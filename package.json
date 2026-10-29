@@ -1,0 +1,31 @@
+{
+  "name": "lynko",
+  "devDependencies": {
+    "@biomejs/biome": "2.6.3",
+    "@types/bun": "latest",
+    "bun-types": "1.4.4"
+  },
+  "peerDependencies": {
+    "typescript": "^7"
+  },
+  "private": true,
+  "scripts": {
+    "dev": "bun run --filter '*' dev",
+    "dev:web": "bun run --filter '@lynko/web' dev",
+    "dev:api": "bun run --filter '@lynko/api' dev",
+    "build": "bun --filter '*' build",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "typecheck": "bun --filter '*' typecheck",
+    "db:generate": "bun --filter '@lynko/api' db:generate",
+    "db:migrate": "bun --filter '@lynko/api' db:migrate",
+    "db:studio": "bun --filter '@lynko/api' db:studio"
+  },
+  "type": "module",
+  "workspaces": [
+    "api",
+    "apps/*",
+    "packages/*"
+  ]
+}
