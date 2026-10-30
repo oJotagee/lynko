@@ -3,6 +3,7 @@ import Fastify from 'fastify'
 import { registerErrorHandler } from './plugins/error-handler'
 import { healthRoutes } from './modules/health/health.routes'
 import { usersRoutes } from './modules/users/users.routes'
+import { pagesRoutes } from './modules/pages/pages.routes'
 import { authRoutes } from './modules/auth/auth.routes'
 import { registerSecurity } from './plugins/security'
 import { registerSwagger } from './plugins/swagger'
@@ -36,6 +37,7 @@ export function buildApp() {
   app.register(healthRoutes, { prefix: '/health' })
   app.register(authRoutes, { prefix: '/auth' })
   app.register(usersRoutes, { prefix: '/users' })
+  app.register(pagesRoutes, { prefix: '/pages' })
 
   return app
 }

@@ -1,5 +1,5 @@
-import { NotFoundError } from '../../shared/errors'
 import { usersRepository } from './users.repository'
+import { NotFoundError } from '../../shared/errors'
 
 export const usersService = {
   async getProfile(userId: string) {

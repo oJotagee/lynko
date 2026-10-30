@@ -1,4 +1,6 @@
-import { index, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core'
+import { boolean, index, jsonb, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core'
+
+import type { PageTheme } from '../modules/pages/pages.theme'
 
 export const timestamps = {
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
@@ -30,3 +32,18 @@ export const sessionSchema = pgTable(
   },
   (table) => [index('sessions_user_id_idx').on(table.userId)],
 )
+
+export const pageSchema = pgTable('pages', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id')
+    .notNull()
+    .unique('pages_user_id_unique')
+    .references(() => userSchema.id, { onDelete: 'cascade' }),
+  username: varchar('username', { length: 30 }).notNull().unique('pages_username_unique'),
+  title: varchar('title', { length: 80 }).notNull(),
+  bio: varchar('bio', { length: 160 }),
+  avatarUrl: text('avatar_url'),
+  theme: jsonb('theme').$type<PageTheme>().notNull(),
+  isPublished: boolean('is_published').notNull().default(false),
+  ...timestamps,
+})

@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm'
 
-import { db } from '../../db'
 import { userSchema } from '../../db/schema'
+import { db } from '../../db'
 
 export const publicUserColumns = {
   id: userSchema.id,

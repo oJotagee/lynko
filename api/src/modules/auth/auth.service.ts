@@ -3,17 +3,10 @@ import { randomUUID } from 'node:crypto'
 import { createRefreshToken, parseRefreshToken, secretMatchesHash } from '../../shared/token'
 import { ConflictError, UnauthorizedError } from '../../shared/errors'
 import { hashPassword, verifyPassword } from '../../shared/password'
+import { getUniqueViolation } from '../../shared/db-errors'
 import type { LoginBody, RegisterBody } from './auth.dto'
 import { authRepository } from './auth.repository'
 import { env } from '../../config/env'
-
-const UNIQUE_VIOLATION = '23505'
-
-function isUniqueViolation(error: unknown) {
-  const cause = error instanceof Error ? (error.cause as { code?: string } | undefined) : undefined
-
-  return cause?.code === UNIQUE_VIOLATION
-}
 
 function refreshTokenExpiresAt() {
   return new Date(Date.now() + env.REFRESH_TOKEN_EXPIRES_IN_DAYS * 24 * 60 * 60 * 1000)
@@ -37,7 +30,7 @@ export const authService = {
 
       return user
     } catch (error) {
-      if (isUniqueViolation(error)) throw new ConflictError('Email already in use')
+      if (getUniqueViolation(error)) throw new ConflictError('Email already in use')
 
       throw error
     }

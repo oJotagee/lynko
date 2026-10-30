@@ -1,7 +1,7 @@
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 
-import { userResponse } from './users.dto'
 import { usersService } from './users.service'
+import { userResponse } from './users.dto'
 
 export const usersRoutes: FastifyPluginAsyncZod = async (app) => {
   app.addHook('onRequest', app.authenticate)
