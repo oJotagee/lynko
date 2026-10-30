@@ -1,5 +1,5 @@
+import scalarApiReference from '@scalar/fastify-api-reference'
 import { jsonSchemaTransform } from 'fastify-type-provider-zod'
-import fastifySwaggerUi from '@fastify/swagger-ui'
 import type { FastifyInstance } from 'fastify'
 import fastifySwagger from '@fastify/swagger'
 
@@ -25,12 +25,23 @@ export function registerSwagger(app: FastifyInstance) {
     transform: jsonSchemaTransform,
   })
 
-  app.register(fastifySwaggerUi, {
+  app.register(scalarApiReference, {
     routePrefix: '/docs',
-    staticCSP: true,
-    uiConfig: {
-      docExpansion: 'list',
-      deepLinking: false,
+    hooks: {
+      preHandler: (_request, reply, done) => {
+        reply.header(
+          'content-security-policy',
+          [
+            "default-src 'self'",
+            "script-src 'self' 'unsafe-inline'",
+            "style-src 'self' 'unsafe-inline' https:",
+            "font-src 'self' data: https:",
+            "img-src 'self' data: https:",
+            "connect-src 'self'",
+          ].join('; '),
+        )
+        done()
+      },
     },
   })
 }
