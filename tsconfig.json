@@ -26,5 +26,7 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false
-  }
+  },
+  // Cada app em apps/* tem o próprio tsconfig
+  "exclude": ["node_modules", "apps"]
 }
