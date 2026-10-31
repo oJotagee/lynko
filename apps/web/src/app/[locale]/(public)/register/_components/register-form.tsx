@@ -1,26 +1,58 @@
 'use client'
 
-import { Eye, EyeOff } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useMutation } from '@tanstack/react-query'
+import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { Controller } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
-import { Field, FieldError, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
+import { useTranslations } from 'next-intl'
+import { toast } from 'sonner'
+
 import { usePasswordVisibility } from '../../_components/password-visibility'
-import { useRegisterSchema } from './schemas'
+import { type RegisterSchemaData, useRegisterSchema } from './schemas'
+import { Field, FieldError, FieldLabel } from '@/components/ui/field'
+import { registerUser } from '../_actions/register'
+import { login } from '../../login/_actions/login'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { useRouter } from '@/i18n/navigation'
 
 export function RegisterForm() {
   const form = useRegisterSchema()
+  const router = useRouter()
   const { visible, setVisible } = usePasswordVisibility()
   const t = useTranslations('Auth.Register')
   const passwordText = useTranslations('Auth.Password')
 
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (values: RegisterSchemaData) => {
+      const response = await registerUser(values)
+      if (response.error) return response
+
+      const session = await login({ email: values.email, password: values.password })
+
+      if (session.error) {
+        toast.success('Conta criada. Entre com seu e-mail e senha.')
+        router.replace('/login')
+        return {}
+      }
+
+      toast.success('Conta criada com sucesso!')
+      router.replace('/dashboard')
+      router.refresh()
+
+      return {}
+    },
+    onSuccess: (response) => {
+      if (response.error) toast.error(response.error)
+    },
+    onError: () => toast.error('Não foi possível concluir o cadastro. Tente novamente.'),
+  })
+
+  function onSubmit(values: RegisterSchemaData) {
+    mutate(values)
+  }
+
   return (
-    <form
-      className="flex flex-col gap-[14px]"
-      onSubmit={form.handleSubmit(() => undefined)}
-      noValidate
-    >
+    <form className="flex flex-col gap-[14px]" onSubmit={form.handleSubmit(onSubmit)} noValidate>
       <Controller
         name="name"
         control={form.control}
@@ -104,8 +136,14 @@ export function RegisterForm() {
       <Button
         className="h-12 w-full justify-between rounded-[10px] border-[#171716] bg-[#171716] px-[14px] text-sm font-semibold text-white transition-[transform,box-shadow,background-color] duration-200 hover:-translate-y-0.5 hover:bg-[#171716] hover:text-white hover:shadow-[0_5px_0_#17171620]"
         type="submit"
+        disabled={isPending}
       >
-        {t('submit')} <span aria-hidden="true">→</span>
+        {isPending ? t('submitting') : t('submit')}
+        {isPending ? (
+          <Loader2 className="size-4 animate-spin" />
+        ) : (
+          <span aria-hidden="true">→</span>
+        )}
       </Button>
     </form>
   )

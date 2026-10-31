@@ -2,32 +2,43 @@
 
 import { useMutation } from '@tanstack/react-query'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
-import { useTranslations } from 'next-intl'
 import { Controller } from 'react-hook-form'
+import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Field, FieldError, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import { Link } from '@/i18n/navigation'
+
 import { usePasswordVisibility } from '../../_components/password-visibility'
-import { login } from '../_actions/login'
+import { Field, FieldError, FieldLabel } from '@/components/ui/field'
 import { type LoginSchemaData, useLoginSchema } from './schemas'
+import { Link, useRouter } from '@/i18n/navigation'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { login } from '../_actions/login'
 
 export function LoginForm() {
   const form = useLoginSchema()
+  const router = useRouter()
   const { visible, setVisible } = usePasswordVisibility()
   const t = useTranslations('Auth.Login')
   const passwordText = useTranslations('Auth.Password')
 
-  const { mutateAsync: loginMutation, isPending } = useMutation({ mutationFn: login })
+  const { mutate: loginMutation, isPending } = useMutation({
+    mutationFn: login,
+    onSuccess: (response) => {
+      if (response.error) {
+        toast.error(response.error)
+        return
+      }
 
-  async function onSubmit(values: LoginSchemaData) {
-    const response = await loginMutation(values)
+      toast.success('Login realizado com sucesso!')
+      router.replace('/dashboard')
+      router.refresh()
+    },
+    onError: () => toast.error('Não foi possível entrar. Tente novamente.'),
+  })
 
-    if (response.error) {
-      toast.error(t('unavailable'))
-    }
+  function onSubmit(values: LoginSchemaData) {
+    loginMutation(values)
   }
 
   return (
