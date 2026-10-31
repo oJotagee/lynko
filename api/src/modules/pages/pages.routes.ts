@@ -83,6 +83,23 @@ export const pagesRoutes: FastifyPluginAsyncZod = async (app) => {
   )
 
   app.get(
+    '/me/preview',
+    {
+      onRequest: [app.authenticate],
+      schema: {
+        tags: ['Pages'],
+        summary: 'Preview the authenticated user page',
+        description: 'Same output as the public page, even if it is not published yet.',
+        security: [{ bearerAuth: [] }],
+        response: { 200: publicPageResponse },
+      },
+    },
+    async (request) => {
+      return pagesService.getPreview(request.user.sub)
+    },
+  )
+
+  app.get(
     '/:username',
     {
       schema: {

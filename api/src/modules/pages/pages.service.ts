@@ -1,6 +1,7 @@
 import { ConflictError, NotFoundError } from '../../shared/errors'
 import type { CreatePageBody, UpdatePageBody } from './pages.dto'
 import { getUniqueViolation } from '../../shared/db-errors'
+import { linksRepository } from '../links/links.repository'
 import { pagesRepository } from './pages.repository'
 
 const PAGE_ALREADY_EXISTS = 'User already has a page'
@@ -81,6 +82,12 @@ export const pagesService = {
       throw new NotFoundError('Page not found')
     }
 
-    return page
+    return { ...page, links: await linksRepository.findActiveByPageId(page.id) }
+  },
+
+  async getPreview(userId: string) {
+    const page = await pagesService.getMine(userId)
+
+    return { ...page, links: await linksRepository.findActiveByPageId(page.id) }
   },
 }

@@ -1,4 +1,14 @@
-import { boolean, index, jsonb, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core'
+import {
+  boolean,
+  index,
+  integer,
+  jsonb,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  varchar,
+} from 'drizzle-orm/pg-core'
 
 import type { PageTheme } from '../modules/pages/pages.theme'
 
@@ -47,3 +57,19 @@ export const pageSchema = pgTable('pages', {
   isPublished: boolean('is_published').notNull().default(false),
   ...timestamps,
 })
+
+export const linkSchema = pgTable(
+  'links',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    pageId: uuid('page_id')
+      .notNull()
+      .references(() => pageSchema.id, { onDelete: 'cascade' }),
+    title: varchar('title', { length: 80 }).notNull(),
+    url: text('url').notNull(),
+    position: integer('position').notNull().default(0),
+    isActive: boolean('is_active').notNull().default(true),
+    ...timestamps,
+  },
+  (table) => [index('links_page_id_position_idx').on(table.pageId, table.position)],
+)

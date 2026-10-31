@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+import { publicLinkResponse } from '../links/links.dto'
+
 import { defaultPageTheme, pageThemeSchema } from './pages.theme'
 
 const RESERVED_USERNAMES = new Set([
@@ -76,13 +78,15 @@ export const pageResponse = z.object({
   updatedAt: z.date(),
 })
 
-export const publicPageResponse = pageResponse.pick({
-  username: true,
-  title: true,
-  bio: true,
-  avatarUrl: true,
-  theme: true,
-})
+export const publicPageResponse = pageResponse
+  .pick({
+    username: true,
+    title: true,
+    bio: true,
+    avatarUrl: true,
+    theme: true,
+  })
+  .extend({ links: z.array(publicLinkResponse) })
 
 export type CreatePageBody = z.infer<typeof createPageBody>
 export type UpdatePageBody = z.infer<typeof updatePageBody>
