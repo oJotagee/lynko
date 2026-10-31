@@ -1,4 +1,5 @@
 import { useTranslations } from 'next-intl'
+
 import type { PhoneButtonShape } from '../phone-preview'
 import { PALETTES, type PaletteId } from './palettes'
 
@@ -18,7 +19,7 @@ export function AppearancePanel({
   const t = useTranslations('Home.Appearance')
 
   return (
-    <div className="absolute top-[100px] left-[6%] z-[3] w-[290px] rotate-[-6deg] rounded-[14px] border border-[#aca7cb] bg-white p-[18px] shadow-[3px_4px_0_#171716] max-[900px]:left-[3%] max-[900px]:w-[240px] max-[640px]:top-[22px] max-[640px]:left-[5%] max-[640px]:w-[225px] max-[640px]:origin-top-left max-[640px]:scale-[0.9] max-[640px]:rotate-[-4deg] max-[640px]:p-[13px]">
+    <div className="absolute top-[100px] left-[6%] z-[3] w-[290px] rotate-[-6deg] rounded-[14px] border border-[#aca7cb] bg-white p-[18px] shadow-[3px_4px_0_#171716] max-[900px]:left-[3%] max-[900px]:w-[240px] max-[640px]:static max-[640px]:w-full max-[640px]:max-w-[320px] max-[640px]:rotate-0 max-[640px]:p-4">
       <div className="mb-5 flex items-center gap-[5px] border-b border-[#d9d8d1] pb-3">
         <i className="size-2 rounded-full bg-[#ccc]" />
         <i className="size-2 rounded-full bg-[#ccc]" />

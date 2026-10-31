@@ -1,5 +1,6 @@
-import { Share2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { Share2 } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
 interface PhonePreviewProps {
@@ -18,14 +19,18 @@ export function PhonePreview({
   shape = 'round',
 }: PhonePreviewProps) {
   const t = useTranslations('Home.Phone')
-  const rotation = 28 - progress * 23
-  const depth = 0.78 + progress * 0.22
+  const offset = Math.round((1 - progress) * 24)
 
   return (
     <div
-      className={cn('lynko-phone', `lynko-phone-${theme}`, `lynko-phone-shape-${shape}`, className)}
+      className={cn(
+        'lynko-phone [transform-style:flat]',
+        `lynko-phone-${theme}`,
+        `lynko-phone-shape-${shape}`,
+        className,
+      )}
       style={{
-        transform: `perspective(900px) rotateY(${rotation}deg) rotateZ(${(1 - progress) * -4}deg) scale(${depth})`,
+        transform: offset === 0 ? 'none' : `translateY(${offset}px)`,
       }}
     >
       <div className="lynko-phone-status">

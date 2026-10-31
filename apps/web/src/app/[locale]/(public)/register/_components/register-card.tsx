@@ -1,8 +1,8 @@
 import { useTranslations } from 'next-intl'
 
 import { Button } from '@/components/ui/button'
-import { Link } from '@/i18n/navigation'
 import { RegisterForm } from './register-form'
+import { Link } from '@/i18n/navigation'
 
 export function RegisterCard() {
   const t = useTranslations('Auth.Register')
@@ -18,7 +18,7 @@ export function RegisterCard() {
       </header>
 
       <Button
-        className="h-[52px] w-full rounded-[10px] !border-[#d8d7d1] !bg-white text-sm !text-[#171716] shadow-none hover:!bg-white hover:!text-[#171716] disabled:pointer-events-none disabled:opacity-100"
+        className="h-[52px] w-full rounded-[10px] !border-[#d8d7d1] !bg-white text-sm !text-[#171716] shadow-none transition-[transform,box-shadow,background-color] duration-200 hover:-translate-y-0.5 hover:!bg-white hover:!text-[#171716] hover:shadow-[0_5px_0_#17171620] disabled:pointer-events-auto disabled:opacity-100 cursor-pointer"
         variant="outline"
         type="button"
         disabled

@@ -19,6 +19,7 @@
       "how": "Como funciona",
       "pricing": "Planos",
       "login": "Entrar",
+      "dashboard": "Abrir dashboard",
       "create": "Crie sua Lynko"
     },
     "Hero": {
@@ -109,12 +110,15 @@
       "title": "O que você",
       "titleAccent": "quer saber.",
       "q1": "A Lynko é mesmo grátis?",
-      "a1": "Sim. Crie uma página caprichada, adicione links à vontade e acompanhe as principais análises, sem precisar de cartão.",
+      "a1": "Sim. Você pode criar sua conta e começar sua página gratuitamente. O plano Pro ainda está em desenvolvimento e não é necessário para começar.",
       "q2": "Posso usar meu próprio domínio?",
       "q3": "Posso mudar meu nome de usuário depois?",
       "q4": "O que a Lynko acompanha?",
       "q5": "Posso cancelar o Pro quando quiser?",
-      "defaultAnswer": "A Lynko acompanha o crescimento da sua presença online e mantém sua página com a sua identidade."
+      "a2": "O domínio próprio está previsto para o plano Pro, que ainda não está disponível. Por enquanto, sua página usa um endereço da Lynko com o nome de usuário escolhido.",
+      "a3": "Sim, desde que o novo nome esteja disponível. A mudança altera o endereço da sua página: atualize o link na bio, nas redes sociais e nos outros lugares em que você o compartilhou.",
+      "a4": "As análises ainda estão em desenvolvimento. A proposta é mostrar visualizações da página e cliques nos links para ajudar você a entender quais conteúdos despertam mais interesse. Os números exibidos nesta página são demonstrativos.",
+      "a5": "O Pro ainda não está disponível para assinatura, então não há cobrança ou assinatura para cancelar neste momento. As condições de contratação e cancelamento serão informadas antes do lançamento."
     },
     "Footer": {
       "title": "Sua internet.",
@@ -177,6 +181,7 @@
       "password": "Senha",
       "passwordPlaceholder": "Mínimo de 8 caracteres",
       "submit": "Criar minha Lynko",
+      "submitting": "Criando conta…",
       "hasAccount": "Já tem uma conta?",
       "login": "Entrar"
     },

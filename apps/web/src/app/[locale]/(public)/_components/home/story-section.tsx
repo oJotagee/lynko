@@ -2,11 +2,12 @@
 
 import { useTranslations } from 'next-intl'
 import { useRef, useState } from 'react'
-import { LynkoMascot } from '../lynko-mascot'
+
 import { type PhoneButtonShape, PhonePreview } from '../phone-preview'
-import { AppearancePanel } from './appearance-panel'
-import type { PaletteId } from './palettes'
 import { useScrollProgress } from './use-scroll-progress'
+import { AppearancePanel } from './appearance-panel'
+import { LynkoMascot } from '../lynko-mascot'
+import type { PaletteId } from './palettes'
 
 export function StorySection() {
   const t = useTranslations('Home.Story')
@@ -33,7 +34,7 @@ export function StorySection() {
         </p>
       </div>
 
-      <div className="lynko-story-stage">
+      <div className="lynko-story-stage max-[640px]:!min-h-0 max-[640px]:gap-7 max-[640px]:!p-5">
         <AppearancePanel
           palette={palette}
           buttonShape={buttonShape}
@@ -44,9 +45,9 @@ export function StorySection() {
           theme={palette}
           progress={progress}
           shape={buttonShape}
-          className="z-[2] max-[640px]:!mb-5 max-[640px]:!min-h-[500px] max-[640px]:!w-[250px]"
+          className="z-[2] !shadow-[3px_4px_0_#171716] max-[640px]:!m-0 max-[640px]:!min-h-[500px] max-[640px]:!w-full max-[640px]:!max-w-[270px] max-[640px]:![transform:none]"
         />
-        <span className="absolute top-[140px] right-[7%] z-[3] rotate-[5deg] border border-[#171716] bg-[#fff8d3] px-5 py-[18px] text-[15px] shadow-[3px_4px_0_#171716] max-[640px]:top-[78px] max-[640px]:right-[3%] max-[640px]:max-w-[150px] max-[640px]:text-[10px]">
+        <span className="absolute top-[140px] right-[7%] z-[3] rotate-[5deg] border border-[#171716] bg-[#fff8d3] px-5 py-[18px] text-[15px] shadow-[3px_4px_0_#171716] max-[640px]:static max-[640px]:mr-14 max-[640px]:justify-self-start max-[640px]:rotate-[-3deg] max-[640px]:px-3 max-[640px]:py-3 max-[640px]:text-xs">
           {t('quote')}
           <small className="mt-2.5 block text-xs text-[#77766f]">{t('byline')}</small>
         </span>

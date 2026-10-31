@@ -1,10 +1,10 @@
 import { useTranslations } from 'next-intl'
 
 import { buttonVariants } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
-import { LynkoMascot } from '../lynko-mascot'
 import { PhonePreview } from '../phone-preview'
+import { LynkoMascot } from '../lynko-mascot'
 import { CtaLink } from './cta-link'
+import { cn } from '@/lib/utils'
 
 export function HeroSection() {
   const t = useTranslations('Home.Hero')
@@ -39,9 +39,13 @@ export function HeroSection() {
       <div className="lynko-hero-art">
         <i className="lynko-orbit lynko-orbit-one" />
         <i className="lynko-orbit lynko-orbit-two" />
-        <span className="lynko-float-note lynko-note-clicks">↗ {t('clicks')}</span>
-        <span className="lynko-float-note lynko-note-theme">◎ {t('theme')}</span>
-        <PhonePreview progress={1} />
+        <span className="lynko-float-note lynko-note-clicks !shadow-[3px_4px_0_#171716]">
+          ↗ {t('clicks')}
+        </span>
+        <span className="lynko-float-note lynko-note-theme !shadow-[3px_4px_0_#171716]">
+          ◎ {t('theme')}
+        </span>
+        <PhonePreview progress={1} className="!shadow-[3px_4px_0_#171716]" />
         <LynkoMascot size="sm" className="lynko-hero-mascot" />
       </div>
     </section>

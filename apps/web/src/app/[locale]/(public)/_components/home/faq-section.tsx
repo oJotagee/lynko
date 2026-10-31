@@ -1,20 +1,21 @@
 import { useTranslations } from 'next-intl'
+
+import { LynkoMascot } from '../lynko-mascot'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import { LynkoMascot } from '../lynko-mascot'
 
 export function FaqSection() {
   const t = useTranslations('Home.Faq')
   const questions = [
     { id: 'q1', question: t('q1'), answer: t('a1') },
-    { id: 'q2', question: t('q2'), answer: t('defaultAnswer') },
-    { id: 'q3', question: t('q3'), answer: t('defaultAnswer') },
-    { id: 'q4', question: t('q4'), answer: t('defaultAnswer') },
-    { id: 'q5', question: t('q5'), answer: t('defaultAnswer') },
+    { id: 'q2', question: t('q2'), answer: t('a2') },
+    { id: 'q3', question: t('q3'), answer: t('a3') },
+    { id: 'q4', question: t('q4'), answer: t('a4') },
+    { id: 'q5', question: t('q5'), answer: t('a5') },
   ]
 
   return (

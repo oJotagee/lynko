@@ -19,6 +19,7 @@
       "how": "How it works",
       "pricing": "Pricing",
       "login": "Log in",
+      "dashboard": "Open dashboard",
       "create": "Create your Lynko"
     },
     "Hero": {
@@ -109,12 +110,15 @@
       "title": "Things you",
       "titleAccent": "might be wondering.",
       "q1": "Is Lynko really free?",
-      "a1": "Yes. Create a polished page, add unlimited links, and see your core analytics—no card required.",
+      "a1": "Yes. You can create an account and start your page for free. Pro is still in development and is not required to get started.",
       "q2": "Can I use my own domain?",
       "q3": "Can I change my username later?",
       "q4": "What does Lynko track?",
       "q5": "Can I cancel Pro anytime?",
-      "defaultAnswer": "Lynko is designed to grow with your online presence and keep your page yours."
+      "a2": "Custom domains are planned for Pro, which is not available yet. For now, your page uses a Lynko address with your chosen username.",
+      "a3": "Yes, as long as the new username is available. Changing it changes your page address, so update the link in your bio, social profiles, and anywhere else you have shared it.",
+      "a4": "Analytics are still in development. The goal is to show page views and link clicks so you can understand which content attracts the most interest. The numbers shown on this page are examples.",
+      "a5": "Pro is not available to subscribe to yet, so there is currently no charge or subscription to cancel. Subscription and cancellation terms will be provided before launch."
     },
     "Footer": {
       "title": "Your internet.",

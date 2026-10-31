@@ -1,8 +1,8 @@
+import { AnalyticsPreview } from './analytics-preview'
+import { PhonePreview } from '../phone-preview'
+import { LynkoMascot } from '../lynko-mascot'
 import { Eye, Sparkles } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { LynkoMascot } from '../lynko-mascot'
-import { PhonePreview } from '../phone-preview'
-import { AnalyticsPreview } from './analytics-preview'
 
 export function FeaturesSection() {
   const t = useTranslations('Home.Features')
@@ -33,10 +33,14 @@ export function FeaturesSection() {
           </span>
           <h3 className="text-xl">{t('screenTitle')}</h3>
           <p className="text-sm leading-[1.55] text-[#74736d]">{t('screenDescription')}</p>
-          <PhonePreview theme="peach" progress={1} className="lynko-device-phone" />
+          <PhonePreview
+            theme="peach"
+            progress={1}
+            className="lynko-device-phone !bottom-[-300px] !w-[230px] max-w-[calc(100%-32px)] ![transform:translateX(-50%)]"
+          />
         </article>
 
-        <article className="lynko-feature-lime relative flex min-h-[430px] flex-col overflow-hidden rounded-[22px] p-[30px]">
+        <article className="lynko-feature-lime relative flex min-h-[430px] flex-col items-center overflow-hidden rounded-[22px] p-[30px]">
           <LynkoMascot animated={false} />
           <div>
             <span className="lynko-icon-chip">
