@@ -1,11 +1,11 @@
-import { FaqSection } from './_components/home/faq-section'
 import { FeaturesSection } from './_components/home/features-section'
-import { HeroSection } from './_components/home/hero-section'
-import { HowSection } from './_components/home/how-section'
 import { PricingSection } from './_components/home/pricing-section'
+import { StorySection } from './_components/home/story-section'
+import { HeroSection } from './_components/home/hero-section'
+import { FaqSection } from './_components/home/faq-section'
+import { HowSection } from './_components/home/how-section'
 import { SiteFooter } from './_components/home/site-footer'
 import { SiteHeader } from './_components/home/site-header'
-import { StorySection } from './_components/home/story-section'
 
 export default function Home() {
   return (

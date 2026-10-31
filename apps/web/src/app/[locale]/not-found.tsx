@@ -1,8 +1,9 @@
 import { useTranslations } from 'next-intl'
+
+import { NotFoundAnimation } from '../_components/not-found-animation'
 import { buttonVariants } from '@/components/ui/button'
 import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
-import { NotFoundAnimation } from '../_components/not-found-animation'
 
 export default function NotFound() {
   const t = useTranslations('NotFound')

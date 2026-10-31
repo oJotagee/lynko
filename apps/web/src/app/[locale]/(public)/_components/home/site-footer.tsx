@@ -1,7 +1,7 @@
-import { useTranslations } from 'next-intl'
-import { Link } from '@/i18n/navigation'
-import { LynkoLogo } from '../lynko-logo'
 import { LynkoMascot } from '../lynko-mascot'
+import { useTranslations } from 'next-intl'
+import { LynkoLogo } from '../lynko-logo'
+import { Link } from '@/i18n/navigation'
 import { CtaLink } from './cta-link'
 
 export function SiteFooter() {

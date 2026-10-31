@@ -1,10 +1,10 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
-import { LocaleSwitcher } from '../../_components/locale-switcher'
-import { LynkoLogo } from '../../_components/lynko-logo'
-import { LynkoMascot } from '../../_components/lynko-mascot'
 import { usePasswordVisibility } from '../../_components/password-visibility'
+import { LocaleSwitcher } from '../../_components/locale-switcher'
+import { LynkoMascot } from '../../_components/lynko-mascot'
+import { LynkoLogo } from '../../_components/lynko-logo'
+import { useTranslations } from 'next-intl'
 
 export function LoginBrand({ mode = 'login' }: { mode?: 'login' | 'register' }) {
   const { visible } = usePasswordVisibility()

@@ -1,12 +1,13 @@
-import type { Metadata } from 'next'
+import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { Playfair_Display, Roboto } from 'next/font/google'
 import { notFound } from 'next/navigation'
-import { hasLocale, NextIntlClientProvider } from 'next-intl'
+import type { Metadata } from 'next'
+
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server'
-import { routing } from '@/i18n/routing'
 import { BASE_OPEN_GRAPH, SITE_NAME, SITE_TITLE, SITE_URL } from '@/lib/site'
-import { cn } from '@/lib/utils'
 import { Providers } from '../providers'
+import { routing } from '@/i18n/routing'
+import { cn } from '@/lib/utils'
 
 import '../globals.css'
 
