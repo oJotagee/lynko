@@ -1,13 +1,13 @@
-import { afterAll, beforeEach, describe, expect, test } from 'bun:test'
 import { AxiosError, AxiosHeaders, type InternalAxiosRequestConfig } from 'axios'
+import { afterAll, beforeEach, describe, expect, test } from 'bun:test'
 import { NextRequest } from 'next/server'
 
 import { registerUser } from '../src/app/[locale]/(public)/register/_actions/register'
 import { api } from '../src/lib/api'
 
 process.env.AUTH_SECRET = 'test-only-secret-with-at-least-32-characters'
-process.env.AUTH_TRUST_HOST = 'true'
 process.env.AUTH_URL = 'http://localhost:3000'
+process.env.AUTH_TRUST_HOST = 'true'
 
 const { handlers } = await import('../src/lib/auth')
 const { default: proxy } = await import('../src/proxy')

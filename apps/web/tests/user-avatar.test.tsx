@@ -1,5 +1,5 @@
-import { describe, expect, test } from 'bun:test'
 import { renderToStaticMarkup } from 'react-dom/server'
+import { describe, expect, test } from 'bun:test'
 
 import { UserAvatar } from '../src/app/[locale]/(public)/_components/home/user-avatar'
 
