@@ -1,0 +1,205 @@
+{
+  "Metadata": {
+    "description": "Bring your links, work, and favorite corners of the internet together in one personal page."
+  },
+  "Common": {
+    "language": "Language",
+    "switchToPortuguese": "Switch language to Portuguese",
+    "switchToEnglish": "Switch language to English",
+    "english": "English",
+    "portuguese": "Português",
+    "backHome": "Back to Home",
+    "mascotHappy": "Happy Lynko mascot",
+    "mascotSad": "Sad Lynko mascot"
+  },
+  "Home": {
+    "Header": {
+      "navigation": "Main navigation",
+      "features": "Features",
+      "how": "How it works",
+      "pricing": "Pricing",
+      "login": "Log in",
+      "create": "Create your Lynko"
+    },
+    "Hero": {
+      "title": "Everything you are,",
+      "titleAccent": "one link away.",
+      "description": "Bring your work, socials, ideas, and favorite corners of the internet together on a page that feels unmistakably you.",
+      "create": "Create your Lynko",
+      "example": "Explore an example",
+      "clicks": "348 new clicks",
+      "theme": "Theme updated"
+    },
+    "Story": {
+      "eyebrow": "01 / YOUR LYNKO",
+      "title": "Make the internet",
+      "titleAccent": "feel like yours.",
+      "description": "No templates that box you in. Start with a beautiful foundation and make every detail feel personal.",
+      "quote": "“It finally looks like me.”",
+      "byline": "— Maya, illustrator"
+    },
+    "Phone": {
+      "share": "Share profile",
+      "role": "Product designer",
+      "bio": "Designing useful things and sharing what I learn along the way.",
+      "link1": "My design portfolio",
+      "link2": "Latest case study",
+      "link3": "Book a coffee chat",
+      "madeWith": "Made with Lynko"
+    },
+    "Appearance": {
+      "title": "Appearance",
+      "theme": "Theme",
+      "background": "Background",
+      "buttonShape": "Button shape",
+      "soft": "Soft",
+      "round": "Round",
+      "sharp": "Sharp",
+      "useTheme": "Use {theme} theme"
+    },
+    "How": {
+      "eyebrow": "02 / HOW IT WORKS",
+      "title": "From scattered to",
+      "titleAccent": "sorted in minutes.",
+      "step1Title": "Claim your space",
+      "step1Description": "Pick a username and add the essentials that make you, you.",
+      "step2Title": "Gather your links",
+      "step2Description": "Drop in anything worth sharing. Reorder it whenever inspiration hits.",
+      "step3Title": "Make it yours",
+      "step3Description": "Choose a mood, color, typeface and shape. No design degree needed.",
+      "step4Title": "Share everywhere",
+      "step4Description": "One memorable link for every bio, email, card and conversation."
+    },
+    "Features": {
+      "analyticsLabel": "LIVE ANALYTICS",
+      "analyticsTitle": "Know what connects.",
+      "analyticsDescription": "See what people love, where they come from, and how your Lynko grows—without drowning in data.",
+      "exploreAnalytics": "Explore analytics",
+      "views": "PAGE VIEWS",
+      "chartLabel": "Illustration of page view growth",
+      "screenTitle": "Beautiful on every screen.",
+      "screenDescription": "Your page feels considered from the smallest phone to the biggest desktop.",
+      "simpleTitle": "Delightfully simple.",
+      "simpleDescription": "No clutter. No learning curve. Just the tools you need and a small friend when you get stuck."
+    },
+    "Pricing": {
+      "eyebrow": "03 / PRICING",
+      "title": "Start free.",
+      "titleAccent": "Stay as long as you like.",
+      "free": "FREE",
+      "forever": "/ forever",
+      "freeDescription": "Everything you need to make your first impression count.",
+      "start": "Start creating",
+      "free1": "Unlimited links",
+      "free2": "Six signature themes",
+      "free3": "30-day analytics",
+      "free4": "Lynko branding",
+      "pro": "PRO",
+      "month": "/ month",
+      "proDescription": "For creators ready to understand and grow their audience.",
+      "comingSoon": "COMING SOON",
+      "waitlist": "Join the waitlist",
+      "pro1": "Advanced customization",
+      "pro2": "Full analytics history",
+      "pro3": "Custom domain",
+      "pro4": "Remove Lynko branding"
+    },
+    "Faq": {
+      "label": "FAQ",
+      "title": "Things you",
+      "titleAccent": "might be wondering.",
+      "q1": "Is Lynko really free?",
+      "a1": "Yes. Create a polished page, add unlimited links, and see your core analytics—no card required.",
+      "q2": "Can I use my own domain?",
+      "q3": "Can I change my username later?",
+      "q4": "What does Lynko track?",
+      "q5": "Can I cancel Pro anytime?",
+      "defaultAnswer": "Lynko is designed to grow with your online presence and keep your page yours."
+    },
+    "Footer": {
+      "title": "Your internet.",
+      "titleAccent": "Linked your way.",
+      "create": "Create your Lynko",
+      "product": "PRODUCT",
+      "company": "COMPANY",
+      "follow": "FOLLOW",
+      "features": "Features",
+      "pricing": "Pricing",
+      "dashboard": "Dashboard",
+      "about": "About",
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "instagram": "Instagram",
+      "twitter": "X / Twitter",
+      "linkedin": "LinkedIn",
+      "copyright": "© {year} Lynko, Inc. Made for the wonderfully online."
+    }
+  },
+  "Auth": {
+    "Brand": {
+      "eyebrow": "YOUR CORNER OF THE INTERNET",
+      "welcome": "Good to have you",
+      "welcomeAccent": "back.",
+      "registerTitle": "Your Lynko",
+      "registerAccent": "starts here.",
+      "description": "Your links, your audience, and your little corner of the internet are waiting for you.",
+      "registerDescription": "Bring together your links, ideas, and everything that makes your corner of the internet yours.",
+      "connected": "All connected."
+    },
+    "Login": {
+      "eyebrow": "LOG IN TO LYNKO",
+      "title": "Access your account",
+      "description": "Keep building an online presence that feels like you.",
+      "google": "Continue with Google",
+      "divider": "or continue with email",
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "At least 8 characters",
+      "forgot": "Forgot password?",
+      "remember": "Keep me signed in",
+      "submit": "Log in",
+      "submitting": "Logging in…",
+      "noAccount": "Don't have an account?",
+      "createAccount": "Create your Lynko",
+      "unavailable": "Sign-in is not available yet. Please try again later."
+    },
+    "Register": {
+      "eyebrow": "CREATE YOUR LYNKO",
+      "title": "Create your account",
+      "description": "Your online corner starts here.",
+      "google": "Continue with Google",
+      "divider": "or continue with email",
+      "name": "Name",
+      "namePlaceholder": "Your full name",
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "At least 8 characters",
+      "submit": "Create my Lynko",
+      "hasAccount": "Already have an account?",
+      "login": "Log in"
+    },
+    "Legal": {
+      "notice": "By continuing, you agree to our <terms>Terms</terms> and <privacy>Privacy Policy</privacy>.",
+      "terms": "Terms",
+      "privacy": "Privacy Policy"
+    },
+    "Password": {
+      "show": "Show password",
+      "hide": "Hide password"
+    },
+    "Validation": {
+      "emailRequired": "Email is required",
+      "emailInvalid": "Enter a valid email address",
+      "passwordRequired": "Password is required",
+      "passwordMin": "Password must be at least 8 characters",
+      "nameRequired": "Name is required"
+    }
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "description": "The page you're looking for doesn't exist or has moved.",
+    "home": "Back to Home"
+  }
+}

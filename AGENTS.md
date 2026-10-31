@@ -8,6 +8,10 @@ Monorepo Bun: `api/` (Fastify, Drizzle, Neon) e `apps/web/` (Next.js 16, padrão
 
 Nunca escreva do zero algo que você não procurou antes. Vale para tudo, de validar uma data a implementar um gráfico.
 
+A ordem é sempre: **o que já existe no projeto → alternativas prontas → só por último criar.**
+
+Se houver componente shadcn para o caso, use. Se já estiver em `components/ui`, importe. Se não estiver, instale com `bunx shadcn add <componente>` e use. Exemplo: seletor de data é o `date-picker` do shadcn; pergunta e resposta é o `accordion`; checkbox é o `checkbox`. Instalar componente shadcn não precisa de aprovação.
+
 1. **No repositório:** procure helper, componente, schema ou padrão parecido em `api/src/shared`, `apps/web/src/lib`, `apps/web/src/components` e no módulo ou rota mais próximos.
 2. **Nas dependências:** veja o `package.json` e use o que já está instalado. Exemplos: validação com Zod, gráficos com `recharts`, componentes com shadcn.
 3. **Na documentação da versão instalada:** consulte a doc oficial. Para Next.js, leia `node_modules/next/dist/docs/` em `apps/web`, porque esta versão difere do que você conhece. Drizzle está em `1.0.0-rc`: confira os tipos instalados em vez de confiar na memória.
@@ -142,6 +146,15 @@ async function onSubmit(values: LinkSchemaData) {
 }
 ```
 
+### Componentes
+
+- `page.tsx` é Server Component e só compõe: metadata, layout e componentes. Lógica de formulário e estado ficam em `_components`.
+- Divida em componentes pequenos, cada um com uma responsabilidade. Uma seção, um arquivo. Passou de cerca de 100 linhas, procure dividir.
+- `'use client'` só no menor componente que precisa de estado ou evento, nunca na página inteira.
+- Elementos com componente em `components/ui` não são escritos à mão: use `Button`, `Input`, `Checkbox`, `Accordion`. Link com cara de botão usa `buttonVariants`, porque o `Button` é do Base UI e não tem `asChild`.
+- Todo campo de formulário usa `Field`, `FieldLabel` e `FieldError` com `Controller`, nunca `label` e mensagem de erro soltos.
+- Estilize com Tailwind e os tokens do tema. Não crie CSS novo.
+
 ### UI
 
 - Feedback ao usuário com `toast` do `sonner`.
@@ -156,13 +169,12 @@ async function onSubmit(values: LinkSchemaData) {
 
 Cada domínio fica em `src/modules/<dominio>/`:
 
-| Arquivo | Responsabilidade | Não faz |
-|---|---|---|
-| `<dominio>.routes.ts` | rota, schema, chama o service | regra de negócio, acesso ao banco |
-| `<dominio>.service.ts` | regras de negócio | conhecer `request`/`reply`, escrever query |
-| `<dominio>.repository.ts` | consultas Drizzle | regra, hash, HTTP |
-| `<dominio>.dto.ts` | schemas Zod de entrada e saída e seus tipos | lógica |
-
+| Arquivo                   | Responsabilidade                            | Não faz                                    |
+| ------------------------- | ------------------------------------------- | ------------------------------------------ |
+| `<dominio>.routes.ts`     | rota, schema, chama o service               | regra de negócio, acesso ao banco          |
+| `<dominio>.service.ts`    | regras de negócio                           | conhecer `request`/`reply`, escrever query |
+| `<dominio>.repository.ts` | consultas Drizzle                           | regra, hash, HTTP                          |
+| `<dominio>.dto.ts`        | schemas Zod de entrada e saída e seus tipos | lógica                                     |
 - Dependência em uma direção: `routes` → `service` → `repository`.
 - Registre o módulo no `app.ts`, depois do swagger e do auth: `app.register(xRoutes, { prefix: '/x' })`.
 - Tabelas ficam em `src/db/schema.ts`, nomeadas `xSchema`, com `...timestamps`.

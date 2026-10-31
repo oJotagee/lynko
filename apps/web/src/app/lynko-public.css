@@ -1,0 +1,547 @@
+.lynko-login-brand {
+  --lynko-ink: #171716;
+  --lynko-paper: #f7f6f1;
+  --lynko-violet: #9b8cff;
+  --lynko-lime: #b7f34a;
+}
+.lynko-logo {
+  position: absolute;
+  top: 24px;
+  left: max(calc((100vw - 1340px) / 2 + 32px), 32px);
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 9px;
+  color: inherit;
+  text-decoration: none;
+  font-size: 23px;
+  letter-spacing: -1.5px;
+}
+.lynko-logo-mark {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  transform: rotate(-15deg);
+}
+.lynko-logo-mark i {
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  width: 13px;
+  height: 23px;
+  border: 3px solid currentColor;
+  border-radius: 9px;
+}
+.lynko-logo-mark i + i {
+  left: 13px;
+}
+.lynko-login-brand .lynko-mascot {
+  z-index: 1;
+  width: 200px;
+  overflow: visible;
+}
+.lynko-login-brand .lynko-mascot-body {
+  stroke: var(--lynko-ink);
+  stroke-width: 3;
+}
+.lynko-login-brand .lynko-mascot-back {
+  fill: var(--lynko-lime);
+}
+.lynko-login-brand .lynko-mascot-front {
+  fill: var(--lynko-violet);
+}
+.lynko-login-brand .lynko-mascot-tail,
+.lynko-login-brand .lynko-mascot-face {
+  fill: none;
+  stroke: var(--lynko-ink);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.lynko-login-brand .lynko-mascot-gap {
+  fill: none;
+  stroke: var(--lynko-paper);
+  stroke-width: 12;
+  stroke-linecap: round;
+}
+.lynko-login-brand .lynko-mascot-eye {
+  fill: var(--lynko-ink);
+}
+.lynko-login-brand .lynko-mascot-animated {
+  animation: lynko-float 4s ease-in-out infinite;
+}
+@keyframes lynko-float {
+  50% {
+    transform: translateY(-7px) rotate(2deg);
+  }
+}
+.lynko-mascot-eye {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 180ms ease;
+}
+.lynko-mascot-eyes-closed .lynko-mascot-eye {
+  transform: scaleY(0.12);
+}
+.lynko-home-logo .lynko-logo-mark {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  transform: rotate(-15deg);
+}
+.lynko-home-logo .lynko-logo-mark i {
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  width: 13px;
+  height: 23px;
+  border: 3px solid currentColor;
+  border-radius: 9px;
+}
+.lynko-home-logo .lynko-logo-mark i + i {
+  left: 13px;
+}
+.lynko-home .lynko-mascot {
+  z-index: 1;
+  width: 180px;
+  overflow: visible;
+}
+.lynko-home .lynko-mascot-sm {
+  width: 130px;
+}
+.lynko-home .lynko-mascot-body {
+  stroke: #171716;
+  stroke-width: 3;
+}
+.lynko-home .lynko-mascot-back {
+  fill: #b7f34a;
+}
+.lynko-home .lynko-mascot-front {
+  fill: #9b8cff;
+}
+.lynko-home .lynko-mascot-tail,
+.lynko-home .lynko-mascot-face {
+  fill: none;
+  stroke: #171716;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.lynko-home .lynko-mascot-gap {
+  fill: none;
+  stroke: #f7f6f1;
+  stroke-width: 12;
+  stroke-linecap: round;
+}
+.lynko-home .lynko-mascot-eye {
+  fill: #171716;
+}
+.lynko-home {
+  --lh-ink: #171716;
+  --lh-paper: #f7f6f1;
+  --lh-line: #d9d8d1;
+  --lh-muted: #74736d;
+  --lh-lime: #b7f34a;
+  --lh-violet: #9b8cff;
+  --lh-peach: #ff8d6b;
+  overflow: hidden;
+  background: var(--lh-paper);
+  color: var(--lh-ink);
+  font-family: var(--font-roboto), sans-serif;
+}
+.lynko-home *,
+.lynko-home *:before,
+.lynko-home *:after {
+  box-sizing: border-box;
+}
+.lynko-home-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: inherit;
+  text-decoration: none;
+  font-size: 23px;
+  letter-spacing: -1.5px;
+}
+.lynko-home em {
+  color: var(--lh-violet);
+  font-style: normal;
+}
+.lynko-hero-art {
+  position: relative;
+  display: grid;
+  height: 600px;
+  place-items: center;
+  perspective: 1200px;
+}
+.lynko-orbit {
+  position: absolute;
+  width: 600px;
+  height: 450px;
+  border: 1px solid #cecdc7;
+  border-radius: 50%;
+  transform: rotate(-10deg);
+}
+.lynko-orbit-two {
+  width: 520px;
+  height: 540px;
+  transform: rotate(28deg);
+}
+.lynko-float-note {
+  position: absolute;
+  z-index: 3;
+  padding: 12px 15px;
+  border: 1px solid var(--lh-line);
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 10px 25px #0001;
+  font-size: 12px;
+  font-weight: 600;
+}
+.lynko-note-clicks {
+  top: 115px;
+  left: 5px;
+  transform: rotate(-6deg);
+}
+.lynko-note-theme {
+  right: 4px;
+  bottom: 90px;
+  transform: rotate(5deg);
+}
+.lynko-phone {
+  position: relative;
+  width: 270px;
+  min-height: 540px;
+  overflow: hidden;
+  padding: 14px 18px 20px;
+  border: 1px solid #232321;
+  border-radius: 35px;
+  background: #e9ff9e;
+  box-shadow: 0 26px 60px #17171629;
+  color: #171716;
+  text-align: center;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+  transform-style: preserve-3d;
+}
+.lynko-hero-art > .lynko-phone {
+  animation: lynko-phone-float 5s ease-in-out infinite;
+}
+.lynko-phone-status {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 7px 18px;
+  font-size: 9px;
+}
+.lynko-phone-share {
+  position: absolute;
+  top: 45px;
+  right: 15px;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 1px solid #0004;
+  border-radius: 50%;
+  background: #fff6;
+}
+.lynko-phone-avatar {
+  display: grid;
+  width: 68px;
+  height: 68px;
+  place-items: center;
+  margin: 7px auto 12px;
+  border: 2px solid var(--lh-ink);
+  border-radius: 50%;
+  background: var(--lh-violet);
+  font-weight: 800;
+}
+.lynko-phone > strong {
+  display: block;
+  font-size: 18px;
+}
+.lynko-phone > small {
+  display: block;
+  margin: 3px;
+  font-size: 10px;
+}
+.lynko-phone > p {
+  max-width: 210px;
+  margin: 13px auto;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.lynko-phone-socials {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 15px 0;
+  font-size: 13px;
+}
+.lynko-phone-links {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.lynko-phone-links > div {
+  display: grid;
+  min-height: 50px;
+  grid-template-columns: 30px 1fr 20px;
+  align-items: center;
+  padding: 8px;
+  border: 1.5px solid var(--lh-ink);
+  border-radius: 14px;
+  background: white;
+  box-shadow: 2px 2px 0 var(--lh-ink);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: left;
+  transition: border-radius 0.2s ease;
+}
+.lynko-phone-shape-soft .lynko-phone-links > div {
+  border-radius: 24px;
+}
+.lynko-phone-shape-sharp .lynko-phone-links > div {
+  border-radius: 4px;
+}
+.lynko-phone-links i {
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--lh-ink);
+  border-radius: 8px;
+  background: var(--lh-lime);
+}
+.lynko-phone-links > div:nth-child(2) i {
+  background: var(--lh-violet);
+}
+.lynko-phone-links > div:nth-child(3) i {
+  background: var(--lh-peach);
+}
+.lynko-phone-brand {
+  margin-top: 17px !important;
+  opacity: 0.6;
+}
+.lynko-phone-violet {
+  background: #ded8ff;
+}
+.lynko-phone-peach {
+  background: #ffd2c5;
+}
+.lynko-phone-ink {
+  background: #1f2022;
+  color: white;
+}
+.lynko-phone-ink .lynko-phone-links > div {
+  border-color: #777;
+  background: #35363a;
+  color: white;
+}
+.lynko-hero-mascot {
+  position: absolute;
+  top: 52px;
+  right: 2px;
+  width: 155px;
+  transform: rotate(8deg);
+}
+@keyframes lynko-phone-float {
+  50% {
+    translate: 0 -13px;
+  }
+}
+.lynko-story-stage {
+  position: relative;
+  display: grid;
+  min-height: 680px;
+  place-items: center;
+  overflow: hidden;
+  margin-top: 70px;
+  border-radius: 24px;
+  background: #ded8ff;
+  perspective: 1200px;
+}
+.lynko-step-art {
+  position: relative;
+  display: grid;
+  height: 180px;
+  place-items: center;
+  margin: 16px 0;
+  border-radius: 10px;
+  background: #ded8ff;
+  font-size: 40px;
+}
+.lynko-step-art.art-1 {
+  background: #fff0be;
+}
+.lynko-step-art.art-2 {
+  background: #ffd2c5;
+}
+.lynko-step-art.art-3 {
+  background: var(--lh-lime);
+}
+.lynko-step-art .lynko-mascot {
+  position: absolute;
+  right: 5px;
+  bottom: -13px;
+  width: 100px;
+}
+.lynko-chart {
+  position: relative;
+  height: 380px;
+  padding: 24px;
+  border-radius: 14px;
+  background: #262724;
+}
+.lynko-chart > div:first-child {
+  display: grid;
+  grid-template-columns: 1fr auto;
+}
+.lynko-chart small {
+  color: #aaa9a4;
+}
+.lynko-chart em {
+  color: var(--lh-lime);
+}
+.lynko-chart svg {
+  width: 100%;
+  height: 190px;
+  margin-top: 18px;
+}
+.lynko-chart svg path:first-child {
+  fill: none;
+  stroke: var(--lh-lime);
+  stroke-width: 4;
+}
+.lynko-chart svg .fill {
+  fill: #b7f34a1a;
+}
+.lynko-bars {
+  display: flex;
+  height: 64px;
+  align-items: end;
+  gap: 8px;
+}
+.lynko-bars i {
+  flex: 1;
+  background: var(--lh-violet);
+}
+.lynko-icon-chip {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  margin-bottom: 12px;
+  border: 0;
+  border-radius: 10px;
+}
+.lynko-device-phone {
+  position: absolute;
+  bottom: -364px;
+  left: 50%;
+  width: 270px;
+  min-height: 540px;
+  margin: 0;
+  transform: translateX(-50%) scale(0.7) !important;
+  transform-origin: top center;
+}
+.lynko-feature-lime {
+  display: flex;
+  flex-direction: column;
+  background: var(--lh-lime);
+}
+.lynko-feature-lime > div {
+  margin-top: auto;
+}
+.lynko-home .lynko-feature-lime > .lynko-mascot {
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  width: 200px;
+  transform: translateX(-50%);
+}
+.lynko-questions [data-slot="accordion-item"] {
+  padding: 25px 0;
+  border-top: 1px solid var(--lh-line);
+}
+.lynko-questions [data-slot="accordion-item"]:last-child {
+  border-bottom: 1px solid var(--lh-line);
+}
+.lynko-questions [data-slot="accordion-trigger"] {
+  padding: 0;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 600;
+}
+.lynko-questions p {
+  max-width: 580px;
+  color: var(--lh-muted);
+  line-height: 1.6;
+}
+@media (max-width: 900px) {
+  .lynko-hero-art {
+    transform: scale(0.86);
+  }
+  .lynko-story-stage {
+    min-height: 600px;
+  }
+}
+@media (max-width: 640px) {
+  .lynko-home-logo {
+    font-size: 20px;
+  }
+  .lynko-hero-art {
+    height: 360px;
+    transform: scale(0.72);
+    transform-origin: top center;
+    margin-bottom: -55px;
+  }
+  .lynko-orbit-one {
+    width: 440px;
+    height: 370px;
+  }
+  .lynko-orbit-two {
+    width: 360px;
+    height: 400px;
+  }
+  .lynko-note-clicks {
+    left: -10px;
+  }
+  .lynko-note-theme {
+    right: -15px;
+  }
+  .lynko-story-stage {
+    min-height: 540px;
+    margin-top: 30px;
+    align-items: end;
+    padding-bottom: 28px;
+  }
+  .lynko-step-art {
+    height: 150px;
+  }
+  .lynko-chart {
+    height: auto;
+    min-height: 270px;
+    padding: 18px;
+  }
+  .lynko-chart svg {
+    height: 125px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lynko-hero-art > .lynko-phone {
+    animation: none;
+  }
+}
+@media (max-width: 600px) {
+  .lynko-login-brand .lynko-logo {
+    top: 11px;
+    left: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lynko-login-brand .lynko-mascot-animated,
+  .lynko-home .lynko-mascot-animated,
+  .lynko-hero-art > .lynko-phone {
+    animation: none;
+  }
+}
