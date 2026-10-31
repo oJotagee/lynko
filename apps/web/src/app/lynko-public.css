@@ -1,0 +1,57 @@
+.lynko-login {
+  --lynko-ink: #171716;
+  --lynko-paper: #f7f6f1;
+  --lynko-violet: #9b8cff;
+  --lynko-lime: #b7f34a;
+  display: grid;
+  min-height: 100svh;
+  grid-template-columns: minmax(360px, 1fr) minmax(400px, 1fr);
+  color: var(--lynko-ink);
+  background: #faf9f6;
+  font-family: Arial, sans-serif;
+}
+.lynko-login-brand { position: relative; display: flex; min-height: 100svh; flex-direction: column; overflow: hidden; padding: 36px 7.5%; background: var(--lynko-violet); }
+.lynko-logo { display: inline-flex; width: fit-content; align-items: center; gap: 9px; color: inherit; text-decoration: none; font-size: 19px; letter-spacing: -.8px; }
+.lynko-logo-mark { position: relative; display: inline-block; width: 26px; height: 27px; transform: rotate(-15deg); }
+.lynko-logo-mark i { position: absolute; top: 2px; left: 3px; width: 12px; height: 21px; border: 2px solid currentColor; border-radius: 9px; }
+.lynko-logo-mark i + i { left: 11px; }
+.lynko-login-welcome { z-index: 1; margin: auto 0 42px; }
+.lynko-login-welcome > span, .lynko-login-card header > span { font-size: 8px; font-weight: 700; letter-spacing: .16em; }
+.lynko-login-welcome h1 { margin: 18px 0 14px; font-size: clamp(36px, 4vw, 58px); line-height: .98; letter-spacing: -.065em; }
+.lynko-login-welcome h1 em { color: var(--lynko-lime); font-style: normal; }
+.lynko-login-welcome p { max-width: 340px; font-size: 12px; line-height: 1.65; }
+.lynko-login-art { position: relative; display: flex; min-height: 190px; align-items: center; justify-content: flex-end; padding-right: 7%; }
+.lynko-login-art::before { position: absolute; right: 0; bottom: 0; width: 250px; height: 150px; border: 1px solid rgb(23 23 22 / 22%); border-radius: 50%; content: ''; transform: rotate(-14deg); }
+.lynko-login-art > span { z-index: 1; align-self: center; margin-right: -15px; padding: 8px 10px; background: #fff7ca; font-size: 9px; transform: rotate(-8deg) translateY(-35px); }
+.lynko-login-brand > small { margin-top: 15px; font-size: 7px; opacity: .55; }
+.lynko-mascot { z-index: 1; width: 170px; overflow: visible; }
+.lynko-mascot-sm { width: 100px; }.lynko-mascot-lg { width: 220px; }
+.lynko-mascot-body { stroke: var(--lynko-ink); stroke-width: 3; }.lynko-mascot-back { fill: var(--lynko-lime); }.lynko-mascot-front { fill: var(--lynko-violet); }
+.lynko-mascot-tail,.lynko-mascot-face { fill: none; stroke: var(--lynko-ink); stroke-width: 3; stroke-linecap: round; }.lynko-mascot-gap { fill: none; stroke: var(--lynko-paper); stroke-width: 12; stroke-linecap: round; }.lynko-mascot-eye { fill: var(--lynko-ink); }
+.lynko-mascot-animated { animation: lynko-float 4s ease-in-out infinite; }
+@keyframes lynko-float { 50% { transform: translateY(-7px) rotate(2deg); } }
+.lynko-login-panel { position: relative; display: flex; min-height: 100svh; flex-direction: column; align-items: center; justify-content: center; padding: 64px 32px 45px; background: #faf9f6; }
+.lynko-login-back { position: absolute; top: 35px; left: 40px; color: inherit; font-size: 11px; text-decoration: none; }
+.lynko-login-card { width: min(100%, 390px); }
+.lynko-login-card header { margin-bottom: 20px; text-align: center; }
+.lynko-login-card header > span { font-size: 7px; }
+.lynko-login-card h2 { margin: 9px 0 5px; font-size: 23px; letter-spacing: -.04em; }
+.lynko-login-card header p { margin: 0; color: #77766f; font-size: 10px; }
+.lynko-google { width: 100%; height: 38px; border-color: #d8d7d1; background: white; font-size: 10px; }
+.lynko-google b { color: #4285f4; font-size: 14px; }
+.lynko-divider { display: flex; align-items: center; gap: 10px; margin: 18px 0; color: #8a8983; font-size: 8px; }
+.lynko-divider::before,.lynko-divider::after { height: 1px; flex: 1; background: #e4e3dd; content: ''; }
+.lynko-login-card form { display: flex; flex-direction: column; }
+.lynko-login-card form > label,.lynko-password-label label { margin: 0 0 6px; font-size: 9px; font-weight: 600; }
+.lynko-login-card form > .lynko-input { height: 37px; border-color: #deddd7; background: white; font-size: 10px; }
+.lynko-password-label { display: flex; justify-content: space-between; margin-top: 16px; }
+.lynko-password-label button,.lynko-signup button { padding: 0; color: #7968e8; font-size: 8px; }
+.lynko-remember { display: flex; align-items: center; gap: 7px; margin: 15px 0; font-size: 8px; }
+.lynko-remember input { width: 12px; height: 12px; accent-color: var(--lynko-ink); }
+.lynko-submit { width: 100%; height: 37px; justify-content: space-between; padding: 0 14px; background: var(--lynko-ink); color: white; font-size: 9px; }
+.lynko-field-error,.lynko-login-error { margin-top: 5px; color: #b42318; font-size: 9px; }
+.lynko-login-error { margin-bottom: 10px; }
+.lynko-signup { margin: 19px 0 0; text-align: center; font-size: 8px; }
+.lynko-legal { position: absolute; bottom: 25px; margin: 0; color: #92918b; font-size: 7px; }
+@media (max-width: 760px) { .lynko-login { grid-template-columns: 1fr; }.lynko-login-brand { min-height: 360px; padding: 24px 8%; }.lynko-login-welcome { margin: 56px 0 15px; }.lynko-login-welcome h1 { font-size: 38px; }.lynko-login-art { position: absolute; right: 4%; bottom: 8px; min-height: auto; padding: 0; }.lynko-login-art::before { width: 160px; height: 100px; }.lynko-login-art .lynko-mascot { width: 120px; }.lynko-login-art > span { font-size: 8px; }.lynko-login-brand > small { margin-top: 5px; }.lynko-login-panel { min-height: 540px; padding: 72px 24px 56px; }.lynko-login-back { top: 25px; left: 25px; } }
+@media (prefers-reduced-motion: reduce) { .lynko-mascot-animated { animation: none; } }
