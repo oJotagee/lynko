@@ -1,79 +1,547 @@
-.lynko-login {
+.lynko-login-brand {
   --lynko-ink: #171716;
   --lynko-paper: #f7f6f1;
   --lynko-violet: #9b8cff;
   --lynko-lime: #b7f34a;
-  display: grid;
-  min-height: 100svh;
-  grid-template-columns: minmax(360px, 1fr) minmax(400px, 1fr);
-  color: var(--lynko-ink);
-  background: #faf9f6;
-  font-family: Arial, sans-serif;
 }
-.lynko-login-brand { position: relative; display: flex; min-height: 100svh; flex-direction: column; overflow: hidden; padding: 36px 7.5%; background: var(--lynko-violet); }
-.lynko-logo { display: inline-flex; width: fit-content; align-items: center; gap: 9px; color: inherit; text-decoration: none; font-size: 19px; letter-spacing: -.8px; }
-.lynko-logo-mark { position: relative; display: inline-block; width: 26px; height: 27px; transform: rotate(-15deg); }
-.lynko-logo-mark i { position: absolute; top: 2px; left: 3px; width: 12px; height: 21px; border: 2px solid currentColor; border-radius: 9px; }
-.lynko-logo-mark i + i { left: 11px; }
-.lynko-login-welcome { z-index: 1; margin: auto 0 42px; }
-.lynko-login-welcome > span, .lynko-login-card header > span { font-size: 8px; font-weight: 700; letter-spacing: .16em; }
-.lynko-login-welcome h1 { margin: 18px 0 14px; font-size: clamp(36px, 4vw, 58px); line-height: .98; letter-spacing: -.065em; }
-.lynko-login-welcome h1 em { color: var(--lynko-lime); font-style: normal; }
-.lynko-login-welcome p { max-width: 340px; font-size: 12px; line-height: 1.65; }
-.lynko-login-art { position: relative; display: flex; min-height: 190px; align-items: center; justify-content: flex-end; padding-right: 7%; }
-.lynko-login-art::before { position: absolute; right: 0; bottom: 0; width: 250px; height: 150px; border: 1px solid rgb(23 23 22 / 22%); border-radius: 50%; content: ''; transform: rotate(-14deg); }
-.lynko-login-art > span { z-index: 1; align-self: center; margin-right: -15px; padding: 8px 10px; background: #fff7ca; font-size: 9px; transform: rotate(-8deg) translateY(-35px); }
-.lynko-login-brand > small { margin-top: 15px; font-size: 7px; opacity: .55; }
-.lynko-login-brand .lynko-mascot { z-index: 1; width: 170px; overflow: visible; }
-.lynko-login-brand .lynko-mascot-sm { width: 100px; }.lynko-login-brand .lynko-mascot-lg { width: 220px; }
-.lynko-login-brand .lynko-mascot-body { stroke: var(--lynko-ink); stroke-width: 3; }.lynko-login-brand .lynko-mascot-back { fill: var(--lynko-lime); }.lynko-login-brand .lynko-mascot-front { fill: var(--lynko-violet); }
-.lynko-login-brand .lynko-mascot-tail,.lynko-login-brand .lynko-mascot-face { fill: none; stroke: var(--lynko-ink); stroke-width: 3; stroke-linecap: round; }.lynko-login-brand .lynko-mascot-gap { fill: none; stroke: var(--lynko-paper); stroke-width: 12; stroke-linecap: round; }.lynko-login-brand .lynko-mascot-eye { fill: var(--lynko-ink); }
-.lynko-login-brand .lynko-mascot-animated { animation: lynko-float 4s ease-in-out infinite; }
-@keyframes lynko-float { 50% { transform: translateY(-7px) rotate(2deg); } }
-.lynko-login-panel { position: relative; display: flex; min-height: 100svh; flex-direction: column; align-items: center; justify-content: center; padding: 64px 32px 45px; background: #faf9f6; }
-.lynko-login-back { position: absolute; top: 35px; left: 40px; color: inherit; font-size: 11px; text-decoration: none; }
-.lynko-login-card { width: min(100%, 390px); }
-.lynko-login-card header { margin-bottom: 20px; text-align: center; }
-.lynko-login-card header > span { font-size: 7px; }
-.lynko-login-card h2 { margin: 9px 0 5px; font-size: 23px; letter-spacing: -.04em; }
-.lynko-login-card header p { margin: 0; color: #77766f; font-size: 10px; }
-.lynko-google { width: 100%; height: 38px; border-color: #d8d7d1; background: white; font-size: 10px; }
-.lynko-google b { color: #4285f4; font-size: 14px; }
-.lynko-divider { display: flex; align-items: center; gap: 10px; margin: 18px 0; color: #8a8983; font-size: 8px; }
-.lynko-divider::before,.lynko-divider::after { height: 1px; flex: 1; background: #e4e3dd; content: ''; }
-.lynko-login-card form { display: flex; flex-direction: column; }
-.lynko-login-card form > label,.lynko-password-label label { margin: 0 0 6px; font-size: 9px; font-weight: 600; }
-.lynko-login-card form > .lynko-input { height: 37px; border-color: #deddd7; background: white; font-size: 10px; }
-.lynko-password-label { display: flex; justify-content: space-between; margin-top: 16px; }
-.lynko-password-label button,.lynko-signup button { padding: 0; color: #7968e8; font-size: 8px; }
-.lynko-remember { display: flex; align-items: center; gap: 7px; margin: 15px 0; font-size: 8px; }
-.lynko-remember input { width: 12px; height: 12px; accent-color: var(--lynko-ink); }
-.lynko-submit { width: 100%; height: 37px; justify-content: space-between; padding: 0 14px; background: var(--lynko-ink); color: white; font-size: 9px; }
-.lynko-field-error,.lynko-login-error { margin-top: 5px; color: #b42318; font-size: 9px; }
-.lynko-login-error { margin-bottom: 10px; }
-.lynko-signup { margin: 19px 0 0; text-align: center; font-size: 8px; }
-.lynko-legal { position: absolute; bottom: 25px; margin: 0; color: #92918b; font-size: 7px; }
-.lynko-home-logo .lynko-logo-mark{position:relative;display:inline-block;width:30px;height:30px;transform:rotate(-15deg)}.lynko-home-logo .lynko-logo-mark i{position:absolute;top:3px;left:4px;width:13px;height:23px;border:3px solid currentColor;border-radius:9px}.lynko-home-logo .lynko-logo-mark i+i{left:13px}
-.lynko-home .lynko-mascot{z-index:1;width:180px;overflow:visible}.lynko-home .lynko-mascot-sm{width:130px}.lynko-home .lynko-mascot-lg{width:220px}.lynko-home .lynko-mascot-body{stroke:#171716;stroke-width:3}.lynko-home .lynko-mascot-back{fill:#b7f34a}.lynko-home .lynko-mascot-front{fill:#9b8cff}.lynko-home .lynko-mascot-tail,.lynko-home .lynko-mascot-face{fill:none;stroke:#171716;stroke-width:3;stroke-linecap:round}.lynko-home .lynko-mascot-gap{fill:none;stroke:#f7f6f1;stroke-width:12;stroke-linecap:round}.lynko-home .lynko-mascot-eye{fill:#171716}
-.lynko-home{--lh-ink:#171716;--lh-paper:#f7f6f1;--lh-line:#d9d8d1;--lh-muted:#74736d;--lh-lime:#b7f34a;--lh-violet:#9b8cff;--lh-peach:#ff8d6b;overflow:hidden;background:var(--lh-paper);color:var(--lh-ink);font-family:Arial,sans-serif}.lynko-home *,.lynko-home *:before,.lynko-home *:after{box-sizing:border-box}
-.lynko-site-header{display:flex;width:min(100%,1340px);height:78px;align-items:center;justify-content:space-between;margin:auto;padding:0 32px;border-bottom:1px solid var(--lh-line)}.lynko-home-logo{display:inline-flex;align-items:center;gap:9px;color:inherit;text-decoration:none;font-size:23px;letter-spacing:-1.5px}.lynko-site-header nav{display:flex;gap:32px}.lynko-site-header nav a,.lynko-text-link{color:#4d4c48;font-size:14px;text-decoration:none}.lynko-site-header>div{display:flex;align-items:center;gap:18px}
-.lynko-primary-button,.lynko-secondary-button,.lynko-light-button,.lynko-lime-button{display:inline-flex;min-height:44px;align-items:center;justify-content:center;gap:9px;padding:0 20px;border:1px solid var(--lh-ink);border-radius:10px;background:var(--lh-ink);color:white;font-size:14px;font-weight:600;text-decoration:none;transition:transform .2s,box-shadow .2s}.lynko-primary-button:hover,.lynko-secondary-button:hover,.lynko-light-button:hover,.lynko-lime-button:hover{transform:translateY(-2px);box-shadow:0 5px 0 #17171620}
-.lynko-hero{display:grid;width:min(100%,1340px);min-height:760px;grid-template-columns:1fr 1fr;align-items:center;margin:auto;padding:80px 50px}.lynko-hero-copy{position:relative;z-index:2}.lynko-eyebrow{display:inline-flex;align-items:center;gap:9px;padding:7px 12px 7px 8px;border:1px solid var(--lh-line);border-radius:30px;font-size:12px;font-weight:600}.lynko-eyebrow i{display:grid;width:25px;height:25px;place-items:center;border-radius:50%;background:var(--lh-lime);font-style:normal}.lynko-hero h1,.lynko-section-heading h2{margin:27px 0;font-size:clamp(54px,6vw,88px);font-weight:700;line-height:.98;letter-spacing:-.06em}.lynko-home em{color:var(--lh-violet);font-style:normal}.lynko-hero-copy>p{max-width:570px;color:#5a5954;font-size:19px;line-height:1.6}.lynko-hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin:34px 0}.lynko-secondary-button{background:var(--lh-paper);color:var(--lh-ink)}.lynko-social-proof{display:flex;align-items:center;gap:14px}.lynko-social-proof>span{display:flex}.lynko-social-proof i{display:grid;width:34px;height:34px;place-items:center;margin-left:-7px;border:2px solid var(--lh-paper);border-radius:50%;background:var(--lh-peach);font-size:10px;font-style:normal;font-weight:700}.lynko-social-proof i:nth-child(2){background:var(--lh-lime)}.lynko-social-proof i:nth-child(3){background:var(--lh-violet)}.lynko-social-proof small{color:var(--lh-muted);line-height:1.5}
-.lynko-hero-art{position:relative;display:grid;height:600px;place-items:center;perspective:1200px}.lynko-orbit{position:absolute;width:600px;height:450px;border:1px solid #cecdc7;border-radius:50%;transform:rotate(-10deg)}.lynko-orbit-two{width:520px;height:540px;transform:rotate(28deg)}.lynko-float-note{position:absolute;z-index:3;padding:12px 15px;border:1px solid var(--lh-line);border-radius:12px;background:white;box-shadow:0 10px 25px #0001;font-size:12px;font-weight:600}.lynko-note-clicks{top:115px;left:5px;transform:rotate(-6deg)}.lynko-note-theme{right:4px;bottom:90px;transform:rotate(5deg)}
-.lynko-phone{position:relative;width:270px;min-height:540px;overflow:hidden;padding:14px 18px 20px;border:1px solid #232321;border-radius:35px;background:#e9ff9e;box-shadow:0 26px 60px #17171629;color:#171716;text-align:center;transition:background-color .3s,color .3s;transform-style:preserve-3d}.lynko-hero-art>.lynko-phone{animation:lynko-phone-float 5s ease-in-out infinite}.lynko-phone-status{display:flex;justify-content:space-between;padding:2px 7px 18px;font-size:9px}.lynko-phone-share{position:absolute;top:45px;right:15px;display:grid;width:30px;height:30px;place-items:center;border:1px solid #0004;border-radius:50%;background:#fff6}.lynko-phone-avatar{display:grid;width:68px;height:68px;place-items:center;margin:7px auto 12px;border:2px solid var(--lh-ink);border-radius:50%;background:var(--lh-violet);font-weight:800}.lynko-phone>strong{display:block;font-size:18px}.lynko-phone>small{display:block;margin:3px;font-size:10px}.lynko-phone>p{max-width:210px;margin:13px auto;font-size:11px;line-height:1.4}.lynko-phone-socials{display:flex;justify-content:center;gap:15px;margin:15px 0;font-size:13px}.lynko-phone-links{display:flex;flex-direction:column;gap:9px}.lynko-phone-links>div{display:grid;min-height:50px;grid-template-columns:30px 1fr 20px;align-items:center;padding:8px;border:1.5px solid var(--lh-ink);border-radius:14px;background:white;box-shadow:2px 2px 0 var(--lh-ink);font-size:11px;font-weight:700;text-align:left}.lynko-phone-links i{width:26px;height:26px;border:1px solid var(--lh-ink);border-radius:8px;background:var(--lh-lime)}.lynko-phone-links>div:nth-child(2) i{background:var(--lh-violet)}.lynko-phone-links>div:nth-child(3) i{background:var(--lh-peach)}.lynko-phone-brand{margin-top:17px!important;opacity:.6}.lynko-phone-violet{background:#ded8ff}.lynko-phone-peach{background:#ffd2c5}.lynko-phone-ink{background:#1f2022;color:white}.lynko-phone-ink .lynko-phone-links>div{border-color:#777;background:#35363a;color:white}.lynko-hero-mascot{position:absolute;top:52px;right:2px;width:155px;transform:rotate(8deg)}
-@keyframes lynko-phone-float{50%{translate:0 -13px}}.lynko-trust{padding:35px 7%;border-block:1px solid var(--lh-line);text-align:center}.lynko-trust p{color:var(--lh-muted);font-size:12px;letter-spacing:.14em;text-transform:uppercase}.lynko-trust>div{display:flex;justify-content:space-between;gap:30px;margin-top:25px;color:#77766f;font-size:18px}
-.lynko-story,.lynko-how,.lynko-features,.lynko-pricing,.lynko-faq{max-width:1250px;margin:auto;padding:140px 30px}.lynko-section-heading{display:grid;grid-template-columns:160px 1fr 310px;align-items:end}.lynko-section-heading>span,.lynko-feature-wide>div>span,.lynko-price-grid article>span,.lynko-faq>div>span{font-size:11px;font-weight:700;letter-spacing:.14em}.lynko-section-heading h2{margin:0;font-size:66px}.lynko-section-heading>p{color:var(--lh-muted);line-height:1.6}.lynko-section-heading.centered{display:flex;flex-direction:column;align-items:center;text-align:center}.lynko-section-heading.centered h2{margin-top:18px}
-.lynko-story-stage{position:relative;display:grid;min-height:680px;place-items:center;overflow:hidden;margin-top:70px;border-radius:24px;background:#ded8ff;perspective:1200px}.lynko-story-phone{z-index:2}.lynko-custom-panel{position:absolute;z-index:3;top:100px;left:6%;width:290px;padding:18px;transform:rotate(-6deg);border:1px solid #aca7cb;border-radius:14px;background:white;box-shadow:0 18px 35px #756aa235}.lynko-window{display:flex;align-items:center;gap:5px;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--lh-line)}.lynko-window i{width:8px;height:8px;border-radius:50%;background:#ccc}.lynko-window b{margin-left:auto;font-size:12px}.lynko-custom-panel label{display:block;margin:18px 0 8px;font-size:11px}.lynko-theme-options,.lynko-swatches,.lynko-shape-options{display:flex;gap:7px}.lynko-theme-options button,.lynko-shape-options button{padding:8px 12px;border:1px solid var(--lh-line);border-radius:7px;background:#fafafa;font-size:11px}.lynko-theme-options .selected,.lynko-shape-options .active{border-color:var(--lh-ink);box-shadow:0 0 0 1px var(--lh-ink)}.lynko-swatches button{width:25px;height:25px;border:1px solid var(--lh-line);border-radius:6px;cursor:pointer}.lynko-swatches button[aria-pressed=true]{outline:2px solid var(--lh-ink);outline-offset:2px}.lynko-quote{position:absolute;top:140px;right:7%;z-index:3;padding:15px;transform:rotate(5deg);background:#fff8d3;font-size:13px}.lynko-quote small{display:block;margin-top:7px}.lynko-story-mascot{position:absolute;right:5%;bottom:20px;transform:rotate(-8deg)}
-.lynko-steps{display:grid;grid-template-columns:repeat(4,1fr);margin-top:70px;border-top:1px solid var(--lh-line)}.lynko-steps article{padding:25px 22px;border-right:1px solid var(--lh-line)}.lynko-steps article:last-child{border:0}.lynko-steps article>span{font-size:11px}.lynko-step-art{position:relative;display:grid;height:180px;place-items:center;margin:16px 0;border-radius:10px;background:#ded8ff;font-size:40px}.lynko-step-art.art-1{background:#fff0be}.lynko-step-art.art-2{background:#ffd2c5}.lynko-step-art.art-3{background:var(--lh-lime)}.lynko-step-art .lynko-mascot{position:absolute;right:5px;bottom:-13px;width:100px}.lynko-steps h3,.lynko-feature-split h3{font-size:20px}.lynko-steps p,.lynko-feature-split p{color:var(--lh-muted);font-size:14px;line-height:1.55}
-.lynko-feature-wide{display:grid;min-height:540px;grid-template-columns:.8fr 1.2fr;align-items:center;gap:45px;padding:60px;border-radius:22px;background:var(--lh-ink);color:white}.lynko-feature-wide h2{max-width:300px;font-size:40px;line-height:1.05}.lynko-feature-wide p{color:#aaa9a4;line-height:1.6}.lynko-light-button{margin-top:14px;background:white;color:var(--lh-ink)}.lynko-chart{position:relative;min-height:330px;padding:24px;border-radius:14px;background:#262724}.lynko-chart>div:first-child{display:grid;grid-template-columns:1fr auto}.lynko-chart small{color:#aaa9a4}.lynko-chart em{color:var(--lh-lime)}.lynko-chart svg{width:100%;height:170px;margin-top:18px}.lynko-chart svg path:first-child{fill:none;stroke:var(--lh-lime);stroke-width:4}.lynko-chart svg .fill{fill:#b7f34a1a}.lynko-bars{display:flex;height:45px;align-items:end;gap:8px}.lynko-bars i{flex:1;background:var(--lh-violet)}
-.lynko-feature-split{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}.lynko-feature-split>article{min-height:370px;overflow:hidden;padding:30px;border:1px solid var(--lh-line);border-radius:16px}.lynko-icon-chip{display:grid;width:38px;height:38px;place-items:center;border:1px solid var(--lh-line);border-radius:10px}.lynko-device-phone{width:190px;min-height:365px;margin:35px auto -190px;transform:scale(.7)!important;transform-origin:top center}.lynko-feature-lime{display:grid;grid-template-columns:1fr 1fr;align-items:end;background:var(--lh-lime)}.lynko-feature-lime>.lynko-mascot{align-self:center;width:160px}
-.lynko-price-grid{display:grid;max-width:900px;grid-template-columns:1fr 1fr;gap:20px;margin:70px auto 0}.lynko-price-grid article{position:relative;padding:30px;border:1px solid var(--lh-line);border-radius:14px;background:white}.lynko-price-grid h3{margin:12px 0;font-size:32px}.lynko-price-grid h3 small{color:var(--lh-muted);font-size:12px;font-weight:400}.lynko-price-grid article>p{color:var(--lh-muted);line-height:1.5}.lynko-price-grid .lynko-primary-button,.lynko-price-grid>article>button{width:100%;margin:15px 0}.lynko-price-grid ul{display:grid;gap:12px;padding:18px 0 0;border-top:1px solid var(--lh-line);list-style:none;font-size:13px}.lynko-price-grid .pro{background:#171716;color:white}.lynko-price-grid .pro>p{color:#aaa9a4}.lynko-price-grid .pro ul{border-color:#38383c}.lynko-coming-soon{position:absolute;top:24px;right:24px;padding:6px 8px;border-radius:5px;background:var(--lh-violet);font-size:8px}
-.lynko-faq{display:grid;grid-template-columns:.8fr 1.2fr;gap:80px}.lynko-faq h2{font-size:48px;line-height:1.1;letter-spacing:-.04em}.lynko-faq>div>.lynko-mascot{margin-top:30px}.lynko-questions details{padding:25px 0;border-top:1px solid var(--lh-line)}.lynko-questions details:last-child{border-bottom:1px solid var(--lh-line)}.lynko-questions summary{display:flex;justify-content:space-between;cursor:pointer;font-size:18px;font-weight:600;list-style:none}.lynko-questions details[open] summary b{transform:rotate(45deg)}.lynko-questions p{max-width:580px;color:var(--lh-muted);line-height:1.6}
-.lynko-footer{position:relative;display:grid;grid-template-columns:1fr 1.5fr auto;gap:40px;padding:60px max(calc((100% - 1250px)/2),40px) 90px;background:var(--lh-ink);color:white}.lynko-footer h2{font-size:30px;line-height:1}.lynko-footer .lynko-lime-button{background:var(--lh-lime);color:var(--lh-ink)}.lynko-footer-links{display:grid;grid-template-columns:repeat(3,1fr);gap:25px}.lynko-footer-links p{display:grid;align-content:start;gap:14px;margin:0;font-size:12px}.lynko-footer-links a{color:#aaa9a4;text-decoration:none}.lynko-footer>.lynko-mascot{align-self:center}.lynko-footer>small{position:absolute;bottom:25px;left:max(calc((100% - 1250px)/2),40px);color:#898983;font-size:9px}
-@media(max-width:900px){.lynko-site-header nav{gap:16px}.lynko-hero{min-height:680px;padding:50px 28px}.lynko-hero h1{font-size:clamp(48px,7vw,68px)}.lynko-hero-art{transform:scale(.86)}.lynko-section-heading{grid-template-columns:1fr 2fr;gap:15px}.lynko-section-heading>p{grid-column:2}.lynko-custom-panel{left:3%;width:240px}.lynko-story-stage{min-height:600px}.lynko-feature-wide{grid-template-columns:1fr 1fr;padding:35px}.lynko-footer{grid-template-columns:1fr 1.4fr}.lynko-footer>.lynko-mascot{display:none}}
-@media(max-width:640px){.lynko-site-header{height:68px;padding:0 18px}.lynko-home-logo{font-size:20px}.lynko-site-header nav{display:none}.lynko-site-header>div{gap:12px}.lynko-text-link{font-size:12px}.lynko-site-header .lynko-primary-button{min-height:38px;padding:0 12px;font-size:11px}.lynko-hero{grid-template-columns:1fr;gap:12px;padding:55px 24px 35px}.lynko-hero h1{font-size:clamp(48px,13vw,68px)}.lynko-hero-copy>p{font-size:16px}.lynko-hero-art{height:470px;transform:scale(.82);transform-origin:top center;margin-bottom:-75px}.lynko-orbit-one{width:440px;height:370px}.lynko-orbit-two{width:360px;height:400px}.lynko-note-clicks{left:-10px}.lynko-note-theme{right:-15px}.lynko-trust{padding:25px 20px}.lynko-trust>div{flex-wrap:wrap;justify-content:center;gap:18px 28px;font-size:14px}.lynko-story,.lynko-how,.lynko-features,.lynko-pricing,.lynko-faq{padding:82px 20px}.lynko-section-heading{display:block}.lynko-section-heading h2{margin-top:15px;font-size:46px}.lynko-section-heading>p{margin-top:20px}.lynko-story-stage{min-height:660px;margin-top:30px;align-items:end;padding-bottom:28px}.lynko-custom-panel{top:22px;left:5%;width:225px;padding:13px;transform:rotate(-4deg) scale(.9);transform-origin:top left}.lynko-story-phone{width:250px;min-height:500px;margin-bottom:20px}.lynko-quote{top:78px;right:3%;max-width:150px;font-size:10px}.lynko-story-mascot{right:2%;bottom:3px;width:90px}.lynko-steps{grid-template-columns:1fr 1fr;margin-top:35px}.lynko-steps article{padding:16px 12px;border-bottom:1px solid var(--lh-line)}.lynko-steps article:nth-child(2){border-right:0}.lynko-step-art{height:130px}.lynko-feature-wide{grid-template-columns:1fr;padding:28px 22px}.lynko-feature-wide h2{font-size:34px}.lynko-chart{min-height:270px;padding:18px}.lynko-chart svg{height:125px}.lynko-feature-split{grid-template-columns:1fr}.lynko-feature-split>article{min-height:310px}.lynko-price-grid{grid-template-columns:1fr;margin-top:35px}.lynko-faq{grid-template-columns:1fr;gap:20px}.lynko-faq h2{font-size:42px}.lynko-footer{grid-template-columns:1fr;gap:34px;padding:45px 24px 75px}.lynko-footer-links{gap:14px}.lynko-footer-links p{font-size:10px}.lynko-footer>small{left:24px;font-size:8px}}
-@media(prefers-reduced-motion:reduce){.lynko-hero-art>.lynko-phone{animation:none}}
-@media (max-width: 760px) { .lynko-login { grid-template-columns: 1fr; }.lynko-login-brand { min-height: 360px; padding: 24px 8%; }.lynko-login-welcome { margin: 56px 0 15px; }.lynko-login-welcome h1 { font-size: 38px; }.lynko-login-art { position: absolute; right: 4%; bottom: 8px; min-height: auto; padding: 0; }.lynko-login-art::before { width: 160px; height: 100px; }.lynko-login-art .lynko-mascot { width: 120px; }.lynko-login-art > span { font-size: 8px; }.lynko-login-brand > small { margin-top: 5px; }.lynko-login-panel { min-height: 540px; padding: 72px 24px 56px; }.lynko-login-back { top: 25px; left: 25px; } }
-@media (prefers-reduced-motion: reduce) { .lynko-login-brand .lynko-mascot-animated,.lynko-home-art .lynko-mascot-animated,.lynko-hero-art > .lynko-phone { animation: none; } }
-.lynko-home-logo .lynko-logo-mark{position:relative;display:inline-block;width:30px;height:30px;transform:rotate(-15deg)}.lynko-home-logo .lynko-logo-mark i{position:absolute;top:3px;left:4px;width:13px;height:23px;border:3px solid currentColor;border-radius:9px}.lynko-home-logo .lynko-logo-mark i+i{left:13px}
-.lynko-home .lynko-mascot{z-index:1;width:180px;overflow:visible}.lynko-home .lynko-mascot-sm{width:130px}.lynko-home .lynko-mascot-lg{width:220px}.lynko-home .lynko-mascot-body{stroke:var(--lh-ink);stroke-width:3}.lynko-home .lynko-mascot-back{fill:var(--lh-lime)}.lynko-home .lynko-mascot-front{fill:var(--lh-violet)}.lynko-home .lynko-mascot-tail,.lynko-home .lynko-mascot-face{fill:none;stroke:var(--lh-ink);stroke-width:3;stroke-linecap:round}.lynko-home .lynko-mascot-gap{fill:none;stroke:var(--lh-paper);stroke-width:12;stroke-linecap:round}.lynko-home .lynko-mascot-eye{fill:var(--lh-ink)}
+.lynko-logo {
+  position: absolute;
+  top: 24px;
+  left: max(calc((100vw - 1340px) / 2 + 32px), 32px);
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 9px;
+  color: inherit;
+  text-decoration: none;
+  font-size: 23px;
+  letter-spacing: -1.5px;
+}
+.lynko-logo-mark {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  transform: rotate(-15deg);
+}
+.lynko-logo-mark i {
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  width: 13px;
+  height: 23px;
+  border: 3px solid currentColor;
+  border-radius: 9px;
+}
+.lynko-logo-mark i + i {
+  left: 13px;
+}
+.lynko-login-brand .lynko-mascot {
+  z-index: 1;
+  width: 200px;
+  overflow: visible;
+}
+.lynko-login-brand .lynko-mascot-body {
+  stroke: var(--lynko-ink);
+  stroke-width: 3;
+}
+.lynko-login-brand .lynko-mascot-back {
+  fill: var(--lynko-lime);
+}
+.lynko-login-brand .lynko-mascot-front {
+  fill: var(--lynko-violet);
+}
+.lynko-login-brand .lynko-mascot-tail,
+.lynko-login-brand .lynko-mascot-face {
+  fill: none;
+  stroke: var(--lynko-ink);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.lynko-login-brand .lynko-mascot-gap {
+  fill: none;
+  stroke: var(--lynko-paper);
+  stroke-width: 12;
+  stroke-linecap: round;
+}
+.lynko-login-brand .lynko-mascot-eye {
+  fill: var(--lynko-ink);
+}
+.lynko-login-brand .lynko-mascot-animated {
+  animation: lynko-float 4s ease-in-out infinite;
+}
+@keyframes lynko-float {
+  50% {
+    transform: translateY(-7px) rotate(2deg);
+  }
+}
+.lynko-mascot-eye {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 180ms ease;
+}
+.lynko-mascot-eyes-closed .lynko-mascot-eye {
+  transform: scaleY(0.12);
+}
+.lynko-home-logo .lynko-logo-mark {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  transform: rotate(-15deg);
+}
+.lynko-home-logo .lynko-logo-mark i {
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  width: 13px;
+  height: 23px;
+  border: 3px solid currentColor;
+  border-radius: 9px;
+}
+.lynko-home-logo .lynko-logo-mark i + i {
+  left: 13px;
+}
+.lynko-home .lynko-mascot {
+  z-index: 1;
+  width: 180px;
+  overflow: visible;
+}
+.lynko-home .lynko-mascot-sm {
+  width: 130px;
+}
+.lynko-home .lynko-mascot-body {
+  stroke: #171716;
+  stroke-width: 3;
+}
+.lynko-home .lynko-mascot-back {
+  fill: #b7f34a;
+}
+.lynko-home .lynko-mascot-front {
+  fill: #9b8cff;
+}
+.lynko-home .lynko-mascot-tail,
+.lynko-home .lynko-mascot-face {
+  fill: none;
+  stroke: #171716;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.lynko-home .lynko-mascot-gap {
+  fill: none;
+  stroke: #f7f6f1;
+  stroke-width: 12;
+  stroke-linecap: round;
+}
+.lynko-home .lynko-mascot-eye {
+  fill: #171716;
+}
+.lynko-home {
+  --lh-ink: #171716;
+  --lh-paper: #f7f6f1;
+  --lh-line: #d9d8d1;
+  --lh-muted: #74736d;
+  --lh-lime: #b7f34a;
+  --lh-violet: #9b8cff;
+  --lh-peach: #ff8d6b;
+  overflow: hidden;
+  background: var(--lh-paper);
+  color: var(--lh-ink);
+  font-family: var(--font-roboto), sans-serif;
+}
+.lynko-home *,
+.lynko-home *:before,
+.lynko-home *:after {
+  box-sizing: border-box;
+}
+.lynko-home-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: inherit;
+  text-decoration: none;
+  font-size: 23px;
+  letter-spacing: -1.5px;
+}
+.lynko-home em {
+  color: var(--lh-violet);
+  font-style: normal;
+}
+.lynko-hero-art {
+  position: relative;
+  display: grid;
+  height: 600px;
+  place-items: center;
+  perspective: 1200px;
+}
+.lynko-orbit {
+  position: absolute;
+  width: 600px;
+  height: 450px;
+  border: 1px solid #cecdc7;
+  border-radius: 50%;
+  transform: rotate(-10deg);
+}
+.lynko-orbit-two {
+  width: 520px;
+  height: 540px;
+  transform: rotate(28deg);
+}
+.lynko-float-note {
+  position: absolute;
+  z-index: 3;
+  padding: 12px 15px;
+  border: 1px solid var(--lh-line);
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 10px 25px #0001;
+  font-size: 12px;
+  font-weight: 600;
+}
+.lynko-note-clicks {
+  top: 115px;
+  left: 5px;
+  transform: rotate(-6deg);
+}
+.lynko-note-theme {
+  right: 4px;
+  bottom: 90px;
+  transform: rotate(5deg);
+}
+.lynko-phone {
+  position: relative;
+  width: 270px;
+  min-height: 540px;
+  overflow: hidden;
+  padding: 14px 18px 20px;
+  border: 1px solid #232321;
+  border-radius: 35px;
+  background: #e9ff9e;
+  box-shadow: 0 26px 60px #17171629;
+  color: #171716;
+  text-align: center;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+  transform-style: preserve-3d;
+}
+.lynko-hero-art > .lynko-phone {
+  animation: lynko-phone-float 5s ease-in-out infinite;
+}
+.lynko-phone-status {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 7px 18px;
+  font-size: 9px;
+}
+.lynko-phone-share {
+  position: absolute;
+  top: 45px;
+  right: 15px;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 1px solid #0004;
+  border-radius: 50%;
+  background: #fff6;
+}
+.lynko-phone-avatar {
+  display: grid;
+  width: 68px;
+  height: 68px;
+  place-items: center;
+  margin: 7px auto 12px;
+  border: 2px solid var(--lh-ink);
+  border-radius: 50%;
+  background: var(--lh-violet);
+  font-weight: 800;
+}
+.lynko-phone > strong {
+  display: block;
+  font-size: 18px;
+}
+.lynko-phone > small {
+  display: block;
+  margin: 3px;
+  font-size: 10px;
+}
+.lynko-phone > p {
+  max-width: 210px;
+  margin: 13px auto;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.lynko-phone-socials {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 15px 0;
+  font-size: 13px;
+}
+.lynko-phone-links {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.lynko-phone-links > div {
+  display: grid;
+  min-height: 50px;
+  grid-template-columns: 30px 1fr 20px;
+  align-items: center;
+  padding: 8px;
+  border: 1.5px solid var(--lh-ink);
+  border-radius: 14px;
+  background: white;
+  box-shadow: 2px 2px 0 var(--lh-ink);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: left;
+  transition: border-radius 0.2s ease;
+}
+.lynko-phone-shape-soft .lynko-phone-links > div {
+  border-radius: 24px;
+}
+.lynko-phone-shape-sharp .lynko-phone-links > div {
+  border-radius: 4px;
+}
+.lynko-phone-links i {
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--lh-ink);
+  border-radius: 8px;
+  background: var(--lh-lime);
+}
+.lynko-phone-links > div:nth-child(2) i {
+  background: var(--lh-violet);
+}
+.lynko-phone-links > div:nth-child(3) i {
+  background: var(--lh-peach);
+}
+.lynko-phone-brand {
+  margin-top: 17px !important;
+  opacity: 0.6;
+}
+.lynko-phone-violet {
+  background: #ded8ff;
+}
+.lynko-phone-peach {
+  background: #ffd2c5;
+}
+.lynko-phone-ink {
+  background: #1f2022;
+  color: white;
+}
+.lynko-phone-ink .lynko-phone-links > div {
+  border-color: #777;
+  background: #35363a;
+  color: white;
+}
+.lynko-hero-mascot {
+  position: absolute;
+  top: 52px;
+  right: 2px;
+  width: 155px;
+  transform: rotate(8deg);
+}
+@keyframes lynko-phone-float {
+  50% {
+    translate: 0 -13px;
+  }
+}
+.lynko-story-stage {
+  position: relative;
+  display: grid;
+  min-height: 680px;
+  place-items: center;
+  overflow: hidden;
+  margin-top: 70px;
+  border-radius: 24px;
+  background: #ded8ff;
+  perspective: 1200px;
+}
+.lynko-step-art {
+  position: relative;
+  display: grid;
+  height: 180px;
+  place-items: center;
+  margin: 16px 0;
+  border-radius: 10px;
+  background: #ded8ff;
+  font-size: 40px;
+}
+.lynko-step-art.art-1 {
+  background: #fff0be;
+}
+.lynko-step-art.art-2 {
+  background: #ffd2c5;
+}
+.lynko-step-art.art-3 {
+  background: var(--lh-lime);
+}
+.lynko-step-art .lynko-mascot {
+  position: absolute;
+  right: 5px;
+  bottom: -13px;
+  width: 100px;
+}
+.lynko-chart {
+  position: relative;
+  height: 380px;
+  padding: 24px;
+  border-radius: 14px;
+  background: #262724;
+}
+.lynko-chart > div:first-child {
+  display: grid;
+  grid-template-columns: 1fr auto;
+}
+.lynko-chart small {
+  color: #aaa9a4;
+}
+.lynko-chart em {
+  color: var(--lh-lime);
+}
+.lynko-chart svg {
+  width: 100%;
+  height: 190px;
+  margin-top: 18px;
+}
+.lynko-chart svg path:first-child {
+  fill: none;
+  stroke: var(--lh-lime);
+  stroke-width: 4;
+}
+.lynko-chart svg .fill {
+  fill: #b7f34a1a;
+}
+.lynko-bars {
+  display: flex;
+  height: 64px;
+  align-items: end;
+  gap: 8px;
+}
+.lynko-bars i {
+  flex: 1;
+  background: var(--lh-violet);
+}
+.lynko-icon-chip {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  margin-bottom: 12px;
+  border: 0;
+  border-radius: 10px;
+}
+.lynko-device-phone {
+  position: absolute;
+  bottom: -364px;
+  left: 50%;
+  width: 270px;
+  min-height: 540px;
+  margin: 0;
+  transform: translateX(-50%) scale(0.7) !important;
+  transform-origin: top center;
+}
+.lynko-feature-lime {
+  display: flex;
+  flex-direction: column;
+  background: var(--lh-lime);
+}
+.lynko-feature-lime > div {
+  margin-top: auto;
+}
+.lynko-home .lynko-feature-lime > .lynko-mascot {
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  width: 200px;
+  transform: translateX(-50%);
+}
+.lynko-questions [data-slot="accordion-item"] {
+  padding: 25px 0;
+  border-top: 1px solid var(--lh-line);
+}
+.lynko-questions [data-slot="accordion-item"]:last-child {
+  border-bottom: 1px solid var(--lh-line);
+}
+.lynko-questions [data-slot="accordion-trigger"] {
+  padding: 0;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 600;
+}
+.lynko-questions p {
+  max-width: 580px;
+  color: var(--lh-muted);
+  line-height: 1.6;
+}
+@media (max-width: 900px) {
+  .lynko-hero-art {
+    transform: scale(0.86);
+  }
+  .lynko-story-stage {
+    min-height: 600px;
+  }
+}
+@media (max-width: 640px) {
+  .lynko-home-logo {
+    font-size: 20px;
+  }
+  .lynko-hero-art {
+    height: 360px;
+    transform: scale(0.72);
+    transform-origin: top center;
+    margin-bottom: -55px;
+  }
+  .lynko-orbit-one {
+    width: 440px;
+    height: 370px;
+  }
+  .lynko-orbit-two {
+    width: 360px;
+    height: 400px;
+  }
+  .lynko-note-clicks {
+    left: -10px;
+  }
+  .lynko-note-theme {
+    right: -15px;
+  }
+  .lynko-story-stage {
+    min-height: 540px;
+    margin-top: 30px;
+    align-items: end;
+    padding-bottom: 28px;
+  }
+  .lynko-step-art {
+    height: 150px;
+  }
+  .lynko-chart {
+    height: auto;
+    min-height: 270px;
+    padding: 18px;
+  }
+  .lynko-chart svg {
+    height: 125px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lynko-hero-art > .lynko-phone {
+    animation: none;
+  }
+}
+@media (max-width: 600px) {
+  .lynko-login-brand .lynko-logo {
+    top: 11px;
+    left: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lynko-login-brand .lynko-mascot-animated,
+  .lynko-home .lynko-mascot-animated,
+  .lynko-hero-art > .lynko-phone {
+    animation: none;
+  }
+}

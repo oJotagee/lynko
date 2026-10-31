@@ -1,0 +1,202 @@
+{
+  "Metadata": {
+    "description": "Reúna seus links, seu trabalho e seus cantinhos favoritos da internet em uma página com a sua cara."
+  },
+  "Common": {
+    "language": "Idioma",
+    "switchToPortuguese": "Mudar idioma para português",
+    "switchToEnglish": "Mudar idioma para inglês",
+    "english": "English",
+    "portuguese": "Português",
+    "backHome": "Voltar para a Home",
+    "mascotHappy": "Mascote Lynko feliz",
+    "mascotSad": "Mascote Lynko triste"
+  },
+  "Home": {
+    "Header": {
+      "navigation": "Navegação principal",
+      "features": "Recursos",
+      "how": "Como funciona",
+      "pricing": "Planos",
+      "login": "Entrar",
+      "create": "Crie sua Lynko"
+    },
+    "Hero": {
+      "title": "Tudo o que você é,",
+      "titleAccent": "a um link de distância.",
+      "description": "Reúna seu trabalho, redes sociais, ideias e seus cantinhos favoritos da internet em uma página que tem a sua cara.",
+      "create": "Crie sua Lynko",
+      "example": "Explore um exemplo",
+      "clicks": "348 novos cliques",
+      "theme": "Tema atualizado"
+    },
+    "Story": {
+      "eyebrow": "01 / SUA LYNKO",
+      "title": "Faça a internet",
+      "titleAccent": "ter a sua cara.",
+      "description": "Sem modelos que limitam você. Comece com uma base bonita e deixe cada detalhe com a sua identidade.",
+      "quote": "“Agora parece comigo.”",
+      "byline": "— Maya, ilustradora"
+    },
+    "Phone": {
+      "share": "Compartilhar perfil",
+      "role": "Designer de produto",
+      "bio": "Criando coisas úteis e compartilhando o que aprendo pelo caminho.",
+      "link1": "Meu portfólio de design",
+      "link2": "Estudo de caso recente",
+      "link3": "Marque um café comigo",
+      "madeWith": "Feito com Lynko"
+    },
+    "Appearance": {
+      "title": "Aparência",
+      "theme": "Tema",
+      "background": "Fundo",
+      "buttonShape": "Formato do botão",
+      "soft": "Suave",
+      "round": "Arredondado",
+      "sharp": "Reto",
+      "useTheme": "Usar o tema {theme}"
+    },
+    "How": {
+      "eyebrow": "02 / COMO FUNCIONA",
+      "title": "Do espalhado ao",
+      "titleAccent": "organizado em minutos.",
+      "step1Title": "Crie seu espaço",
+      "step1Description": "Escolha um nome de usuário e adicione o que faz você ser você.",
+      "step2Title": "Reúna seus links",
+      "step2Description": "Adicione o que vale a pena compartilhar. Reordene quando quiser.",
+      "step3Title": "Deixe com a sua cara",
+      "step3Description": "Escolha o estilo, as cores, a fonte e o formato. Sem precisar saber design.",
+      "step4Title": "Compartilhe em todo lugar",
+      "step4Description": "Um link fácil de lembrar para sua bio, e-mail, cartão e conversas."
+    },
+    "Features": {
+      "analyticsLabel": "ANÁLISES EM TEMPO REAL",
+      "analyticsTitle": "Descubra o que conecta.",
+      "analyticsDescription": "Veja o que as pessoas adoram, de onde elas vêm e como sua Lynko cresce, sem se perder nos dados.",
+      "exploreAnalytics": "Explore as análises",
+      "views": "VISUALIZAÇÕES DA PÁGINA",
+      "chartLabel": "Ilustração do crescimento de visualizações",
+      "screenTitle": "Bonita em qualquer tela.",
+      "screenDescription": "Sua página fica bem cuidada, do menor celular ao maior computador.",
+      "simpleTitle": "Simples e encantadora.",
+      "simpleDescription": "Sem bagunça nem curva de aprendizado. Só as ferramentas de que você precisa e uma ajudinha quando bater dúvida."
+    },
+    "Pricing": {
+      "eyebrow": "03 / PLANOS",
+      "title": "Comece grátis.",
+      "titleAccent": "Fique o tempo que quiser.",
+      "free": "GRÁTIS",
+      "forever": "/ para sempre",
+      "freeDescription": "Tudo de que você precisa para causar uma ótima primeira impressão.",
+      "start": "Começar a criar",
+      "free1": "Links ilimitados",
+      "free2": "Seis temas exclusivos",
+      "free3": "Análises dos últimos 30 dias",
+      "free4": "Com a marca Lynko",
+      "pro": "PRO",
+      "month": "/ mês",
+      "proDescription": "Para criadores que querem entender e ampliar seu público.",
+      "comingSoon": "EM BREVE",
+      "waitlist": "Entrar na lista de espera",
+      "pro1": "Personalização avançada",
+      "pro2": "Histórico completo de análises",
+      "pro3": "Domínio próprio",
+      "pro4": "Remova a marca Lynko"
+    },
+    "Faq": {
+      "label": "DÚVIDAS",
+      "title": "O que você",
+      "titleAccent": "quer saber.",
+      "q1": "A Lynko é mesmo grátis?",
+      "a1": "Sim. Crie uma página caprichada, adicione links à vontade e acompanhe as principais análises, sem precisar de cartão.",
+      "q2": "Posso usar meu próprio domínio?",
+      "q3": "Posso mudar meu nome de usuário depois?",
+      "q4": "O que a Lynko acompanha?",
+      "q5": "Posso cancelar o Pro quando quiser?",
+      "defaultAnswer": "A Lynko acompanha o crescimento da sua presença online e mantém sua página com a sua identidade."
+    },
+    "Footer": {
+      "title": "Sua internet.",
+      "titleAccent": "Conectada do seu jeito.",
+      "create": "Crie sua Lynko",
+      "product": "PRODUTO",
+      "company": "EMPRESA",
+      "follow": "REDES",
+      "features": "Recursos",
+      "pricing": "Planos",
+      "dashboard": "Painel",
+      "about": "Sobre",
+      "privacy": "Privacidade",
+      "terms": "Termos",
+      "instagram": "Instagram",
+      "twitter": "X / Twitter",
+      "linkedin": "LinkedIn",
+      "copyright": "© {year} Lynko, Inc. Feita para quem vive a internet."
+    }
+  },
+  "Auth": {
+    "Brand": {
+      "eyebrow": "SEU CANTO NA INTERNET",
+      "welcome": "Bom ter você",
+      "welcomeAccent": "de volta.",
+      "registerTitle": "Sua Lynko",
+      "registerAccent": "começa aqui.",
+      "description": "Seus links, sua audiência e seu pequeno espaço digital estão à sua espera.",
+      "registerDescription": "Reúna seus links, ideias e tudo o que faz parte do seu espaço digital.",
+      "connected": "Tudo conectado."
+    },
+    "Login": {
+      "eyebrow": "ENTRAR NA LYNKO",
+      "title": "Acesse sua conta",
+      "description": "Continue construindo uma presença que tem a sua cara.",
+      "google": "Continuar com Google",
+      "divider": "ou continue com e-mail",
+      "email": "E-mail",
+      "emailPlaceholder": "voce@exemplo.com",
+      "password": "Senha",
+      "passwordPlaceholder": "Mínimo de 8 caracteres",
+      "forgot": "Esqueci minha senha",
+      "remember": "Manter minha sessão ativa",
+      "submit": "Entrar",
+      "submitting": "Entrando…",
+      "noAccount": "Ainda não tem uma conta?",
+      "createAccount": "Crie sua Lynko",
+      "unavailable": "O acesso ainda não está disponível. Tente novamente mais tarde."
+    },
+    "Register": {
+      "eyebrow": "CRIAR SUA LYNKO",
+      "title": "Crie sua conta",
+      "description": "Seu espaço digital começa por aqui.",
+      "google": "Continuar com Google",
+      "divider": "ou continue com e-mail",
+      "name": "Nome",
+      "namePlaceholder": "Seu nome completo",
+      "email": "E-mail",
+      "emailPlaceholder": "voce@exemplo.com",
+      "password": "Senha",
+      "passwordPlaceholder": "Mínimo de 8 caracteres",
+      "submit": "Criar minha Lynko",
+      "hasAccount": "Já tem uma conta?",
+      "login": "Entrar"
+    },
+    "Legal": {
+      "notice": "Ao continuar, você concorda com os <terms>Termos</terms> e a <privacy>Política de Privacidade</privacy>.",
+      "terms": "Termos",
+      "privacy": "Política de Privacidade"
+    },
+    "Password": { "show": "Mostrar senha", "hide": "Ocultar senha" },
+    "Validation": {
+      "emailRequired": "E-mail é obrigatório",
+      "emailInvalid": "Informe um endereço de e-mail válido",
+      "passwordRequired": "Senha é obrigatória",
+      "passwordMin": "A senha deve ter pelo menos 8 caracteres",
+      "nameRequired": "Nome é obrigatório"
+    }
+  },
+  "NotFound": {
+    "title": "Página não encontrada",
+    "description": "A página que você procura não existe ou foi movida.",
+    "home": "Voltar para a Home"
+  }
+}
