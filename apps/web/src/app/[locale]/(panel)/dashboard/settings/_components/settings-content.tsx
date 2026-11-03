@@ -1,5 +1,5 @@
-import { DashboardHeader } from '../../_components/dashboard-header'
-import { DashboardMain } from '../../_components/dashboard-main'
+import { DashboardHeader } from '../../_components/layout/dashboard-header'
+import { DashboardMain } from '../../_components/layout/dashboard-main'
 import { toDashboardData } from '../../_components/dashboard-data'
 import { getDashboard } from '../../_data-access/get-dashboard'
 import { SettingsPanel } from './settings-panel'

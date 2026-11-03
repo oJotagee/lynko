@@ -1,4 +1,4 @@
-import { LynkoMascot } from '../../../(public)/_components/lynko-mascot'
+import { LynkoMascot } from '../../../../(public)/_components/lynko-mascot'
 
 export function DashboardMascot({ className = '' }: { className?: string }) {
   return (

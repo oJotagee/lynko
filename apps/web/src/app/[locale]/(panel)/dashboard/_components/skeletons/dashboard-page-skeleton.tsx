@@ -1,4 +1,4 @@
-import { DashboardMenuButton } from './dashboard-menu-button'
+import { DashboardMenuButton } from '../layout/dashboard-menu-button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { PageSkeleton } from './page-skeleton'
 

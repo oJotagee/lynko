@@ -1,7 +1,7 @@
 import { getDashboard } from '../_data-access/get-dashboard'
-import { DashboardHeader } from './dashboard-header'
+import { DashboardHeader } from './layout/dashboard-header'
 import { toDashboardData } from './dashboard-data'
-import { DashboardMain } from './dashboard-main'
+import { DashboardMain } from './layout/dashboard-main'
 import { Overview } from './overview'
 
 export async function OverviewContent() {

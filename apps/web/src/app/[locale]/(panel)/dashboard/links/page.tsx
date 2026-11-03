@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 
-import { DashboardPageSkeleton } from '../_components/dashboard-page-skeleton'
+import { DashboardPageSkeleton } from '../_components/skeletons/dashboard-page-skeleton'
 import { LinksContent } from './_components/links-content'
 
 export const metadata: Metadata = { title: 'Meus links' }

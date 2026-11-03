@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { useRouter } from '@/i18n/navigation'
-import { logout } from '../_actions/logout'
+import { logout } from '../../_actions/logout'
 
 export function LogoutButton() {
   const router = useRouter()

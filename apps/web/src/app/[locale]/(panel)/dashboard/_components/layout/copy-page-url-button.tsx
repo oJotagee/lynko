@@ -3,7 +3,7 @@
 import { Copy } from 'lucide-react'
 import { toast } from 'sonner'
 
-import type { DashboardProfile } from './dashboard-data'
+import type { DashboardProfile } from '../dashboard-data'
 import { Button } from '@/components/ui/button'
 import { SITE_URL } from '@/lib/site'
 

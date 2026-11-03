@@ -1,4 +1,4 @@
-import { ProfileAvatar } from './profile-avatar'
+import { ProfileAvatar } from '../profile/profile-avatar'
 import { auth } from '@/lib/auth'
 
 export async function NavAccount() {

@@ -1,7 +1,7 @@
 import { DashboardMenuButton } from './dashboard-menu-button'
 import { CopyPageUrlButton } from './copy-page-url-button'
 import { PreviewPageButton } from './preview-page-button'
-import type { DashboardData } from './dashboard-data'
+import type { DashboardData } from '../dashboard-data'
 
 interface DashboardHeaderProps {
   title: string

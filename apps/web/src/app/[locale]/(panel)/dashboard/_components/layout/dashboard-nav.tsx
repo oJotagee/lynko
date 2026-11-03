@@ -3,7 +3,7 @@
 import { ArrowRight, ChartNoAxesColumn, House, Link2, Moon, Settings } from 'lucide-react'
 import { Link, usePathname } from '@/i18n/navigation'
 
-import { LynkoLogo } from '../../../(public)/_components/lynko-logo'
+import { LynkoLogo } from '../../../../(public)/_components/lynko-logo'
 import { DashboardMascot } from './dashboard-mascot'
 import { LogoutButton } from './logout-button'
 

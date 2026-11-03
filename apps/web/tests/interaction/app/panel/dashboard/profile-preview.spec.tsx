@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { render, screen } from '@testing-library/react'
 
-import { ProfilePreview } from '@/app/[locale]/(panel)/dashboard/_components/profile-preview'
+import { ProfilePreview } from '@/app/[locale]/(panel)/dashboard/_components/profile/profile-preview'
 import { buildDashboardData } from '../../../support/builders'
 
 describe('ProfilePreview', () => {

@@ -14,7 +14,9 @@ const updatePage = mock(async (_input: DashboardData): Promise<ActionResult> => 
 mock.module('@/app/[locale]/(panel)/dashboard/_actions/create-page', () => ({ createPage }))
 mock.module('@/app/[locale]/(panel)/dashboard/_actions/update-page', () => ({ updatePage }))
 
-const { ProfileForm } = await import('@/app/[locale]/(panel)/dashboard/_components/profile-form')
+const { ProfileForm } = await import(
+  '@/app/[locale]/(panel)/dashboard/_components/profile/profile-form'
+)
 
 describe('ProfileForm', () => {
   beforeEach(() => {

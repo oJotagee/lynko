@@ -51,7 +51,7 @@ import {
   SiYoutubeHex,
 } from '@icons-pack/react-simple-icons'
 
-import { LINKEDIN_COLOR, LinkedinIcon } from './linkedin-icon'
+import { LINKEDIN_COLOR, LinkedinIcon } from './linkedin'
 
 export interface LinkBrand {
   name: string

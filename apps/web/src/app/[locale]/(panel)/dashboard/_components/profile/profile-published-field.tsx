@@ -1,7 +1,7 @@
 import { type Control, Controller } from 'react-hook-form'
 
 import { Field, FieldLabel } from '@/components/ui/field'
-import type { ProfileSchemaData } from './schemas'
+import type { ProfileSchemaData } from '../schemas'
 import { Switch } from '@/components/ui/switch'
 
 interface ProfilePublishedFieldProps {

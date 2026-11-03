@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 
 import { type DashboardData, type DashboardLink, moveLink } from '../../_components/dashboard-data'
-import { ProfilePreview } from '../../_components/profile-preview'
+import { ProfilePreview } from '../../_components/profile/profile-preview'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { reorderLinks } from '../_actions/reorder-links'
 import { DeleteLinkDialog } from './delete-link-dialog'

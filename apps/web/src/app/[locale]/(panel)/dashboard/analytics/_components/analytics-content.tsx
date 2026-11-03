@@ -1,6 +1,6 @@
-import { DashboardHeader } from '../../_components/dashboard-header'
+import { DashboardHeader } from '../../_components/layout/dashboard-header'
 import { toDashboardData } from '../../_components/dashboard-data'
-import { DashboardMain } from '../../_components/dashboard-main'
+import { DashboardMain } from '../../_components/layout/dashboard-main'
 import { getDashboard } from '../../_data-access/get-dashboard'
 import { Analytics } from './analytics'
 

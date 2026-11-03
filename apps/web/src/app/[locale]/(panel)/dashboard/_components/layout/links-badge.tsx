@@ -1,4 +1,4 @@
-import { getDashboard } from '../_data-access/get-dashboard'
+import { getDashboard } from '../../_data-access/get-dashboard'
 
 export async function LinksBadge() {
   const dashboard = await getDashboard().catch(() => null)

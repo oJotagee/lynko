@@ -3,8 +3,8 @@ import { ArrowRight, EyeOff, Plus } from 'lucide-react'
 import { LinkIcon } from './link-icon'
 import { buttonVariants } from '@/components/ui/button'
 import type { DashboardData } from './dashboard-data'
-import { DashboardMascot } from './dashboard-mascot'
-import { ProfilePreview } from './profile-preview'
+import { DashboardMascot } from './layout/dashboard-mascot'
+import { ProfilePreview } from './profile/profile-preview'
 import { Link } from '@/i18n/navigation'
 
 export function Overview({ data, hasPage }: { data: DashboardData; hasPage: boolean }) {

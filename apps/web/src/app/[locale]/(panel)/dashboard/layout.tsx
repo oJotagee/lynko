@@ -1,10 +1,10 @@
 import { DM_Sans, Manrope } from 'next/font/google'
 import { Suspense } from 'react'
 
-import { DashboardSidebar } from './_components/dashboard-sidebar'
+import { DashboardSidebar } from './_components/layout/dashboard-sidebar'
 import { SidebarProvider } from '@/components/ui/sidebar'
-import { LinksBadge } from './_components/links-badge'
-import { NavAccount } from './_components/nav-account'
+import { LinksBadge } from './_components/layout/links-badge'
+import { NavAccount } from './_components/layout/nav-account'
 
 const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-dashboard-body' })
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-dashboard-heading' })

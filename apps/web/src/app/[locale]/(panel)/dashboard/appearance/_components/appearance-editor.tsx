@@ -5,7 +5,7 @@ import { Loader2, RotateCcw } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
-import { ProfilePreview } from '../../_components/profile-preview'
+import { ProfilePreview } from '../../_components/profile/profile-preview'
 import { updatePage } from '../../_actions/update-page'
 import { DesignControls } from './design-controls'
 import { Button } from '@/components/ui/button'

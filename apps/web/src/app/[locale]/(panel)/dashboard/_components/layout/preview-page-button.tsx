@@ -4,10 +4,10 @@ import { Eye } from 'lucide-react'
 import { useState } from 'react'
 
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
-import type { DashboardData } from './dashboard-data'
-import { ProfilePreview } from './profile-preview'
+import type { DashboardData } from '../dashboard-data'
+import { ProfilePreview } from '../profile/profile-preview'
 import { Button } from '@/components/ui/button'
-import { portalTheme } from './portal-theme'
+import { portalTheme } from '../portal-theme'
 
 export function PreviewPageButton({ data }: { data: DashboardData }) {
   const [open, setOpen] = useState(false)
