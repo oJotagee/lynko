@@ -4,7 +4,7 @@
 
 @import "./lynko-public.css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:is(.dark *):not(:where(.light, .light *)));
 
 @theme inline {
   --font-serif: var(--font-playfair-display);

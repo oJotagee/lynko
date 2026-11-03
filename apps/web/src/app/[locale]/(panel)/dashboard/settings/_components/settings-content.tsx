@@ -1,0 +1,20 @@
+import { DashboardHeader } from '../../_components/dashboard-header'
+import { DashboardMain } from '../../_components/dashboard-main'
+import { toDashboardData } from '../../_components/dashboard-data'
+import { getDashboard } from '../../_data-access/get-dashboard'
+import { SettingsPanel } from './settings-panel'
+
+export async function SettingsContent() {
+  const dashboard = await getDashboard()
+  const data = toDashboardData(dashboard)
+  const hasPage = !!dashboard.page
+
+  return (
+    <>
+      <DashboardHeader title="Configurações" data={data} hasPage={hasPage} />
+      <DashboardMain hasPage={hasPage}>
+        <SettingsPanel user={dashboard.user} data={data} hasPage={hasPage} />
+      </DashboardMain>
+    </>
+  )
+}
