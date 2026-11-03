@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "bun --watch src/server.ts",
     "typecheck": "tsc --noEmit -p ../tsconfig.json",
+    "test": "bun test tests/unit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio"
