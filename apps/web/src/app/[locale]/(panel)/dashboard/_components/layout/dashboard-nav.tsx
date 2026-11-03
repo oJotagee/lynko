@@ -9,10 +9,10 @@ import { LogoutButton } from './logout-button'
 
 export const dashboardRoutes = [
   { href: '/dashboard', label: 'Visão geral', icon: House },
-  { href: '/dashboard/links', label: 'Meus links', icon: Link2 },
-  { href: '/dashboard/appearance', label: 'Aparência', icon: Moon },
+  { href: '/dashboard/links', label: 'Meus links', icon: Link2, prefetch: true },
+  { href: '/dashboard/appearance', label: 'Aparência', icon: Moon, prefetch: true },
   { href: '/dashboard/analytics', label: 'Analytics', icon: ChartNoAxesColumn },
-  { href: '/dashboard/settings', label: 'Configurações', icon: Settings },
+  { href: '/dashboard/settings', label: 'Configurações', icon: Settings, prefetch: true },
 ]
 
 interface DashboardNavProps {
@@ -28,10 +28,11 @@ export function DashboardNav({ account, linksBadge, onNavigate }: DashboardNavPr
     <div className="flex h-full flex-col gap-5 overflow-y-auto bg-sidebar p-4 text-sidebar-foreground [&>*]:shrink-0">
       <LynkoLogo className="flex h-12 items-center gap-2 px-3 text-2xl tracking-tight" />
       <nav aria-label="Dashboard" className="space-y-1">
-        {dashboardRoutes.map(({ href, label, icon: Icon }) => (
+        {dashboardRoutes.map(({ href, label, icon: Icon, prefetch }) => (
           <Link
             key={href}
             href={href}
+            prefetch={prefetch}
             onClick={onNavigate}
             aria-current={pathname === href ? 'page' : undefined}
             className={`flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm transition-colors hover:bg-sidebar-accent focus-visible:outline-2 focus-visible:outline-accent ${pathname === href ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'text-sidebar-foreground/70'}`}
