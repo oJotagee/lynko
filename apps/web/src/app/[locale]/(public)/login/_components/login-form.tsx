@@ -2,6 +2,7 @@
 
 import { useMutation } from '@tanstack/react-query'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
+import { getSession } from 'next-auth/react'
 import { Controller } from 'react-hook-form'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
@@ -9,8 +10,8 @@ import { toast } from 'sonner'
 import { usePasswordVisibility } from '../../_components/password-visibility'
 import { Field, FieldError, FieldLabel } from '@/components/ui/field'
 import { type LoginSchemaData, useLoginSchema } from './schemas'
-import { Link, useRouter } from '@/i18n/navigation'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Link, useRouter } from '@/i18n/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { login } from '../_actions/login'
@@ -24,12 +25,13 @@ export function LoginForm() {
 
   const { mutate: loginMutation, isPending } = useMutation({
     mutationFn: login,
-    onSuccess: (response) => {
+    onSuccess: async (response) => {
       if (response.error) {
         toast.error(response.error)
         return
       }
 
+      await getSession()
       toast.success('Login realizado com sucesso!')
       router.replace('/dashboard')
       router.refresh()

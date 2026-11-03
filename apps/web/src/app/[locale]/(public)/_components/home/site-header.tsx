@@ -1,10 +1,11 @@
 import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
-import { auth } from '@/lib/auth'
+
 import { LocaleSwitcher } from '../locale-switcher'
+import { UserAvatar } from './user-avatar'
 import { LynkoLogo } from '../lynko-logo'
 import { CtaLink } from './cta-link'
-import { UserAvatar } from './user-avatar'
+import { auth } from '@/lib/auth'
 
 const NAV_LINK_CLASS = 'underline-offset-2 hover:underline'
 
@@ -27,6 +28,7 @@ export async function SiteHeader() {
         </a>
       </nav>
       <div className="flex items-center gap-[18px] max-[640px]:gap-0">
+        <LocaleSwitcher className="mr-2" />
         {!user && (
           <Link
             className={`text-sm text-[#4d4c48] max-[640px]:hidden ${NAV_LINK_CLASS}`}
@@ -35,7 +37,6 @@ export async function SiteHeader() {
             {t('login')}
           </Link>
         )}
-        <LocaleSwitcher className="mr-2" />
         {user ? (
           <Link
             href="/dashboard"

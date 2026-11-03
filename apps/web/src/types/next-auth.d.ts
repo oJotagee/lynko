@@ -6,11 +6,14 @@ import type { ApiTokens } from '@/lib/read-api-tokens'
 declare module 'next-auth' {
   interface Session {
     user: { id: string } & DefaultSession['user']
+    error?: 'UserUpdateFailed'
   }
 
   interface User extends Partial<ApiTokens> {}
 }
 
 declare module 'next-auth/jwt' {
-  interface JWT extends Partial<ApiTokens> {}
+  interface JWT extends Partial<ApiTokens> {
+    error?: 'UserUpdateFailed'
+  }
 }

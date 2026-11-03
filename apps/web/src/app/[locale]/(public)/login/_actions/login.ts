@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { AuthError } from 'next-auth'
 
 import { signIn } from '@/lib/auth'
@@ -13,6 +14,7 @@ export async function login(input: LoginInput): Promise<{ error?: string }> {
   try {
     await signIn('credentials', { ...input, redirect: false })
 
+    revalidatePath('/[locale]', 'layout')
     return {}
   } catch (error) {
     if (error instanceof AuthError && error.type === 'CredentialsSignin') {
