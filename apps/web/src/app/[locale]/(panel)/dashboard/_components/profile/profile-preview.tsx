@@ -1,9 +1,9 @@
 import { ArrowRight, Link2 } from 'lucide-react'
 
-import { LinkIcon } from '../link-icon'
 import { buttonVariants } from '@/components/ui/button'
 import type { DashboardData } from '../dashboard-data'
 import { ProfileAvatar } from './profile-avatar'
+import { LinkIcon } from '../link-icon'
 
 export function ProfilePreview({ data: { profile, appearance, links } }: { data: DashboardData }) {
   return (

@@ -1,7 +1,7 @@
 import { Link2 } from 'lucide-react'
 
-import { cn } from '@/lib/utils'
 import { getLinkBrand } from './brands'
+import { cn } from '@/lib/utils'
 
 interface LinkIconProps {
   url: string

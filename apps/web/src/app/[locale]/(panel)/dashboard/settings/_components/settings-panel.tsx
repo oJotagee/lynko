@@ -2,11 +2,11 @@
 
 import { useState } from 'react'
 
-import type { DashboardData } from '../../_components/dashboard-data'
 import { ProfilePreview } from '../../_components/profile/profile-preview'
+import type { DashboardData } from '../../_components/dashboard-data'
+import { ProfileForm } from '../../_components/profile/profile-form'
 import type { ApiUser } from '../../_data-access/get-dashboard'
 import { Button, buttonVariants } from '@/components/ui/button'
-import { ProfileForm } from '../../_components/profile/profile-form'
 import { Link } from '@/i18n/navigation'
 
 interface SettingsPanelProps {
