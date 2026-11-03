@@ -5,8 +5,8 @@ import { Controller } from 'react-hook-form'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { type ProfileSchemaData, profileSchema, useProfileSchema } from './schemas'
-import type { DashboardData, DashboardProfile } from './dashboard-data'
+import { type ProfileSchemaData, useProfileSchema } from './schemas'
+import type { DashboardData } from './dashboard-data'
 import { Field, FieldError, FieldLabel } from '@/components/ui/field'
 import { ProfilePublishedField } from './profile-published-field'
 import { createPage } from '../_actions/create-page'
@@ -19,12 +19,10 @@ import { Input } from '@/components/ui/input'
 interface ProfileFormProps {
   data: DashboardData
   hasPage: boolean
-  onLiveChange?: (profile: DashboardProfile) => void
 }
 
-export function ProfileForm({ data, hasPage, onLiveChange }: ProfileFormProps) {
+export function ProfileForm({ data, hasPage }: ProfileFormProps) {
   const form = useProfileSchema(data.profile)
-  const live = !!onLiveChange
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: hasPage ? updatePage : createPage,
@@ -41,19 +39,8 @@ export function ProfileForm({ data, hasPage, onLiveChange }: ProfileFormProps) {
     toast.success(hasPage ? 'Página atualizada' : 'Página criada. Agora adicione seus links.')
   }
 
-  function handleChange() {
-    const profile = profileSchema.safeParse(form.getValues())
-
-    if (profile.success) onLiveChange?.(profile.data)
-  }
-
   return (
-    <form
-      className="space-y-6"
-      noValidate
-      onChange={live ? handleChange : undefined}
-      onSubmit={form.handleSubmit(onSubmit)}
-    >
+    <form className="space-y-6" noValidate onSubmit={form.handleSubmit(onSubmit)}>
       <ProfileAvatar
         profile={{ ...data.profile, name: form.watch('name'), image: form.watch('image') }}
         large
@@ -71,19 +58,17 @@ export function ProfileForm({ data, hasPage, onLiveChange }: ProfileFormProps) {
         )}
       />
 
-      {!live && (
-        <Controller
-          name="username"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Nome de usuário</FieldLabel>
-              <Input {...field} id={field.name} aria-invalid={fieldState.invalid} />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-      )}
+      <Controller
+        name="username"
+        control={form.control}
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel htmlFor={field.name}>Nome de usuário</FieldLabel>
+            <Input {...field} id={field.name} aria-invalid={fieldState.invalid} />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
 
       <Controller
         name="bio"
@@ -119,9 +104,9 @@ export function ProfileForm({ data, hasPage, onLiveChange }: ProfileFormProps) {
         )}
       />
 
-      {!live && <ProfilePublishedField control={form.control} hasPage={hasPage} />}
+      <ProfilePublishedField control={form.control} hasPage={hasPage} />
 
-      <Button type="submit" className="min-h-11 px-5" disabled={isPending || (live && !hasPage)}>
+      <Button type="submit" className="min-h-11 px-5" disabled={isPending}>
         {isPending && <Loader2 className="size-4 animate-spin" />}
         {hasPage ? 'Salvar perfil' : 'Criar minha página'}
       </Button>

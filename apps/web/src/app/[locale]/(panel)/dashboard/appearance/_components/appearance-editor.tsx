@@ -6,7 +6,6 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 
 import { ProfilePreview } from '../../_components/profile-preview'
-import { ProfileForm } from '../../_components/profile-form'
 import { updatePage } from '../../_actions/update-page'
 import { DesignControls } from './design-controls'
 import { Button } from '@/components/ui/button'
@@ -65,18 +64,8 @@ export function AppearanceEditor({ data, hasPage }: AppearanceEditorProps) {
         </div>
       </div>
       <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(310px,0.8fr)]">
-        <div className="space-y-5">
-          <div className="rounded-xl border border-border bg-card p-6">
-            <DesignControls appearance={draft.appearance} onChange={changeAppearance} />
-          </div>
-          <section className="rounded-xl border border-border bg-card p-6">
-            <h2 className="mb-6 text-lg font-bold">Seu perfil</h2>
-            <ProfileForm
-              data={draft}
-              hasPage={hasPage}
-              onLiveChange={(profile) => setDraft((current) => ({ ...current, profile }))}
-            />
-          </section>
+        <div className="rounded-xl border border-border bg-card p-6">
+          <DesignControls appearance={draft.appearance} onChange={changeAppearance} />
         </div>
         <aside className="rounded-xl bg-muted p-6 sm:p-10 xl:sticky xl:top-6">
           <h2 className="mb-8 text-center text-xs text-muted-foreground">

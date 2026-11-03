@@ -9,10 +9,8 @@ import { renderWithProviders } from '../../../../support/render'
 type ActionResult = { data?: unknown; error?: string }
 
 const updatePage = mock(async (_input: DashboardData): Promise<ActionResult> => ({ data: {} }))
-const createPage = mock(async (_input: DashboardData): Promise<ActionResult> => ({ data: {} }))
 
 mock.module('@/app/[locale]/(panel)/dashboard/_actions/update-page', () => ({ updatePage }))
-mock.module('@/app/[locale]/(panel)/dashboard/_actions/create-page', () => ({ createPage }))
 
 const { AppearanceEditor } = await import(
   '@/app/[locale]/(panel)/dashboard/appearance/_components/appearance-editor'
@@ -44,15 +42,21 @@ describe('AppearanceEditor', () => {
     await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Aparência salva'))
   })
 
-  it('updates the live preview while editing the profile', async () => {
-    const { user } = renderWithProviders(<AppearanceEditor data={buildDashboardData()} hasPage />)
+  it('does not edit the profile and saves it unchanged', async () => {
+    const data = buildDashboardData()
+    const { user } = renderWithProviders(<AppearanceEditor data={data} hasPage />)
 
-    const name = screen.getByLabelText('Nome de exibição')
-    await user.clear(name)
-    await user.type(name, 'Ana Lima')
+    expect(screen.queryByText('Seu perfil')).toBeNull()
+    expect(screen.queryByLabelText('Nome de exibição')).toBeNull()
 
-    expect(screen.getByRole('heading', { name: 'Ana Lima' })).toBeInTheDocument()
-    expect(updatePage).not.toHaveBeenCalled()
+    await user.click(screen.getByRole('button', { name: 'Salvar aparência' }))
+
+    await waitFor(() =>
+      expect(updatePage).toHaveBeenCalledWith(
+        expect.objectContaining({ profile: data.profile }),
+        expect.anything(),
+      ),
+    )
   })
 
   it('shows the error and keeps the draft when saving fails', async () => {

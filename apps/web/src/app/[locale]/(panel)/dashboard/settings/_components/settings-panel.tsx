@@ -91,7 +91,7 @@ export function SettingsPanel({ user, data, hasPage }: SettingsPanelProps) {
           <div>
             <h2 className="text-2xl font-bold">Seu perfil público</h2>
             <p className="mt-3 mb-6 text-sm leading-relaxed text-muted-foreground">
-              Edite sua biografia, foto, temas e botões em Aparência. A visibilidade é controlada em
+              Edite temas e botões em Aparência. Nome, biografia, foto e visibilidade ficam em
               Geral.
             </p>
             <Link
