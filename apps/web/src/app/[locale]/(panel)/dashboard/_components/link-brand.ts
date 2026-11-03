@@ -1,5 +1,4 @@
 import {
-  type IconType,
   SiBehance,
   SiBehanceHex,
   SiBluesky,
@@ -52,15 +51,23 @@ import {
   SiYoutubeHex,
 } from '@icons-pack/react-simple-icons'
 
+import { LINKEDIN_COLOR, LinkedinIcon } from './linkedin-icon'
+
 export interface LinkBrand {
   name: string
-  icon: IconType
+  icon: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' }>
   color: string
 }
 
-// shortcut: só as marcas mais comuns em páginas de links; o LinkedIn não existe no Simple Icons.
+// shortcut: só as marcas mais comuns em páginas de links; amplie a lista quando surgir demanda.
 const brands: (LinkBrand & { domains: string[] })[] = [
   { name: 'YouTube', icon: SiYoutube, color: SiYoutubeHex, domains: ['youtube.com', 'youtu.be'] },
+  {
+    name: 'LinkedIn',
+    icon: LinkedinIcon,
+    color: LINKEDIN_COLOR,
+    domains: ['linkedin.com', 'lnkd.in'],
+  },
   { name: 'GitHub', icon: SiGithub, color: SiGithubHex, domains: ['github.com'] },
   { name: 'GitLab', icon: SiGitlab, color: SiGitlabHex, domains: ['gitlab.com'] },
   { name: 'Instagram', icon: SiInstagram, color: SiInstagramHex, domains: ['instagram.com'] },

@@ -8,6 +8,9 @@ describe('getLinkBrand', () => {
     ['https://youtu.be/dQw4w9WgXcQ', 'YouTube'],
     ['https://m.youtube.com/watch?v=1', 'YouTube'],
     ['https://github.com/lynko', 'GitHub'],
+    ['https://www.linkedin.com/in/lynko', 'LinkedIn'],
+    ['https://br.linkedin.com/in/lynko', 'LinkedIn'],
+    ['https://lnkd.in/abc', 'LinkedIn'],
     ['https://twitter.com/lynko', 'X'],
     ['https://x.com/lynko', 'X'],
     ['https://wa.me/5511999999999', 'WhatsApp'],
@@ -27,7 +30,6 @@ describe('getLinkBrand', () => {
     ['a look-alike domain', 'https://notgithub.com/lynko'],
     ['a brand in the path only', 'https://example.com/youtube.com'],
     ['an invalid url', 'not a url'],
-    ['LinkedIn, missing from Simple Icons', 'https://linkedin.com/in/lynko'],
   ])('returns null for %s', (_case, url) => {
     expect(getLinkBrand(url)).toBeNull()
   })
