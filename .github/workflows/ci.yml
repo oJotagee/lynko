@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   api:
-    name: API (typecheck)
+    name: API (typecheck + unit tests)
     runs-on: ubuntu-latest
 
     steps:
@@ -40,8 +40,11 @@ jobs:
       - name: Typecheck
         run: bun run --filter '@lynko/api' typecheck
 
+      - name: Unit tests
+        run: bun run --filter '@lynko/api' test
+
   frontend:
-    name: Frontend (typecheck + unit tests)
+    name: Frontend (typecheck + unit and interaction tests)
     runs-on: ubuntu-latest
 
     defaults:
@@ -73,3 +76,6 @@ jobs:
 
       - name: Unit tests
         run: bun run test
+
+      - name: Interaction tests
+        run: bun run test:interaction
