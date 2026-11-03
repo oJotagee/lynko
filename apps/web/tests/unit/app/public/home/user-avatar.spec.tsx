@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, test } from 'bun:test'
 
-import { UserAvatar } from '../src/app/[locale]/(public)/_components/home/user-avatar'
+import { UserAvatar } from '@/app/[locale]/(public)/_components/home/user-avatar'
 
 describe('home user avatar', () => {
   test.each([
