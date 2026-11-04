@@ -43,30 +43,32 @@ export function DashboardNav({ account, linksBadge, onNavigate }: DashboardNavPr
           </Link>
         ))}
       </nav>
-      <div className="mt-auto rounded-xl border border-sidebar-border bg-sidebar-accent/50 p-4 [@media(max-height:760px)]:hidden">
-        <div className="flex items-start justify-between gap-2">
-          <p className="pt-2 text-sm font-semibold">Do seu jeito</p>
-          <DashboardMascot className="w-16" />
+      <div className="mt-auto">
+        <div className="rounded-xl border border-sidebar-border bg-sidebar-accent/50 p-4 [@media(max-height:760px)]:hidden">
+          <div className="flex items-start justify-between gap-2">
+            <p className="pt-2 text-sm font-semibold">Do seu jeito</p>
+            <DashboardMascot className="w-16" />
+          </div>
+          <p className="mt-3 text-xs leading-relaxed text-sidebar-foreground/70">
+            Um novo tema, uma página com a sua cara.
+          </p>
+          <Link
+            href="/dashboard/appearance"
+            onClick={onNavigate}
+            className="mt-2 inline-flex min-h-8 items-center gap-2 text-xs text-chart-2 hover:underline"
+          >
+            Personalizar <ArrowRight className="size-3" />
+          </Link>
         </div>
-        <p className="mt-3 text-xs leading-relaxed text-sidebar-foreground/70">
-          Um novo tema, uma página com a sua cara.
-        </p>
         <Link
-          href="/dashboard/appearance"
+          href="/dashboard/settings"
           onClick={onNavigate}
-          className="mt-2 inline-flex min-h-8 items-center gap-2 text-xs text-chart-2 hover:underline"
+          className="flex min-w-0 items-center gap-3 px-2 pt-4 pb-2 hover:opacity-80"
         >
-          Personalizar <ArrowRight className="size-3" />
+          {account}
+          <Settings className="ml-auto size-4 shrink-0" />
         </Link>
       </div>
-      <Link
-        href="/dashboard/settings"
-        onClick={onNavigate}
-        className="mt-auto flex min-w-0 items-center gap-3 border-t border-sidebar-border px-2 pt-5 pb-2 hover:opacity-80"
-      >
-        {account}
-        <Settings className="ml-auto size-4 shrink-0" />
-      </Link>
       <LogoutButton />
     </div>
   )
