@@ -11,6 +11,7 @@ import { logout } from '../../_actions/logout'
 
 export function LogoutButton() {
   const router = useRouter()
+
   const client = useQueryClient()
 
   const { mutate, isPending } = useMutation({
@@ -18,10 +19,16 @@ export function LogoutButton() {
     async onSuccess(response) {
       if (response.error) {
         toast.error(response.error)
+
         return
       }
+
+      toast.success('Você saiu da conta')
+
       await getSession()
+
       client.clear()
+
       router.replace('/')
       router.refresh()
     },

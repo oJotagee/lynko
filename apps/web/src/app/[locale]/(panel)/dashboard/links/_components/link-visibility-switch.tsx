@@ -10,10 +10,12 @@ import { Switch } from '@/components/ui/switch'
 
 export function LinkVisibilitySwitch({ link }: { link: DashboardLink }) {
   const [checked, setChecked] = useState(link.active)
+
   const [serverActive, setServerActive] = useState(link.active)
 
   if (link.active !== serverActive) {
     setServerActive(link.active)
+
     setChecked(link.active)
   }
 
@@ -22,11 +24,17 @@ export function LinkVisibilitySwitch({ link }: { link: DashboardLink }) {
     onSuccess: (response, isActive) => {
       if (response.error) {
         setChecked(!isActive)
+
         toast.error(response.error)
+
+        return
       }
+
+      toast.success(isActive ? 'Link visível na página' : 'Link oculto da página')
     },
     onError: (_error, isActive) => {
       setChecked(!isActive)
+
       toast.error('Não foi possível atualizar o link')
     },
   })
@@ -35,6 +43,7 @@ export function LinkVisibilitySwitch({ link }: { link: DashboardLink }) {
     if (isPending) return
 
     setChecked(isActive)
+
     mutate(isActive)
   }
 

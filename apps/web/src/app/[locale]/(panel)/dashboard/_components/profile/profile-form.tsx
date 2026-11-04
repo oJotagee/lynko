@@ -29,10 +29,14 @@ export function ProfileForm({ data, hasPage }: ProfileFormProps) {
   })
 
   async function onSubmit(profile: ProfileSchemaData) {
-    const response = await mutateAsync({ ...data, profile })
+    const response = await mutateAsync({
+      ...data,
+      profile: { ...profile, published: data.profile.published },
+    })
 
     if (response.error) {
       toast.error(response.error)
+
       return
     }
 
@@ -104,7 +108,7 @@ export function ProfileForm({ data, hasPage }: ProfileFormProps) {
         )}
       />
 
-      <ProfilePublishedField control={form.control} hasPage={hasPage} />
+      <ProfilePublishedField data={data} hasPage={hasPage} />
 
       <Button type="submit" className="min-h-11 px-5" disabled={isPending}>
         {isPending && <Loader2 className="size-4 animate-spin" />}
