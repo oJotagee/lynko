@@ -11,6 +11,7 @@ const NAV_LINK_CLASS = 'underline-offset-2 hover:underline'
 
 export async function SiteHeader() {
   const [t, session] = await Promise.all([getTranslations('Home.Header'), auth()])
+
   const user = session?.user
 
   return (

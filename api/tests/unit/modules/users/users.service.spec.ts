@@ -18,6 +18,7 @@ describe('usersService', () => {
 
   it('returns the profile without the password hash', async () => {
     const user = buildUser()
+
     store.users.push(user)
 
     const profile = await usersService.getProfile(user.id)

@@ -3,6 +3,7 @@ import { z } from 'zod'
 export const MAX_LINKS_PER_PAGE = 100
 
 const title = z.string().trim().min(1).max(80)
+
 const url = z
   .string()
   .trim()
@@ -48,4 +49,5 @@ export const publicLinkResponse = linkResponse.pick({
 })
 
 export type CreateLinkBody = z.infer<typeof createLinkBody>
+
 export type UpdateLinkBody = z.infer<typeof updateLinkBody>

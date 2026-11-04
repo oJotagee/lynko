@@ -18,9 +18,13 @@ import { login } from '../_actions/login'
 
 export function LoginForm() {
   const form = useLoginSchema()
+
   const router = useRouter()
+
   const { visible, setVisible } = usePasswordVisibility()
+
   const t = useTranslations('Auth.Login')
+
   const passwordText = useTranslations('Auth.Password')
 
   const { mutate: loginMutation, isPending } = useMutation({
@@ -28,11 +32,14 @@ export function LoginForm() {
     onSuccess: async (response) => {
       if (response.error) {
         toast.error(response.error)
+
         return
       }
 
       await getSession()
+
       toast.success('Login realizado com sucesso!')
+
       router.replace('/dashboard')
       router.refresh()
     },

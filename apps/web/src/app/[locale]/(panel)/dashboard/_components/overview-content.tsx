@@ -6,7 +6,9 @@ import { Overview } from './overview'
 
 export async function OverviewContent() {
   const dashboard = await getDashboard()
+
   const data = toDashboardData(dashboard)
+
   const hasPage = !!dashboard.page
 
   return (

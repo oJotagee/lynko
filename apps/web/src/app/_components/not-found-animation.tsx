@@ -7,10 +7,12 @@ import animationData from '../../../public/animation/lynko-404.json'
 
 export function NotFoundAnimation() {
   const lottieRef = useRef<LottieHandle>(null)
+
   const [ready, setReady] = useState(false)
 
   function handleReady() {
     setReady(true)
+
     lottieRef.current?.play()
   }
 

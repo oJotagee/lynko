@@ -9,6 +9,7 @@ const server = createServer((request, response) => {
 }).listen(0)
 
 const { port } = server.address() as { port: number }
+
 const url = `http://localhost:${port}/echo`
 
 afterAll(() => {

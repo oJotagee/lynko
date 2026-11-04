@@ -10,6 +10,7 @@ import {
 
 export function FaqSection() {
   const t = useTranslations('Home.Faq')
+
   const questions = [
     { id: 'q1', question: t('q1'), answer: t('a1') },
     { id: 'q2', question: t('q2'), answer: t('a2') },

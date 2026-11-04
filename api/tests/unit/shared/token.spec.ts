@@ -11,6 +11,7 @@ import {
 describe('refresh token', () => {
   it('creates a token that parses back to the session and matches its hash', () => {
     const sessionId = randomUUID()
+
     const { token, secretHash } = createRefreshToken(sessionId)
 
     const parsed = parseRefreshToken(token)

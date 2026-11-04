@@ -5,15 +5,18 @@ import { createTestApp, signIn } from '../../support/app'
 
 describe('users routes', () => {
   let store: ReturnType<typeof useInMemoryRepositories>
+
   let app: Awaited<ReturnType<typeof createTestApp>>
 
   beforeEach(async () => {
     store = useInMemoryRepositories()
+
     app = await createTestApp()
   })
 
   afterEach(async () => {
     await app.close()
+
     mock.restore()
   })
 
@@ -35,6 +38,7 @@ describe('users routes', () => {
 
   it('GET /users/me returns 401 when the session was revoked', async () => {
     const { session, headers } = signIn(app, store)
+
     session.revokedAt = new Date()
 
     const response = await app.inject({ method: 'GET', url: '/users/me', headers })

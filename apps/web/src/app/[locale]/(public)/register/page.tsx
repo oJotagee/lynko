@@ -10,6 +10,7 @@ export async function generateMetadata({
   params,
 }: PageProps<'/[locale]/register'>): Promise<Metadata> {
   const { locale } = await params
+
   const t = await getTranslations({ locale, namespace: 'Auth.Register' })
 
   return { title: t('title'), robots: { index: false, follow: true } }

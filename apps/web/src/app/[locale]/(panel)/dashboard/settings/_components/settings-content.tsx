@@ -6,7 +6,9 @@ import { SettingsPanel } from './settings-panel'
 
 export async function SettingsContent() {
   const dashboard = await getDashboard()
+
   const data = toDashboardData(dashboard)
+
   const hasPage = !!dashboard.page
 
   return (

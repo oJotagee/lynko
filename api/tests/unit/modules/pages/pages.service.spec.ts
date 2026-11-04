@@ -45,6 +45,7 @@ describe('pagesService', () => {
       const race = new Error('duplicate', {
         cause: { code: '23505', constraint: 'pages_username_unique' },
       })
+
       spyOn(pagesRepository, 'create').mockImplementation(async () => {
         throw race
       })
@@ -92,6 +93,7 @@ describe('pagesService', () => {
   describe('deleteMine', () => {
     it('deletes the page and its links', async () => {
       const page = buildPage({ userId })
+
       store.pages.push(page)
       store.links.push(buildLink({ pageId: page.id }))
 
@@ -109,7 +111,9 @@ describe('pagesService', () => {
   describe('getPublic', () => {
     it('returns the published page with only active links, in order', async () => {
       const page = buildPage({ username: 'maria', isPublished: true })
+
       store.pages.push(page)
+
       store.links.push(
         buildLink({ pageId: page.id, title: 'Segundo', position: 1 }),
         buildLink({ pageId: page.id, title: 'Oculto', position: 2, isActive: false }),

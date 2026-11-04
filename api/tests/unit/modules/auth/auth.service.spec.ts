@@ -61,6 +61,7 @@ describe('authService', () => {
       await expect(
         authService.login({ email: 'maria@example.com', password: 'wrong-pass' }),
       ).rejects.toBeInstanceOf(UnauthorizedError)
+
       expect(store.sessions).toHaveLength(0)
     })
 
@@ -74,8 +75,11 @@ describe('authService', () => {
   describe('refresh', () => {
     function storeSession(overrides: Parameters<typeof buildSession>[0] = {}) {
       const session = buildSession(overrides)
+
       const { token, secretHash } = createRefreshToken(session.id)
+
       session.refreshTokenHash = secretHash
+
       store.sessions.push(session)
 
       return { session, token }
@@ -93,6 +97,7 @@ describe('authService', () => {
 
     it('revokes the session when an old secret is reused', async () => {
       const { session } = storeSession()
+
       const stolen = `${session.id}.old-secret`
 
       await expect(authService.refresh(stolen)).rejects.toBeInstanceOf(UnauthorizedError)
@@ -116,8 +121,11 @@ describe('authService', () => {
   describe('logout', () => {
     it('revokes the session of the refresh token', async () => {
       const session = buildSession()
+
       const { token, secretHash } = createRefreshToken(session.id)
+
       session.refreshTokenHash = secretHash
+
       store.sessions.push(session)
 
       await authService.logout(token)
@@ -134,6 +142,7 @@ describe('authService', () => {
   describe('isSessionValid', () => {
     it('only accepts the active session of the same user', async () => {
       const session = buildSession()
+
       store.sessions.push(session)
 
       expect(await authService.isSessionValid(session.id, session.userId)).toBe(true)

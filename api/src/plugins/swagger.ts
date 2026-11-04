@@ -40,6 +40,7 @@ export function registerSwagger(app: FastifyInstance) {
             "connect-src 'self'",
           ].join('; '),
         )
+
         done()
       },
     },

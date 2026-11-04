@@ -2,6 +2,7 @@ import { useTranslations } from 'next-intl'
 
 export function HowSection() {
   const t = useTranslations('Home.How')
+
   const steps = [
     { id: '01', title: t('step1Title'), description: t('step1Description'), icon: '✳' },
     { id: '02', title: t('step2Title'), description: t('step2Description'), icon: '↗' },

@@ -7,6 +7,7 @@ import { NavAccount } from './_components/layout/nav-account'
 import { SidebarProvider } from '@/components/ui/sidebar'
 
 const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-dashboard-body' })
+
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-dashboard-heading' })
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {

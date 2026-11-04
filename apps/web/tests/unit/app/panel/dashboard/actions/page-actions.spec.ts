@@ -11,7 +11,9 @@ import {
 const { toDashboardData, defaultTheme } = await import(
   '@/app/[locale]/(panel)/dashboard/_components/dashboard-data'
 )
+
 const { createPage } = await import('@/app/[locale]/(panel)/dashboard/_actions/create-page')
+
 const { updatePage } = await import('@/app/[locale]/(panel)/dashboard/_actions/update-page')
 
 describe('page actions', () => {
@@ -21,6 +23,7 @@ describe('page actions', () => {
 
   beforeEach(() => {
     api = spyOnApi()
+
     revalidatePath.mockClear()
   })
 
@@ -31,6 +34,7 @@ describe('page actions', () => {
   describe('createPage', () => {
     it('creates a draft page without the account e-mail', async () => {
       const page = buildApiPage()
+
       api.post.mockResolvedValueOnce({ data: page })
 
       const result = await createPage(data)
@@ -46,6 +50,7 @@ describe('page actions', () => {
         },
         { headers: authorization },
       )
+
       expect(revalidatePath).toHaveBeenCalledWith('/[locale]/dashboard', 'layout')
       expect(result).toEqual({ data: page })
     })

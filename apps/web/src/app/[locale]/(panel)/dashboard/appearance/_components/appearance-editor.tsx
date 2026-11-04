@@ -35,6 +35,7 @@ export function AppearanceEditor({ data, hasPage }: AppearanceEditorProps) {
 
     if (response.error) {
       toast.error(response.error)
+
       return
     }
 

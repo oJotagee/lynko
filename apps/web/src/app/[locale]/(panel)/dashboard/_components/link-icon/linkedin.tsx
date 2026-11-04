@@ -1,4 +1,3 @@
-// O Simple Icons removeu o LinkedIn; path CC0 da versão 9.21.0 (simple-icons/icons/linkedin.svg).
 export const LINKEDIN_COLOR = '#0A66C2'
 
 export function LinkedinIcon(props: React.SVGProps<SVGSVGElement>) {

@@ -6,7 +6,9 @@ import { Analytics } from './analytics'
 
 export async function AnalyticsContent() {
   const dashboard = await getDashboard()
+
   const data = toDashboardData(dashboard)
+
   const hasPage = !!dashboard.page
 
   return (

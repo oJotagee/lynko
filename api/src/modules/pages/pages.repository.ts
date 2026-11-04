@@ -4,6 +4,7 @@ import { pageSchema } from '../../db/schema'
 import { db } from '../../db'
 
 type PageChanges = Partial<Omit<NewPage, 'id' | 'userId' | 'createdAt' | 'updatedAt'>>
+
 type NewPage = typeof pageSchema.$inferInsert
 
 export const pagesRepository = {

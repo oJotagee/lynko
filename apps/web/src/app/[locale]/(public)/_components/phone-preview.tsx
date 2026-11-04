@@ -19,6 +19,7 @@ export function PhonePreview({
   shape = 'round',
 }: PhonePreviewProps) {
   const t = useTranslations('Home.Phone')
+
   const offset = Math.round((1 - progress) * 24)
 
   return (

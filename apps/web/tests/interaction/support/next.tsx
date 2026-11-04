@@ -19,6 +19,7 @@ export function setPathname(next: string) {
 
 export function resetNextMocks() {
   for (const fn of [...Object.values(router), ...Object.values(toast)]) fn.mockClear()
+
   pathname = '/dashboard'
 }
 

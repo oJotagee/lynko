@@ -7,15 +7,18 @@ import { createTestApp } from '../../support/app'
 
 describe('auth routes', () => {
   let store: ReturnType<typeof useInMemoryRepositories>
+
   let app: Awaited<ReturnType<typeof createTestApp>>
 
   beforeEach(async () => {
     store = useInMemoryRepositories()
+
     app = await createTestApp()
   })
 
   afterEach(async () => {
     await app.close()
+
     mock.restore()
   })
 
@@ -79,6 +82,7 @@ describe('auth routes', () => {
 
       expect(response.statusCode).toBe(200)
       expect(response.json().accessToken).toBeString()
+
       expect(getRefreshCookie(response)).toMatchObject({
         httpOnly: true,
         sameSite: 'Strict',
@@ -101,6 +105,7 @@ describe('auth routes', () => {
         url: '/auth/refresh',
         cookies: { refreshToken: cookie },
       })
+
       const rotated = getRefreshCookie(refreshed)?.value ?? ''
 
       expect(refreshed.statusCode).toBe(200)

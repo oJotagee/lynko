@@ -4,6 +4,7 @@ import { linkSchema } from '../../db/schema'
 import { db } from '../../db'
 
 type LinkChanges = Partial<Pick<typeof linkSchema.$inferInsert, 'title' | 'url' | 'isActive'>>
+
 type NewLink = typeof linkSchema.$inferInsert
 
 const pageOrder = [asc(linkSchema.position), asc(linkSchema.createdAt)]

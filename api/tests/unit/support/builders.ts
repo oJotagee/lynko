@@ -4,8 +4,11 @@ import type { linkSchema, pageSchema, sessionSchema, userSchema } from '../../..
 import { defaultPageTheme } from '../../../src/modules/pages/pages.theme'
 
 export type User = typeof userSchema.$inferSelect
+
 export type Session = typeof sessionSchema.$inferSelect
+
 export type Page = typeof pageSchema.$inferSelect
+
 export type Link = typeof linkSchema.$inferSelect
 
 const createdAt = new Date('2026-01-01T00:00:00.000Z')

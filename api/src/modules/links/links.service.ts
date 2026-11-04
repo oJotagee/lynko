@@ -22,6 +22,7 @@ export const linksService = {
 
   async create(userId: string, data: CreateLinkBody) {
     const pageId = await getPageIdOrThrow(userId)
+
     const links = await linksRepository.findByPageId(pageId)
 
     if (links.length >= MAX_LINKS_PER_PAGE) {
@@ -29,7 +30,9 @@ export const linksService = {
     }
 
     const position = Math.max(-1, ...links.map((link) => link.position)) + 1
+
     const link = await linksRepository.create({ ...data, pageId, position })
+
     if (!link) throw new Error('Failed to create link')
 
     return link
@@ -55,9 +58,11 @@ export const linksService = {
 
   async reorder(userId: string, linkIds: string[]) {
     const pageId = await getPageIdOrThrow(userId)
+
     const links = await linksRepository.findByPageId(pageId)
 
     const received = new Set(linkIds)
+
     const isSameSet =
       received.size === linkIds.length &&
       linkIds.length === links.length &&

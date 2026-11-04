@@ -10,7 +10,9 @@ interface LinksContentProps {
 
 export async function LinksContent({ searchParams }: LinksContentProps) {
   const [dashboard, { new: isNew }] = await Promise.all([getDashboard(), searchParams])
+
   const data = toDashboardData(dashboard)
+
   const hasPage = !!dashboard.page
 
   return (

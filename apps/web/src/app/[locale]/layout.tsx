@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils'
 import '../globals.css'
 
 const roboto = Roboto({ variable: '--font-roboto', subsets: ['latin'] })
+
 const playfairDisplay = Playfair_Display({
   variable: '--font-playfair-display',
   subsets: ['latin'],
@@ -19,7 +20,9 @@ const playfairDisplay = Playfair_Display({
 
 export async function generateMetadata({ params }: LayoutProps<'/[locale]'>): Promise<Metadata> {
   const { locale } = await params
+
   const t = await getTranslations({ locale, namespace: 'Metadata' })
+
   const description = t('description')
 
   return {
@@ -40,7 +43,9 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
   const { locale } = await params
 
   if (!hasLocale(routing.locales, locale)) notFound()
+
   setRequestLocale(locale)
+
   const messages = await getMessages()
 
   return (

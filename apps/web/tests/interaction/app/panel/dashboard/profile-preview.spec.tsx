@@ -9,6 +9,7 @@ describe('ProfilePreview', () => {
 
   it('uses the button text color on outline buttons', () => {
     const data = buildDashboardData()
+
     render(
       <ProfilePreview
         data={{ ...data, appearance: { ...data.appearance, ...colors, buttonStyle: 'outline' } }}
@@ -24,6 +25,7 @@ describe('ProfilePreview', () => {
 
   it('fills filled buttons with the button color', () => {
     const data = buildDashboardData()
+
     render(
       <ProfilePreview
         data={{ ...data, appearance: { ...data.appearance, ...colors, buttonStyle: 'filled' } }}
@@ -38,6 +40,7 @@ describe('ProfilePreview', () => {
 
   it('hides inactive links', () => {
     const data = buildDashboardData()
+
     render(
       <ProfilePreview
         data={{ ...data, links: data.links.map((link) => ({ ...link, active: false })) }}

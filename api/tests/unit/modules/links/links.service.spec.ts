@@ -8,13 +8,16 @@ import { buildLink, buildPage, type Page } from '../../support/builders'
 
 describe('linksService', () => {
   let store: ReturnType<typeof useInMemoryRepositories>
+
   let page: Page
 
   const userId = 'a26d7946-6249-4f68-95e6-5cb612ccf538'
 
   beforeEach(() => {
     store = useInMemoryRepositories()
+
     page = buildPage({ userId })
+
     store.pages.push(page)
   })
 
@@ -57,6 +60,7 @@ describe('linksService', () => {
   describe('update and delete', () => {
     it('updates a link of the own page', async () => {
       const link = buildLink({ pageId: page.id })
+
       store.links.push(link)
 
       await expect(
@@ -66,17 +70,20 @@ describe('linksService', () => {
 
     it('treats a link from another page as not found', async () => {
       const foreign = buildLink({ pageId: buildPage().id })
+
       store.links.push(foreign)
 
       await expect(
         linksService.update(userId, foreign.id, { title: 'Hack' }),
       ).rejects.toBeInstanceOf(NotFoundError)
+
       await expect(linksService.delete(userId, foreign.id)).rejects.toBeInstanceOf(NotFoundError)
       expect(store.links).toContain(foreign)
     })
 
     it('deletes a link of the own page', async () => {
       const link = buildLink({ pageId: page.id })
+
       store.links.push(link)
 
       await linksService.delete(userId, link.id)
@@ -88,7 +95,9 @@ describe('linksService', () => {
   describe('reorder', () => {
     it('saves the new order and returns the links sorted', async () => {
       const first = buildLink({ pageId: page.id, position: 0, title: 'Primeiro' })
+
       const second = buildLink({ pageId: page.id, position: 1, title: 'Segundo' })
+
       store.links.push(first, second)
 
       const links = await linksService.reorder(userId, [second.id, first.id])
@@ -102,6 +111,7 @@ describe('linksService', () => {
       ['includes a foreign link', (ids: string[]) => [ids[0] ?? '', crypto.randomUUID()]],
     ])('throws BadRequestError when the list %s', async (_case, change) => {
       const links = [buildLink({ pageId: page.id }), buildLink({ pageId: page.id, position: 1 })]
+
       store.links.push(...links)
 
       await expect(

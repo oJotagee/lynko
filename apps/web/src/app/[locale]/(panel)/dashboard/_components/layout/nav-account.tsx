@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth'
 
 export async function NavAccount() {
   const session = await auth()
+
   const name = session?.user.name ?? ''
 
   return (

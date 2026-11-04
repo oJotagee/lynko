@@ -39,7 +39,9 @@ const username = z
   )
 
 const title = z.string().trim().min(1).max(80)
+
 const bio = z.string().trim().max(160)
+
 const avatarUrl = z.url({ protocol: /^https?$/ }).max(2048)
 
 export const createPageBody = z.object({
@@ -89,4 +91,5 @@ export const publicPageResponse = pageResponse
   .extend({ links: z.array(publicLinkResponse) })
 
 export type CreatePageBody = z.infer<typeof createPageBody>
+
 export type UpdatePageBody = z.infer<typeof updatePageBody>

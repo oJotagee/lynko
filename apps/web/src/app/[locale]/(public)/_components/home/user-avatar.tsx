@@ -4,7 +4,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 export function UserAvatar({ user }: { user: Pick<Session['user'], 'name' | 'email' | 'image'> }) {
   const name = user.name?.trim() || user.email || 'U'
+
   const names = name.split(/\s+/)
+
   const initials =
     `${names[0][0]}${names.length > 1 ? names[names.length - 1][0] : ''}`.toUpperCase()
 

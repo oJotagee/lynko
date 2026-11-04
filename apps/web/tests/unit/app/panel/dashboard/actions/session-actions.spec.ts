@@ -3,7 +3,9 @@ import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:te
 import { revalidatePath } from '../../../../support/mocks'
 
 const authModule = await import('@/lib/auth')
+
 const { logout } = await import('@/app/[locale]/(panel)/dashboard/_actions/logout')
+
 const { login } = await import('@/app/[locale]/(public)/login/_actions/login')
 
 describe('session actions', () => {

@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl'
 
 export function LoginBrand({ mode = 'login' }: { mode?: 'login' | 'register' }) {
   const { visible } = usePasswordVisibility()
+
   const t = useTranslations('Auth.Brand')
 
   return (

@@ -30,8 +30,11 @@ export function buildApp() {
   })
 
   registerZod(app)
+
   registerErrorHandler(app)
+
   registerSecurity(app)
+
   registerSwagger(app)
 
   app.register(authPlugin)

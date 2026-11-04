@@ -5,11 +5,13 @@ import { sessionSchema, userSchema } from '../../db/schema'
 import { db } from '../../db'
 
 type NewSession = typeof sessionSchema.$inferInsert
+
 type NewUser = typeof userSchema.$inferInsert
 
 export const authRepository = {
   async findByEmailWithPassword(email: string) {
     const [user] = await db.select().from(userSchema).where(eq(userSchema.email, email)).limit(1)
+
     return user
   },
 
@@ -19,6 +21,7 @@ export const authRepository = {
       .from(userSchema)
       .where(eq(userSchema.email, email))
       .limit(1)
+
     return Boolean(user)
   },
 

@@ -5,12 +5,14 @@ import { linksRepository } from '../links/links.repository'
 import { pagesRepository } from './pages.repository'
 
 const PAGE_ALREADY_EXISTS = 'User already has a page'
+
 const USERNAME_TAKEN = 'Username already taken'
 
 function toConflictError(error: unknown) {
   const constraint = getUniqueViolation(error)
 
   if (constraint === 'pages_username_unique') return new ConflictError(USERNAME_TAKEN)
+
   if (constraint === 'pages_user_id_unique') return new ConflictError(PAGE_ALREADY_EXISTS)
 
   return error
@@ -28,6 +30,7 @@ export const pagesService = {
 
     try {
       const page = await pagesRepository.create({ ...data, userId })
+
       if (!page) throw new Error('Failed to create page')
 
       return page
@@ -38,6 +41,7 @@ export const pagesService = {
 
   async getMine(userId: string) {
     const page = await pagesRepository.findByUserId(userId)
+
     if (!page) {
       throw new NotFoundError('Page not found')
     }
@@ -61,6 +65,7 @@ export const pagesService = {
         ...changes,
         ...(theme && { theme: { ...current.theme, ...theme } }),
       })
+
       if (!page) throw new NotFoundError('Page not found')
 
       return page
@@ -71,6 +76,7 @@ export const pagesService = {
 
   async deleteMine(userId: string) {
     const deleted = await pagesRepository.deleteByUserId(userId)
+
     if (!deleted) {
       throw new NotFoundError('Page not found')
     }
@@ -78,6 +84,7 @@ export const pagesService = {
 
   async getPublic(username: string) {
     const page = await pagesRepository.findPublishedByUsername(username)
+
     if (!page) {
       throw new NotFoundError('Page not found')
     }

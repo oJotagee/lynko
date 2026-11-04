@@ -15,6 +15,7 @@ export async function login(input: LoginInput): Promise<{ error?: string }> {
     await signIn('credentials', { ...input, redirect: false })
 
     revalidatePath('/[locale]', 'layout')
+
     return {}
   } catch (error) {
     if (error instanceof AuthError && error.type === 'CredentialsSignin') {

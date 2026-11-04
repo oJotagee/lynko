@@ -11,9 +11,13 @@ import type { PaletteId } from './palettes'
 
 export function StorySection() {
   const t = useTranslations('Home.Story')
+
   const sectionRef = useRef<HTMLElement>(null)
+
   const progress = useScrollProgress(sectionRef)
+
   const [palette, setPalette] = useState<PaletteId>('violet')
+
   const [buttonShape, setButtonShape] = useState<PhoneButtonShape>('round')
 
   return (

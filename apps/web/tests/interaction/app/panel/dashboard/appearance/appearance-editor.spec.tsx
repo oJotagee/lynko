@@ -19,6 +19,7 @@ const { AppearanceEditor } = await import(
 describe('AppearanceEditor', () => {
   beforeEach(() => {
     resetNextMocks()
+
     updatePage.mockClear()
     updatePage.mockImplementation(async () => ({ data: {} }))
   })
@@ -27,6 +28,7 @@ describe('AppearanceEditor', () => {
     const { user } = renderWithProviders(<AppearanceEditor data={buildDashboardData()} hasPage />)
 
     await user.click(screen.getByRole('button', { name: 'Mellow' }))
+
     expect(screen.getByRole('button', { name: 'Mellow' })).toHaveAttribute('aria-pressed', 'true')
 
     await user.click(screen.getByRole('button', { name: 'Salvar aparência' }))
@@ -39,11 +41,13 @@ describe('AppearanceEditor', () => {
         expect.anything(),
       ),
     )
+
     await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Aparência salva'))
   })
 
   it('does not edit the profile and saves it unchanged', async () => {
     const data = buildDashboardData()
+
     const { user } = renderWithProviders(<AppearanceEditor data={data} hasPage />)
 
     expect(screen.queryByText('Seu perfil')).toBeNull()
@@ -61,6 +65,7 @@ describe('AppearanceEditor', () => {
 
   it('shows the error and keeps the draft when saving fails', async () => {
     updatePage.mockImplementation(async () => ({ error: 'Não foi possível salvar sua página.' }))
+
     const { user } = renderWithProviders(<AppearanceEditor data={buildDashboardData()} hasPage />)
 
     await user.click(screen.getByRole('button', { name: 'Peachy' }))
@@ -69,6 +74,7 @@ describe('AppearanceEditor', () => {
     await waitFor(() =>
       expect(toast.error).toHaveBeenCalledWith('Não foi possível salvar sua página.'),
     )
+
     expect(screen.getByRole('button', { name: 'Peachy' })).toHaveAttribute('aria-pressed', 'true')
   })
 

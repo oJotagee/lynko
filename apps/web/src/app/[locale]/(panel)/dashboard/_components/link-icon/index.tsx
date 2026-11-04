@@ -12,6 +12,7 @@ interface LinkIconProps {
 
 export function LinkIcon({ url, className, iconClassName, fallbackColor }: LinkIconProps) {
   const brand = getLinkBrand(url)
+
   const Icon = brand?.icon ?? Link2
 
   return (

@@ -7,9 +7,13 @@ import type { routing } from '@/i18n/routing'
 
 export function LocaleSwitcher({ className = '' }: { className?: string }) {
   const locale = useLocale()
+
   const t = useTranslations('Common')
+
   const pathname = usePathname()
+
   const router = useRouter()
+
   const nextLocale = locale === 'en' ? 'pt' : 'en'
 
   return (

@@ -6,7 +6,9 @@ import { AppearanceEditor } from './appearance-editor'
 
 export async function AppearanceContent() {
   const dashboard = await getDashboard()
+
   const data = toDashboardData(dashboard)
+
   const hasPage = !!dashboard.page
 
   return (

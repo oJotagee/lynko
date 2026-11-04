@@ -20,4 +20,5 @@ export const accessTokenResponse = z.object({
 })
 
 export type RegisterBody = z.infer<typeof registerBody>
+
 export type LoginBody = z.infer<typeof loginBody>

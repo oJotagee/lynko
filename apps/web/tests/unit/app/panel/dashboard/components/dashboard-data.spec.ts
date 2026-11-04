@@ -29,6 +29,7 @@ describe('toDashboardData', () => {
       image: '',
       published: false,
     })
+
     expect(data.links.map((link) => [link.id, link.active])).toEqual([
       ['first', true],
       ['second', false],

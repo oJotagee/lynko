@@ -15,7 +15,9 @@ function FeatureList({ features }: { features: string[] }) {
 
 export function PricingSection() {
   const t = useTranslations('Home.Pricing')
+
   const freeFeatures = [t('free1'), t('free2'), t('free3'), t('free4')]
+
   const proFeatures = [t('pro1'), t('pro2'), t('pro3'), t('pro4')]
 
   return (

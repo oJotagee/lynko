@@ -26,6 +26,7 @@ export const authService = {
 
     try {
       const user = await authRepository.create({ name, email, passwordHash })
+
       if (!user) throw new Error('Failed to create user')
 
       return user
@@ -46,7 +47,9 @@ export const authService = {
     }
 
     const sessionId = randomUUID()
+
     const { token, secretHash } = createRefreshToken(sessionId)
+
     const expiresAt = refreshTokenExpiresAt()
 
     await authRepository.createSession({
@@ -61,19 +64,23 @@ export const authService = {
 
   async refresh(refreshToken: string | undefined) {
     const parsed = refreshToken ? parseRefreshToken(refreshToken) : null
+
     if (!parsed) throw new UnauthorizedError('Invalid refresh token')
 
     const session = await authRepository.findSessionById(parsed.sessionId)
+
     if (!session || !isSessionActive(session)) {
       throw new UnauthorizedError('Invalid refresh token')
     }
 
     if (!secretMatchesHash(parsed.secret, session.refreshTokenHash)) {
       await authRepository.revokeSession(session.id)
+
       throw new UnauthorizedError('Invalid refresh token')
     }
 
     const { token, secretHash } = createRefreshToken(session.id)
+
     const expiresAt = refreshTokenExpiresAt()
 
     await authRepository.rotateSessionToken(session.id, secretHash, expiresAt)
@@ -88,6 +95,7 @@ export const authService = {
 
   async logout(refreshToken: string | undefined) {
     const parsed = refreshToken ? parseRefreshToken(refreshToken) : null
+
     if (!parsed) return
 
     const session = await authRepository.findSessionById(parsed.sessionId)

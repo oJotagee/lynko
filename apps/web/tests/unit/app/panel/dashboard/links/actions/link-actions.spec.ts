@@ -9,8 +9,11 @@ import {
 } from '../../../../../support/mocks'
 
 const { createLink } = await import('@/app/[locale]/(panel)/dashboard/links/_actions/create-link')
+
 const { updateLink } = await import('@/app/[locale]/(panel)/dashboard/links/_actions/update-link')
+
 const { deleteLink } = await import('@/app/[locale]/(panel)/dashboard/links/_actions/delete-link')
+
 const { reorderLinks } = await import(
   '@/app/[locale]/(panel)/dashboard/links/_actions/reorder-links'
 )
@@ -22,6 +25,7 @@ describe('link actions', () => {
 
   beforeEach(() => {
     api = spyOnApi()
+
     revalidatePath.mockClear()
   })
 
@@ -40,6 +44,7 @@ describe('link actions', () => {
         { title: 'Portfólio', url: 'https://example.com' },
         { headers: authorization },
       )
+
       expect(revalidatePath).toHaveBeenCalledWith('/[locale]/dashboard', 'layout')
       expect(result).toEqual({ data: link })
     })
@@ -77,6 +82,7 @@ describe('link actions', () => {
         { isActive: false },
         { headers: authorization },
       )
+
       expect(result.data?.isActive).toBe(false)
     })
 

@@ -1,4 +1,5 @@
 const HASH_OPTIONS = { algorithm: 'bcrypt', cost: 10 } as const
+
 const DUMMY_HASH = await Bun.password.hash('dummy-password-for-timing', HASH_OPTIONS)
 
 export function hashPassword(password: string) {

@@ -14,6 +14,7 @@ describe('home user avatar', () => {
     const html = renderToStaticMarkup(
       <UserAvatar user={{ name, email: 'test@example.com', image: null }} />,
     )
+
     expect(html).toContain(`>${initials}</span>`)
     expect(html).not.toContain('<img')
   })

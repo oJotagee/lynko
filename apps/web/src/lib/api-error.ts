@@ -10,14 +10,15 @@ const NETWORK_ERROR_MESSAGE =
 
 export function getApiErrorMessage(error: unknown, fallback: string): string {
   if (!isAxiosError(error)) return fallback
+
   if (!error.response) return NETWORK_ERROR_MESSAGE
 
   const { status, data } = error.response
 
   if (MESSAGE_BY_STATUS[status]) return MESSAGE_BY_STATUS[status]
+
   if (status >= 500) return fallback
 
-  // A API responde erros como { message }
   const body = data as { message?: unknown } | undefined
 
   return typeof body?.message === 'string' && body.message.trim() ? body.message : fallback

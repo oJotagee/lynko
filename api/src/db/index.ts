@@ -8,4 +8,5 @@ import * as schema from './schema'
 const relations = defineRelations(schema)
 
 const sql = neon(env.DATABASE_URL)
+
 export const db = drizzle({ client: sql, relations })

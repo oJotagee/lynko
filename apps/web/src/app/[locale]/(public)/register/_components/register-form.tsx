@@ -17,25 +17,33 @@ import { useRouter } from '@/i18n/navigation'
 
 export function RegisterForm() {
   const form = useRegisterSchema()
+
   const router = useRouter()
+
   const { visible, setVisible } = usePasswordVisibility()
+
   const t = useTranslations('Auth.Register')
+
   const passwordText = useTranslations('Auth.Password')
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (values: RegisterSchemaData) => {
       const response = await registerUser(values)
+
       if (response.error) return response
 
       const session = await login({ email: values.email, password: values.password })
 
       if (session.error) {
         toast.success('Conta criada. Entre com seu e-mail e senha.')
+
         router.replace('/login')
+
         return {}
       }
 
       toast.success('Conta criada com sucesso!')
+
       router.replace('/dashboard')
       router.refresh()
 

@@ -59,7 +59,6 @@ export interface LinkBrand {
   color: string
 }
 
-// shortcut: só as marcas mais comuns em páginas de links; amplie a lista quando surgir demanda.
 const brands: (LinkBrand & { domains: string[] })[] = [
   { name: 'YouTube', icon: SiYoutube, color: SiYoutubeHex, domains: ['youtube.com', 'youtu.be'] },
   {

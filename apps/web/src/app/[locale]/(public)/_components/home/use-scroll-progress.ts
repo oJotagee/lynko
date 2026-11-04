@@ -5,6 +5,7 @@ export function useScrollProgress(ref: RefObject<HTMLElement | null>) {
 
   useEffect(() => {
     const node = ref.current
+
     if (!node) return
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -12,15 +13,19 @@ export function useScrollProgress(ref: RefObject<HTMLElement | null>) {
     const update = () => {
       if (reduceMotion) {
         setProgress(1)
+
         return
       }
 
       const bounds = node.getBoundingClientRect()
+
       const travel = Math.max(1, node.offsetHeight - window.innerHeight)
+
       setProgress(Math.max(0, Math.min(1, -bounds.top / travel)))
     }
 
     update()
+
     window.addEventListener('scroll', update, { passive: true })
     window.addEventListener('resize', update)
 

@@ -20,6 +20,7 @@ export function registerErrorHandler(app: FastifyInstance) {
 
     if (isResponseSerializationError(error)) {
       request.log.error(error, 'Response serialization error')
+
       return reply.status(500).send({ message: 'Internal server error' })
     }
 
@@ -32,6 +33,7 @@ export function registerErrorHandler(app: FastifyInstance) {
     }
 
     request.log.error(error)
+
     return reply.status(500).send({ message: 'Internal server error' })
   })
 }

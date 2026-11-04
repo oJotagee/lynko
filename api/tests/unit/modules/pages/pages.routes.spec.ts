@@ -6,15 +6,18 @@ import { createTestApp, signIn } from '../../support/app'
 
 describe('pages routes', () => {
   let store: ReturnType<typeof useInMemoryRepositories>
+
   let app: Awaited<ReturnType<typeof createTestApp>>
 
   beforeEach(async () => {
     store = useInMemoryRepositories()
+
     app = await createTestApp()
   })
 
   afterEach(async () => {
     await app.close()
+
     mock.restore()
   })
 
@@ -73,7 +76,9 @@ describe('pages routes', () => {
 
   it('PATCH /pages/me publishes the page of the token owner only', async () => {
     const other = buildPage({ username: 'joao' })
+
     store.pages.push(other)
+
     const { page, headers } = signIn(app, store)
 
     const response = await app.inject({
@@ -99,7 +104,9 @@ describe('pages routes', () => {
 
   it('GET /pages/:username is public and only exposes active links', async () => {
     const page = buildPage({ username: 'maria', isPublished: true })
+
     store.pages.push(page)
+
     store.links.push(
       buildLink({ pageId: page.id, title: 'Visível' }),
       buildLink({ pageId: page.id, title: 'Oculto', isActive: false, position: 1 }),
@@ -109,6 +116,7 @@ describe('pages routes', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.json()).not.toHaveProperty('id')
+
     expect(response.json().links).toEqual([
       expect.objectContaining({ title: 'Visível', url: 'https://example.com' }),
     ])

@@ -7,7 +7,9 @@ type Store = ReturnType<typeof useInMemoryRepositories>
 
 export async function createTestApp() {
   const app = buildApp()
+
   app.log.level = 'silent'
+
   await app.ready()
 
   return app
@@ -19,6 +21,7 @@ export function signIn(
   overrides: { user?: Partial<User>; page?: Partial<Page> | false } = {},
 ) {
   const user = buildUser(overrides.user)
+
   const session = buildSession({ userId: user.id })
 
   store.users.push(user)

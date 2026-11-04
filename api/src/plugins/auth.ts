@@ -23,7 +23,6 @@ export const authPlugin = fp(
         throw new UnauthorizedError('Invalid or missing token')
       }
 
-      // Token válido, mas a sessão pode ter sido encerrada (logout) ou expirada
       const { sub, sid } = request.user
 
       if (!sid || !(await authService.isSessionValid(sid, sub))) {
