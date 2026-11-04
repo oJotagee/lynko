@@ -44,20 +44,28 @@ export function LinkRow({
   return (
     <li
       className={cn(
-        'relative flex flex-wrap items-center gap-2 border-t border-border bg-card px-3 py-5 sm:gap-3 sm:px-5',
+        'relative flex flex-col gap-3 rounded-xl border border-border bg-card p-4',
+        'sm:flex-row sm:flex-wrap sm:items-center sm:rounded-none sm:border-0 sm:border-t sm:px-5 sm:py-5',
         draggingId === link.id && 'opacity-40',
       )}
       onDragOver={(event) => {
         if (!draggingId) return
+
         event.preventDefault()
+
         event.dataTransfer.dropEffect = 'move'
+
         const bounds = event.currentTarget.getBoundingClientRect()
+
         onDragOver(index + (event.clientY >= bounds.top + bounds.height / 2 ? 1 : 0))
       }}
       onDrop={(event) => {
         if (!draggingId) return
+
         event.preventDefault()
+
         const bounds = event.currentTarget.getBoundingClientRect()
+
         onDrop(index + (event.clientY >= bounds.top + bounds.height / 2 ? 1 : 0))
       }}
     >
@@ -78,47 +86,60 @@ export function LinkRow({
         draggable
         onDragStart={(event) => {
           event.dataTransfer.setData('text/plain', link.id)
+
           event.dataTransfer.effectAllowed = 'move'
+
           const row = event.currentTarget.closest('li')
+
           if (row) {
             const bounds = row.getBoundingClientRect()
+
             const preview = row.cloneNode(true) as HTMLElement
+
             preview.classList.remove('opacity-40')
             preview.classList.add('fixed', 'pointer-events-none', 'z-50', 'rounded-lg', 'shadow-lg')
+
             Object.assign(preview.style, {
               top: `${bounds.top}px`,
               left: `${bounds.left}px`,
               width: `${bounds.width}px`,
               margin: '0',
             })
+
             preview.setAttribute('aria-hidden', 'true')
+
             preview.inert = true
+
             row.parentElement?.appendChild(preview)
+
             event.dataTransfer.setDragImage(preview, 24, bounds.height / 2)
-            // The browser captures the image before the next task; keep the copy out of React's list.
+
             setTimeout(() => preview.remove(), 0)
           }
+
           onDragStart(link.id)
         }}
         onDragEnd={onDragEnd}
-        className="cursor-grab p-1 text-muted-foreground active:cursor-grabbing"
+        className="hidden cursor-grab p-1 text-muted-foreground active:cursor-grabbing sm:inline-flex"
         title="Arraste para reordenar. Ou use os botões de mover."
       >
         <GripVertical className="size-4" aria-hidden="true" />
       </Button>
-      <LinkIcon
-        url={link.url}
-        fallbackColor={link.color}
-        className="size-10 border border-foreground/40 text-primary"
-        iconClassName="size-5"
-      />
-      <div className="min-w-0 flex-1 basis-24">
-        <p className="truncate text-sm font-semibold">{link.title}</p>
-        <p className="mt-1 truncate text-xs text-muted-foreground">
-          {link.url.replace(/^https?:\/\//, '')}
-        </p>
+      <div className="flex min-w-0 items-center gap-3 sm:flex-1 sm:basis-24">
+        <LinkIcon
+          url={link.url}
+          fallbackColor={link.color}
+          className="size-10 border border-foreground/40 text-primary"
+          iconClassName="size-5"
+        />
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-semibold">{link.title}</p>
+          <p className="mt-1 truncate text-xs text-muted-foreground">
+            {link.url.replace(/^https?:\/\//, '')}
+          </p>
+        </div>
       </div>
-      <div className="flex w-full items-center justify-end gap-1 pl-8 sm:w-auto sm:pl-0">
+      <div className="flex items-center justify-between border-t border-border pt-3 sm:w-auto sm:justify-end sm:gap-1 sm:border-0 sm:pt-0">
         <Button
           size="icon"
           variant="ghost"
