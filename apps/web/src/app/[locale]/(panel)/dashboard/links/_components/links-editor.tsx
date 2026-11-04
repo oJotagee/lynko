@@ -2,7 +2,7 @@
 
 import { useMutation } from '@tanstack/react-query'
 import { Plus } from 'lucide-react'
-import { useState } from 'react'
+import { useOptimistic, useState, useTransition } from 'react'
 import { toast } from 'sonner'
 
 import { type DashboardData, type DashboardLink, moveLink } from '../../_components/dashboard-data'
@@ -15,6 +15,14 @@ import { Link } from '@/i18n/navigation'
 import { LinkForm } from './link-form'
 import { LinkList } from './link-list'
 
+type LinksChange = { type: 'reorder'; ids: string[] } | { type: 'delete'; id: string }
+
+function applyChange(links: DashboardLink[], change: LinksChange) {
+  if (change.type === 'delete') return links.filter((link) => link.id !== change.id)
+
+  return change.ids.flatMap((id) => links.find((link) => link.id === id) ?? [])
+}
+
 interface LinksEditorProps {
   data: DashboardData
   hasPage: boolean
@@ -25,40 +33,62 @@ export function LinksEditor({ data, hasPage, startCreating }: LinksEditorProps) 
   const [editing, setEditing] = useState<DashboardLink | 'new' | null>(
     startCreating && hasPage ? 'new' : null,
   )
+
   const [deleting, setDeleting] = useState<DashboardLink | null>(null)
 
-  const reorder = useMutation({
-    mutationFn: reorderLinks,
-    onSuccess: (response) => {
-      if (response.error) toast.error(response.error)
-      else toast.success('Ordem dos links atualizada')
-    },
-  })
+  const [isPending, startTransition] = useTransition()
 
-  const remove = useMutation({
-    mutationFn: deleteLink,
-    onSuccess: (response) => {
-      if (response.error) {
-        toast.error(response.error)
-        return
+  const [links, applyOptimistic] = useOptimistic(data.links, applyChange)
+
+  const reorder = useMutation({ mutationFn: reorderLinks })
+
+  const remove = useMutation({ mutationFn: deleteLink })
+
+  function save(
+    change: LinksChange,
+    request: () => Promise<{ error?: string }>,
+    messages: { success: string; error: string },
+    onSaved?: () => void,
+  ) {
+    startTransition(async () => {
+      applyOptimistic(change)
+
+      try {
+        const response = await request()
+
+        if (response.error) {
+          toast.error(response.error)
+
+          return
+        }
+
+        toast.success(messages.success)
+
+        onSaved?.()
+      } catch {
+        toast.error(messages.error)
       }
-
-      toast.success('Link excluído')
-      setDeleting(null)
-    },
-  })
-
-  // Mostra a mudança enquanto a action roda; a resposta traz os links revalidados do servidor.
-  let links = data.links
-  if (reorder.isPending && reorder.variables) {
-    links = reorder.variables.flatMap((id) => links.find((link) => link.id === id) ?? [])
+    })
   }
-  if (remove.isPending) links = links.filter((link) => link.id !== remove.variables)
-
-  const isPending = reorder.isPending || remove.isPending
 
   function move(id: string, target: number) {
-    if (!isPending) reorder.mutate(moveLink(links, id, target).map((link) => link.id))
+    if (isPending) return
+
+    const ids = moveLink(links, id, target).map((link) => link.id)
+
+    save({ type: 'reorder', ids }, () => reorder.mutateAsync(ids), {
+      success: 'Ordem dos links atualizada',
+      error: 'Não foi possível reordenar os links',
+    })
+  }
+
+  function confirmDelete(link: DashboardLink) {
+    save(
+      { type: 'delete', id: link.id },
+      () => remove.mutateAsync(link.id),
+      { success: 'Link excluído', error: 'Não foi possível excluir o link' },
+      () => setDeleting(null),
+    )
   }
 
   if (!hasPage)
@@ -110,8 +140,8 @@ export function LinksEditor({ data, hasPage, startCreating }: LinksEditorProps) 
       )}
       <DeleteLinkDialog
         link={deleting}
-        isPending={remove.isPending}
-        onConfirm={(link) => remove.mutate(link.id)}
+        isPending={isPending}
+        onConfirm={confirmDelete}
         onCancel={() => setDeleting(null)}
       />
     </div>
