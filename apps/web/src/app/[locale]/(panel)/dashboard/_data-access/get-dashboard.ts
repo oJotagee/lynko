@@ -3,7 +3,7 @@
 import { isAxiosError } from 'axios'
 import { cache } from 'react'
 
-import { getApiAuthorization } from '@/lib/get-api-authorization'
+import { getApiAuthorization, SessionExpiredError } from '@/lib/get-api-authorization'
 import { getApiErrorMessage } from '@/lib/api-error'
 import { api } from '@/lib/api'
 
@@ -68,6 +68,12 @@ const loadDashboard = cache(async (): Promise<ApiDashboard> => {
 
     return { user, page, links }
   } catch (error) {
+    if (
+      error instanceof SessionExpiredError ||
+      (isAxiosError(error) && error.response?.status === 401)
+    )
+      throw new SessionExpiredError()
+
     throw new Error(
       getApiErrorMessage(
         error,

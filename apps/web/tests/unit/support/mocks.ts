@@ -7,16 +7,13 @@ export const authorization = { Authorization: 'Bearer access-token' }
 
 export const revalidatePath = mock((..._args: unknown[]) => undefined)
 
-// mock.module vale para o processo inteiro: os outros specs continuam usando o restante do módulo real.
 const realAuthorization = await import('@/lib/get-api-authorization')
 
-mock.module('next/cache', () => ({ revalidatePath }))
-mock.module('@/lib/get-api-authorization', () => ({
-  ...realAuthorization,
-  getApiAuthorization: async () => authorization,
-}))
+export const getApiAuthorization = mock(async () => authorization)
 
-// spyOn em vez de mock.module: o auth.spec usa o mesmo axios com adapter próprio.
+mock.module('next/cache', () => ({ revalidatePath }))
+mock.module('@/lib/get-api-authorization', () => ({ ...realAuthorization, getApiAuthorization }))
+
 export function spyOnApi() {
   return {
     get: spyOn(api, 'get'),

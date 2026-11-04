@@ -1,7 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test'
 
 import { buildApiDashboard } from '../../../../support/builders'
-import { authorization, createAxiosError, spyOnApi } from '../../../../support/mocks'
+import {
+  authorization,
+  createAxiosError,
+  getApiAuthorization,
+  spyOnApi,
+} from '../../../../support/mocks'
+
+const { SessionExpiredError } = await import('@/lib/get-api-authorization')
 
 const { getDashboard } = await import('@/app/[locale]/(panel)/dashboard/_data-access/get-dashboard')
 
@@ -13,6 +20,7 @@ describe('getDashboard', () => {
   function respondWith(responses: Record<string, unknown>) {
     api.get.mockImplementation((async (url: string) => {
       const response = responses[url]
+
       if (response instanceof Error) throw response
 
       return { data: response }
@@ -37,6 +45,7 @@ describe('getDashboard', () => {
     const result = await getDashboard()
 
     expect(result).toEqual(dashboard)
+
     expect(api.get.mock.calls).toEqual([
       ['/users/me', { headers: authorization }],
       ['/pages/me', { headers: authorization }],
@@ -64,11 +73,26 @@ describe('getDashboard', () => {
     )
   })
 
-  it('throws the session message when the token expired', async () => {
+  const toSessionExpired = { digest: 'SESSION_EXPIRED' }
+
+  it('ends the session when the API rejects the access token', async () => {
     respondWith({ '/users/me': createAxiosError(401, { message: 'Unauthorized' }) })
 
+    await expect(getDashboard()).rejects.toMatchObject(toSessionExpired)
+  })
+
+  it('ends the session when there is no valid access token to send', async () => {
+    getApiAuthorization.mockRejectedValueOnce(new SessionExpiredError())
+
+    await expect(getDashboard()).rejects.toMatchObject(toSessionExpired)
+    expect(api.get).not.toHaveBeenCalled()
+  })
+
+  it('keeps the error screen for failures that are not about the session', async () => {
+    respondWith({ '/users/me': createAxiosError(500, { message: 'boom' }) })
+
     await expect(getDashboard()).rejects.toThrow(
-      'Sua sessão expirou. Entre novamente para continuar.',
+      'Não foi possível carregar seu dashboard. Tente novamente.',
     )
   })
 })

@@ -3,6 +3,15 @@ import { cookies, headers } from 'next/headers'
 import { getToken } from 'next-auth/jwt'
 
 import { handlers } from './auth'
+import { SESSION_EXPIRED_DIGEST } from './session-expired'
+
+export class SessionExpiredError extends Error {
+  readonly digest = SESSION_EXPIRED_DIGEST
+
+  constructor() {
+    super('Sua sessão expirou. Entre novamente para continuar.')
+  }
+}
 
 export async function getApiAuthorization(): Promise<{ Authorization: string }> {
   const request = new NextRequest(
@@ -11,8 +20,11 @@ export async function getApiAuthorization(): Promise<{ Authorization: string }> 
   )
 
   return getAuthorizationFromRequest(request, async (refreshed) => {
-    const jar = await cookies()
-    for (const cookie of refreshed) jar.set(cookie)
+    try {
+      const jar = await cookies()
+
+      for (const cookie of refreshed) jar.set(cookie)
+    } catch {}
   })
 }
 
@@ -47,7 +59,7 @@ export async function getAuthorizationFromRequest(
     !token.accessTokenExpiresAt ||
     Date.now() >= token.accessTokenExpiresAt
   ) {
-    throw new Error('Sua sessão expirou. Entre novamente para continuar.')
+    throw new SessionExpiredError()
   }
 
   return { Authorization: `Bearer ${token.accessToken}` }

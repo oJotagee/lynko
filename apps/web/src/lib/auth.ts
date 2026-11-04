@@ -5,8 +5,40 @@ import { isAxiosError } from 'axios'
 import { z } from 'zod'
 
 import { type UserSession, userSessionSchema } from './user-session'
-import { readApiTokens } from './read-api-tokens'
+import { type ApiTokens, readApiTokens } from './read-api-tokens'
 import { api } from './api'
+
+const REFRESH_REUSE_MS = 30_000
+
+const globalRefreshes = globalThis as typeof globalThis & {
+  lynkoRefreshes?: Map<string, { at: number; tokens: Promise<ApiTokens> }>
+}
+
+const refreshes = (globalRefreshes.lynkoRefreshes ??= new Map())
+
+function refreshTokens(refreshToken: string): Promise<ApiTokens> {
+  const now = Date.now()
+
+  for (const [key, entry] of refreshes) {
+    if (now - entry.at > REFRESH_REUSE_MS) refreshes.delete(key)
+  }
+
+  const cached = refreshes.get(refreshToken)
+
+  if (cached) return cached.tokens
+
+  const tokens = api
+    .post<{ accessToken: string }>('/auth/refresh', null, {
+      headers: { Cookie: `refreshToken=${refreshToken}` },
+    })
+    .then(readApiTokens)
+
+  refreshes.set(refreshToken, { at: now, tokens })
+
+  tokens.catch(() => refreshes.delete(refreshToken))
+
+  return tokens
+}
 
 class TooManyLoginAttempts extends CredentialsSignin {
   code = 'too_many_attempts'
@@ -32,6 +64,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       async authorize(credentials) {
         const input = credentialsSchema.safeParse(credentials)
+
         if (!input.success) return null
 
         try {
@@ -64,12 +97,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, user, trigger }) {
       if (user) {
         token.accessToken = user.accessToken
+
         token.refreshToken = user.refreshToken
+
         token.accessTokenExpiresAt = user.accessTokenExpiresAt
+
         token.sub = user.id
+
         token.name = user.name
+
         token.email = user.email
+
         token.picture = user.image ?? null
+
         return token
       }
 
@@ -77,11 +117,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       if (Date.now() >= token.accessTokenExpiresAt) {
         try {
-          const response = await api.post<{ accessToken: string }>('/auth/refresh', null, {
-            headers: { Cookie: `refreshToken=${token.refreshToken}` },
-          })
-
-          Object.assign(token, readApiTokens(response))
+          Object.assign(token, await refreshTokens(token.refreshToken))
         } catch {
           return null
         }
@@ -98,11 +134,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           if (profile.id !== token.sub) return null
 
           token.name = profile.name
+
           token.email = profile.email
 
           delete token.error
         } catch (error) {
           if (isAxiosError(error) && error.response?.status === 401) return null
+
           token.error = 'UserUpdateFailed'
         }
       }
@@ -111,8 +149,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     session({ session, token }) {
       session.user.id = token.sub as string
+
       session.user.name = token.name ?? null
+
       session.user.email = token.email ?? session.user.email
+
       session.user.image = token.picture ?? null
 
       if (token.error) session.error = token.error
@@ -127,9 +168,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           await api.post('/auth/logout', null, {
             headers: { Cookie: `refreshToken=${message.token.refreshToken}` },
           })
-        } catch {
-          // A sessão local deve ser encerrada mesmo quando a API estiver indisponível.
-        }
+        } catch {}
       }
     },
   },
