@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**", "!**/drizzle", "!**/bun.lock"]
+    "includes": ["**", "!**/drizzle", "!**/bun.lock", "!.agents/skills", "!.claude/skills"]
   },
   "formatter": {
     "enabled": true,
