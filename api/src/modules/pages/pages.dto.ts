@@ -2,6 +2,8 @@ import { z } from 'zod'
 
 import { publicLinkResponse } from '../links/links.dto'
 
+import { pageAppearanceSchema } from './pages.appearance'
+import { socialLinkResponse, socialLinksSchema } from './pages.social'
 import { defaultPageTheme, pageThemeSchema } from './pages.theme'
 
 const RESERVED_USERNAMES = new Set([
@@ -58,7 +60,10 @@ export const updatePageBody = z
     title,
     bio: bio.nullable(),
     avatarUrl: avatarUrl.nullable(),
+    avatarMediaId: z.uuid().nullable(),
     theme: pageThemeSchema.partial(),
+    socialLinks: socialLinksSchema,
+    appearance: pageAppearanceSchema,
     isPublished: z.boolean(),
   })
   .partial()
@@ -74,7 +79,11 @@ export const pageResponse = z.object({
   title: z.string(),
   bio: z.string().nullable(),
   avatarUrl: z.string().nullable(),
+  avatarMediaId: z.uuid().nullable(),
+  backgroundImageUrl: z.string().nullable(),
   theme: pageThemeSchema,
+  appearance: pageAppearanceSchema,
+  socialLinks: z.array(socialLinkResponse),
   isPublished: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -86,9 +95,14 @@ export const publicPageResponse = pageResponse
     title: true,
     bio: true,
     avatarUrl: true,
+    backgroundImageUrl: true,
     theme: true,
+    appearance: true,
   })
-  .extend({ links: z.array(publicLinkResponse) })
+  .extend({
+    socialLinks: z.array(socialLinkResponse.pick({ platform: true, url: true })),
+    links: z.array(publicLinkResponse),
+  })
 
 export type CreatePageBody = z.infer<typeof createPageBody>
 

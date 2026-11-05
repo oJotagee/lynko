@@ -2,14 +2,17 @@ import { spyOn } from 'bun:test'
 
 import { authRepository } from '../../../src/modules/auth/auth.repository'
 import { linksRepository } from '../../../src/modules/links/links.repository'
+import { mediaRepository } from '../../../src/modules/media/media.repository'
 import { pagesRepository } from '../../../src/modules/pages/pages.repository'
 import { usersRepository } from '../../../src/modules/users/users.repository'
 import {
   buildLink,
+  buildMedia,
   buildPage,
   buildSession,
   buildUser,
   type Link,
+  type Media,
   type Page,
   type Session,
   type User,
@@ -29,6 +32,7 @@ export function useInMemoryRepositories() {
     sessions: [] as Session[],
     pages: [] as Page[],
     links: [] as Link[],
+    media: [] as Media[],
   }
 
   spyOn(authRepository, 'findByEmailWithPassword').mockImplementation(async (email) =>
@@ -151,6 +155,63 @@ export function useInMemoryRepositories() {
 
       if (link.pageId === pageId && position >= 0) link.position = position
     }
+  })
+
+  spyOn(mediaRepository, 'findById').mockImplementation(async (id, pageId) =>
+    store.media.find((media) => media.id === id && media.pageId === pageId),
+  )
+
+  spyOn(mediaRepository, 'findReadyOwned').mockImplementation(async (id, pageId, type) =>
+    store.media.find(
+      (media) =>
+        media.id === id &&
+        media.pageId === pageId &&
+        media.type === type &&
+        media.status === 'ready',
+    ),
+  )
+
+  spyOn(mediaRepository, 'findReadyByIds').mockImplementation(async (ids) =>
+    store.media.filter((media) => ids.includes(media.id) && media.status === 'ready'),
+  )
+
+  spyOn(mediaRepository, 'countPending').mockImplementation(
+    async (pageId) =>
+      store.media.filter((media) => media.pageId === pageId && media.status === 'pending').length,
+  )
+
+  spyOn(mediaRepository, 'create').mockImplementation(async (data) => {
+    const media = buildMedia(data)
+
+    store.media.push(media)
+
+    return media
+  })
+
+  spyOn(mediaRepository, 'markReady').mockImplementation(async (id, pageId, changes) => {
+    const media = store.media.find(
+      (item) => item.id === id && item.pageId === pageId && item.status === 'pending',
+    )
+
+    return media && Object.assign(media, changes, { status: 'ready' as const })
+  })
+
+  spyOn(mediaRepository, 'markFailed').mockImplementation(async (id, pageId) => {
+    const media = store.media.find(
+      (item) => item.id === id && item.pageId === pageId && item.status === 'pending',
+    )
+
+    if (media) media.status = 'failed'
+  })
+
+  spyOn(mediaRepository, 'delete').mockImplementation(async (id, pageId) => {
+    const media = store.media.find((item) => item.id === id && item.pageId === pageId)
+
+    if (!media) return undefined
+
+    store.media = store.media.filter((item) => item !== media)
+
+    return { id: media.id }
   })
 
   return store

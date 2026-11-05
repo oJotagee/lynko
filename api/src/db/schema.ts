@@ -10,6 +10,8 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core'
 
+import type { PageAppearance } from '../modules/pages/pages.appearance'
+import type { SocialLink } from '../modules/pages/pages.social'
 import type { PageTheme } from '../modules/pages/pages.theme'
 
 export const timestamps = {
@@ -53,7 +55,10 @@ export const pageSchema = pgTable('pages', {
   title: varchar('title', { length: 80 }).notNull(),
   bio: varchar('bio', { length: 160 }),
   avatarUrl: text('avatar_url'),
+  avatarMediaId: uuid('avatar_media_id'),
   theme: jsonb('theme').$type<PageTheme>().notNull(),
+  appearance: jsonb('appearance').$type<PageAppearance>(),
+  socialLinks: jsonb('social_links').$type<SocialLink[]>().notNull().default([]),
   isPublished: boolean('is_published').notNull().default(false),
   ...timestamps,
 })
@@ -72,4 +77,24 @@ export const linkSchema = pgTable(
     ...timestamps,
   },
   (table) => [index('links_page_id_position_idx').on(table.pageId, table.position)],
+)
+
+export const mediaSchema = pgTable(
+  'media',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    pageId: uuid('page_id')
+      .notNull()
+      .references(() => pageSchema.id, { onDelete: 'cascade' }),
+    key: text('key').notNull().unique('media_key_unique'),
+    type: varchar('type', { length: 16 }).$type<'avatar' | 'background'>().notNull(),
+    mimeType: varchar('mime_type', { length: 32 }).notNull(),
+    size: integer('size').notNull(),
+    status: varchar('status', { length: 16 })
+      .$type<'pending' | 'ready' | 'failed'>()
+      .notNull()
+      .default('pending'),
+    ...timestamps,
+  },
+  (table) => [index('media_page_id_status_idx').on(table.pageId, table.status)],
 )

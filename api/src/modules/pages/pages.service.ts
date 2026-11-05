@@ -1,8 +1,16 @@
-import { ConflictError, NotFoundError } from '../../shared/errors'
-import type { CreatePageBody, UpdatePageBody } from './pages.dto'
+import type { pageSchema } from '../../db/schema'
 import { getUniqueViolation } from '../../shared/db-errors'
+import { ConflictError, NotFoundError } from '../../shared/errors'
 import { linksRepository } from '../links/links.repository'
+import type { MediaType } from '../media/media.dto'
+import { mediaRepository } from '../media/media.repository'
+import { getMediaUrl, mediaService } from '../media/media.service'
+import { getBackgroundMediaId, resolveAppearance } from './pages.appearance'
+import type { CreatePageBody, UpdatePageBody } from './pages.dto'
 import { pagesRepository } from './pages.repository'
+import type { SocialLink } from './pages.social'
+
+type Page = typeof pageSchema.$inferSelect
 
 const PAGE_ALREADY_EXISTS = 'User already has a page'
 
@@ -16,6 +24,59 @@ function toConflictError(error: unknown) {
   if (constraint === 'pages_user_id_unique') return new ConflictError(PAGE_ALREADY_EXISTS)
 
   return error
+}
+
+async function toPageResponse(page: Page) {
+  const appearance = resolveAppearance(page)
+
+  const backgroundMediaId = getBackgroundMediaId(appearance)
+
+  const media = await mediaRepository.findReadyByIds(
+    [page.avatarMediaId, backgroundMediaId].filter((id) => id !== null),
+  )
+
+  function urlOf(id: string | null) {
+    const item = media.find((entry) => entry.id === id && entry.pageId === page.id)
+
+    return item ? getMediaUrl(item.key) : null
+  }
+
+  return {
+    ...page,
+    appearance,
+    avatarUrl: urlOf(page.avatarMediaId) ?? page.avatarUrl,
+    backgroundImageUrl: urlOf(backgroundMediaId),
+  }
+}
+
+async function findMineOrThrow(userId: string) {
+  const page = await pagesRepository.findByUserId(userId)
+
+  if (!page) {
+    throw new NotFoundError('Page not found')
+  }
+
+  return page
+}
+
+async function assertOwnedReadyMedia(pageId: string, id: string, type: MediaType) {
+  if (!(await mediaRepository.findReadyOwned(id, pageId, type))) {
+    throw new NotFoundError('Media not found')
+  }
+}
+
+async function discardReplaced(pageId: string, previous: string | null, next: string | null) {
+  if (!previous || previous === next) return
+
+  try {
+    await mediaService.discard(pageId, previous)
+  } catch (error) {
+    console.error('Failed to remove replaced media', previous, error)
+  }
+}
+
+function toPublicSocialLinks(socialLinks: SocialLink[]) {
+  return socialLinks.filter((link) => link.isActive).map(({ platform, url }) => ({ platform, url }))
 }
 
 export const pagesService = {
@@ -33,24 +94,18 @@ export const pagesService = {
 
       if (!page) throw new Error('Failed to create page')
 
-      return page
+      return toPageResponse(page)
     } catch (error) {
       throw toConflictError(error)
     }
   },
 
   async getMine(userId: string) {
-    const page = await pagesRepository.findByUserId(userId)
-
-    if (!page) {
-      throw new NotFoundError('Page not found')
-    }
-
-    return page
+    return toPageResponse(await findMineOrThrow(userId))
   },
 
   async updateMine(userId: string, { theme, ...changes }: UpdatePageBody) {
-    const current = await pagesService.getMine(userId)
+    const current = await findMineOrThrow(userId)
 
     if (changes.username && changes.username !== current.username) {
       const owner = await pagesRepository.findByUsername(changes.username)
@@ -60,18 +115,42 @@ export const pagesService = {
       }
     }
 
+    const previousAvatar = current.avatarMediaId
+
+    const nextAvatar = changes.avatarMediaId === undefined ? previousAvatar : changes.avatarMediaId
+
+    const previousBackground = getBackgroundMediaId(current.appearance)
+
+    const nextBackground = changes.appearance
+      ? getBackgroundMediaId(changes.appearance)
+      : previousBackground
+
+    if (nextAvatar && nextAvatar !== previousAvatar) {
+      await assertOwnedReadyMedia(current.id, nextAvatar, 'avatar')
+    }
+
+    if (nextBackground && nextBackground !== previousBackground) {
+      await assertOwnedReadyMedia(current.id, nextBackground, 'background')
+    }
+
+    let page: Page | undefined
+
     try {
-      const page = await pagesRepository.updateByUserId(userId, {
+      page = await pagesRepository.updateByUserId(userId, {
         ...changes,
         ...(theme && { theme: { ...current.theme, ...theme } }),
       })
-
-      if (!page) throw new NotFoundError('Page not found')
-
-      return page
     } catch (error) {
       throw toConflictError(error)
     }
+
+    if (!page) throw new NotFoundError('Page not found')
+
+    await discardReplaced(current.id, previousAvatar, nextAvatar)
+
+    await discardReplaced(current.id, previousBackground, nextBackground)
+
+    return toPageResponse(page)
   },
 
   async deleteMine(userId: string) {
@@ -89,12 +168,20 @@ export const pagesService = {
       throw new NotFoundError('Page not found')
     }
 
-    return { ...page, links: await linksRepository.findActiveByPageId(page.id) }
+    return {
+      ...(await toPageResponse(page)),
+      socialLinks: toPublicSocialLinks(page.socialLinks),
+      links: await linksRepository.findActiveByPageId(page.id),
+    }
   },
 
   async getPreview(userId: string) {
     const page = await pagesService.getMine(userId)
 
-    return { ...page, links: await linksRepository.findActiveByPageId(page.id) }
+    return {
+      ...page,
+      socialLinks: toPublicSocialLinks(page.socialLinks),
+      links: await linksRepository.findActiveByPageId(page.id),
+    }
   },
 }

@@ -12,6 +12,15 @@ const envSchema = z.object({
     .default('http://localhost:3000')
     .transform((value) => value.split(',').map((origin) => origin.trim()))
     .pipe(z.array(z.url())),
+  AWS_REGION: z.string().min(1).optional(),
+  S3_BUCKET: z.string().min(1).optional(),
+  CDN_URL: z
+    .url({ protocol: /^https?$/ })
+    .transform((value) => value.replace(/\/+$/, ''))
+    .optional(),
+  MEDIA_AVATAR_MAX_BYTES: z.coerce.number().int().positive().default(5242880),
+  MEDIA_BACKGROUND_MAX_BYTES: z.coerce.number().int().positive().default(10485760),
+  MEDIA_MAX_PENDING_PER_PAGE: z.coerce.number().int().positive().default(5),
 })
 
 const parsed = envSchema.safeParse(process.env)

@@ -5,6 +5,7 @@ import { healthRoutes } from './modules/health/health.routes'
 import { usersRoutes } from './modules/users/users.routes'
 import { pagesRoutes } from './modules/pages/pages.routes'
 import { linksRoutes } from './modules/links/links.routes'
+import { mediaRoutes } from './modules/media/media.routes'
 import { authRoutes } from './modules/auth/auth.routes'
 import { registerSecurity } from './plugins/security'
 import { registerSwagger } from './plugins/swagger'
@@ -44,6 +45,7 @@ export function buildApp() {
   app.register(usersRoutes, { prefix: '/users' })
   app.register(pagesRoutes, { prefix: '/pages' })
   app.register(linksRoutes, { prefix: '/links' })
+  app.register(mediaRoutes, { prefix: '/media' })
 
   return app
 }

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const hexColor = z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Expected a hex color like #1a2b3c')
+export const hexColor = z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Expected a hex color like #1a2b3c')
 
 export const pageThemeSchema = z.object({
   backgroundColor: hexColor,
