@@ -1,7 +1,6 @@
 import { and, eq } from 'drizzle-orm'
-
-import { pageSchema } from '../../db/schema'
 import { db } from '../../db'
+import { pageSchema } from '../../db/schema'
 
 type PageChanges = Partial<Omit<NewPage, 'id' | 'userId' | 'createdAt' | 'updatedAt'>>
 

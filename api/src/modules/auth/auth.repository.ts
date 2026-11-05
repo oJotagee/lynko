@@ -1,8 +1,7 @@
 import { and, eq, isNull } from 'drizzle-orm'
-
-import { publicUserColumns } from '../users/users.repository'
-import { sessionSchema, userSchema } from '../../db/schema'
 import { db } from '../../db'
+import { sessionSchema, userSchema } from '../../db/schema'
+import { publicUserColumns } from '../users/users.repository'
 
 type NewSession = typeof sessionSchema.$inferInsert
 

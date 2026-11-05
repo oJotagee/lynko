@@ -1,10 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test'
-
-import { BadRequestError, ConflictError, NotFoundError } from '../../../../src/shared/errors'
 import { MAX_LINKS_PER_PAGE } from '../../../../src/modules/links/links.dto'
-import { useInMemoryRepositories } from '../../support/memory-repositories'
 import { linksService } from '../../../../src/modules/links/links.service'
+import { BadRequestError, ConflictError, NotFoundError } from '../../../../src/shared/errors'
 import { buildLink, buildPage, type Page } from '../../support/builders'
+import { useInMemoryRepositories } from '../../support/memory-repositories'
 
 describe('linksService', () => {
   let store: ReturnType<typeof useInMemoryRepositories>

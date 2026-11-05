@@ -23,15 +23,19 @@ export function resetNextMocks() {
   pathname = '/dashboard'
 }
 
+function MockLink({ href, children, ...props }: React.ComponentProps<'a'> & { href: string }) {
+  return (
+    <a href={href} {...props}>
+      {children}
+    </a>
+  )
+}
+
 mock.module('@/i18n/navigation', () => ({
   useRouter: () => router,
   usePathname: () => pathname,
   redirect: mock(() => undefined),
-  Link: ({ href, children, ...props }: React.ComponentProps<'a'> & { href: string }) => (
-    <a href={href} {...props}>
-      {children}
-    </a>
-  ),
+  Link: MockLink,
 }))
 
 mock.module('sonner', () => ({ toast }))

@@ -1,12 +1,11 @@
 import { randomUUID } from 'node:crypto'
-
-import { createRefreshToken, parseRefreshToken, secretMatchesHash } from '../../shared/token'
+import { env } from '../../config/env'
+import { getUniqueViolation } from '../../shared/db-errors'
 import { ConflictError, UnauthorizedError } from '../../shared/errors'
 import { hashPassword, verifyPassword } from '../../shared/password'
-import { getUniqueViolation } from '../../shared/db-errors'
+import { createRefreshToken, parseRefreshToken, secretMatchesHash } from '../../shared/token'
 import type { LoginBody, RegisterBody } from './auth.dto'
 import { authRepository } from './auth.repository'
-import { env } from '../../config/env'
 
 function refreshTokenExpiresAt() {
   return new Date(Date.now() + env.REFRESH_TOKEN_EXPIRES_IN_DAYS * 24 * 60 * 60 * 1000)

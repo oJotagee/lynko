@@ -7,12 +7,8 @@ export function renderWithProviders(ui: React.ReactElement) {
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
   })
 
-  function Wrapper({ children }: { children: React.ReactNode }) {
-    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  }
-
   return {
     user: userEvent.setup(),
-    ...render(ui, { wrapper: Wrapper }),
+    ...render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>),
   }
 }

@@ -1,7 +1,6 @@
 import { and, asc, eq, sql } from 'drizzle-orm'
-
-import { linkSchema } from '../../db/schema'
 import { db } from '../../db'
+import { linkSchema } from '../../db/schema'
 
 type LinkChanges = Partial<Pick<typeof linkSchema.$inferInsert, 'title' | 'url' | 'isActive'>>
 

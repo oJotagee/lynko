@@ -1,12 +1,11 @@
-import Credentials from 'next-auth/providers/credentials'
-import NextAuth, { CredentialsSignin } from 'next-auth'
-import Google from 'next-auth/providers/google'
 import { isAxiosError } from 'axios'
+import NextAuth, { CredentialsSignin } from 'next-auth'
+import Credentials from 'next-auth/providers/credentials'
+import Google from 'next-auth/providers/google'
 import { z } from 'zod'
-
-import { type UserSession, userSessionSchema } from './user-session'
-import { type ApiTokens, readApiTokens } from './read-api-tokens'
 import { api } from './api'
+import { type ApiTokens, readApiTokens } from './read-api-tokens'
+import { type UserSession, userSessionSchema } from './user-session'
 
 const REFRESH_REUSE_MS = 30_000
 
@@ -14,7 +13,9 @@ const globalRefreshes = globalThis as typeof globalThis & {
   lynkoRefreshes?: Map<string, { at: number; tokens: Promise<ApiTokens> }>
 }
 
-const refreshes = (globalRefreshes.lynkoRefreshes ??= new Map())
+globalRefreshes.lynkoRefreshes ??= new Map()
+
+const refreshes = globalRefreshes.lynkoRefreshes
 
 function refreshTokens(refreshToken: string): Promise<ApiTokens> {
   const now = Date.now()

@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test'
-
-import { useInMemoryRepositories } from '../../support/memory-repositories'
 import { createTestApp, signIn } from '../../support/app'
+import { useInMemoryRepositories } from '../../support/memory-repositories'
 
 describe('users routes', () => {
   let store: ReturnType<typeof useInMemoryRepositories>

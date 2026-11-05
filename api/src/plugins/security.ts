@@ -1,7 +1,7 @@
+import fastifyCors from '@fastify/cors'
+import fastifyHelmet from '@fastify/helmet'
 import fastifyRateLimit from '@fastify/rate-limit'
 import type { FastifyInstance } from 'fastify'
-import fastifyHelmet from '@fastify/helmet'
-import fastifyCors from '@fastify/cors'
 
 import { env } from '../config/env'
 

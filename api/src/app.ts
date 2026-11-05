@@ -1,15 +1,14 @@
 import Fastify from 'fastify'
-
-import { registerErrorHandler } from './plugins/error-handler'
+import { authRoutes } from './modules/auth/auth.routes'
 import { healthRoutes } from './modules/health/health.routes'
-import { usersRoutes } from './modules/users/users.routes'
-import { pagesRoutes } from './modules/pages/pages.routes'
 import { linksRoutes } from './modules/links/links.routes'
 import { mediaRoutes } from './modules/media/media.routes'
-import { authRoutes } from './modules/auth/auth.routes'
+import { pagesRoutes } from './modules/pages/pages.routes'
+import { usersRoutes } from './modules/users/users.routes'
+import { authPlugin } from './plugins/auth'
+import { registerErrorHandler } from './plugins/error-handler'
 import { registerSecurity } from './plugins/security'
 import { registerSwagger } from './plugins/swagger'
-import { authPlugin } from './plugins/auth'
 import { registerZod } from './plugins/zod'
 
 export function buildApp() {

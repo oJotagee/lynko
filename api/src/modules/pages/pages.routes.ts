@@ -1,7 +1,5 @@
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod'
-
-import { pagesService } from './pages.service'
 import {
   createPageBody,
   pageResponse,
@@ -9,6 +7,7 @@ import {
   updatePageBody,
   usernameParams,
 } from './pages.dto'
+import { pagesService } from './pages.service'
 
 export const pagesRoutes: FastifyPluginAsyncZod = async (app) => {
   app.post(

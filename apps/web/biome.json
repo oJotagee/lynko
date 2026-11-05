@@ -12,5 +12,13 @@
       "next": "recommended",
       "react": "recommended"
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["src/components/ui/**"],
+      "linter": {
+        "enabled": false
+      }
+    }
+  ]
 }

@@ -1,6 +1,6 @@
-import { type CreateLinkBody, MAX_LINKS_PER_PAGE, type UpdateLinkBody } from './links.dto'
 import { BadRequestError, ConflictError, NotFoundError } from '../../shared/errors'
 import { pagesRepository } from '../pages/pages.repository'
+import { type CreateLinkBody, MAX_LINKS_PER_PAGE, type UpdateLinkBody } from './links.dto'
 import { linksRepository } from './links.repository'
 
 const LINK_NOT_FOUND = 'Link not found'

@@ -1,7 +1,7 @@
-import scalarApiReference from '@scalar/fastify-api-reference'
-import { jsonSchemaTransform } from 'fastify-type-provider-zod'
-import type { FastifyInstance } from 'fastify'
 import fastifySwagger from '@fastify/swagger'
+import scalarApiReference from '@scalar/fastify-api-reference'
+import type { FastifyInstance } from 'fastify'
+import { jsonSchemaTransform } from 'fastify-type-provider-zod'
 
 export function registerSwagger(app: FastifyInstance) {
   app.register(fastifySwagger, {

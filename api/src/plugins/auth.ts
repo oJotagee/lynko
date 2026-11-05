@@ -1,11 +1,10 @@
-import type { FastifyRequest } from 'fastify'
 import fastifyCookie from '@fastify/cookie'
 import fastifyJwt from '@fastify/jwt'
+import type { FastifyRequest } from 'fastify'
 import fp from 'fastify-plugin'
-
+import { env } from '../config/env'
 import { authService } from '../modules/auth/auth.service'
 import { UnauthorizedError } from '../shared/errors'
-import { env } from '../config/env'
 
 export const authPlugin = fp(
   async (app) => {

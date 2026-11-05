@@ -1,11 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test'
-
-import { ConflictError, UnauthorizedError } from '../../../../src/shared/errors'
-import { useInMemoryRepositories } from '../../support/memory-repositories'
 import { authService } from '../../../../src/modules/auth/auth.service'
+import { ConflictError, UnauthorizedError } from '../../../../src/shared/errors'
+import { hashPassword } from '../../../../src/shared/password'
 import { createRefreshToken } from '../../../../src/shared/token'
 import { buildSession, buildUser } from '../../support/builders'
-import { hashPassword } from '../../../../src/shared/password'
+import { useInMemoryRepositories } from '../../support/memory-repositories'
 
 describe('authService', () => {
   let store: ReturnType<typeof useInMemoryRepositories>

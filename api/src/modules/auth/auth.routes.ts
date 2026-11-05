@@ -1,12 +1,11 @@
-import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import type { FastifyReply } from 'fastify'
+import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod'
-
-import { accessTokenResponse, loginBody, registerBody } from './auth.dto'
-import { userResponse } from '../users/users.dto'
-import { authService } from './auth.service'
 import { env } from '../../config/env'
 import { authRateLimit } from '../../plugins/security'
+import { userResponse } from '../users/users.dto'
+import { accessTokenResponse, loginBody, registerBody } from './auth.dto'
+import { authService } from './auth.service'
 
 const REFRESH_COOKIE = 'refreshToken'
 

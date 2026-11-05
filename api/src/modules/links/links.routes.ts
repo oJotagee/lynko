@@ -1,7 +1,5 @@
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod'
-
-import { linksService } from './links.service'
 import {
   createLinkBody,
   linkParams,
@@ -9,6 +7,7 @@ import {
   reorderLinksBody,
   updateLinkBody,
 } from './links.dto'
+import { linksService } from './links.service'
 
 export const linksRoutes: FastifyPluginAsyncZod = async (app) => {
   app.addHook('onRequest', app.authenticate)
