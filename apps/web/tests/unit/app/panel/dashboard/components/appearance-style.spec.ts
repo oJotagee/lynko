@@ -2,8 +2,10 @@ import { describe, expect, it } from 'bun:test'
 
 import { defaultAppearance } from '@/app/[locale]/_components/appearance-schema'
 import {
+  buttonHoverClasses,
   buttonRadius,
   getBackgroundStyle,
+  getButtonStyle,
 } from '@/app/[locale]/_components/page-view/appearance-style'
 
 describe('getBackgroundStyle', () => {
@@ -53,6 +55,43 @@ describe('getBackgroundStyle', () => {
       expect(style).toEqual({ background: '#123456' })
     },
   )
+})
+
+describe('getButtonStyle', () => {
+  const buttons = defaultAppearance.buttons
+
+  it('keeps the button colors on hover by default', () => {
+    expect(getButtonStyle(buttons)).toMatchObject({
+      background: buttons.backgroundColor,
+      color: buttons.textColor,
+      '--button-hover-bg': buttons.backgroundColor,
+      '--button-hover-fg': buttons.textColor,
+    })
+  })
+
+  it('swaps the colors on hover when the effect is invert', () => {
+    expect(getButtonStyle({ ...buttons, hoverEffect: 'invert' })).toMatchObject({
+      '--button-hover-bg': buttons.textColor,
+      '--button-hover-fg': buttons.backgroundColor,
+    })
+  })
+
+  it('uses the custom hover color for the background', () => {
+    expect(
+      getButtonStyle({ ...buttons, hoverEffect: 'invert', hoverColor: '#ff8d6b' }),
+    ).toMatchObject({
+      '--button-hover-bg': '#ff8d6b',
+      '--button-hover-fg': buttons.backgroundColor,
+    })
+  })
+
+  it('has no movement classes for invert and none', () => {
+    expect(buttonHoverClasses.invert).toBe('')
+    expect(buttonHoverClasses.none).toBe('')
+    expect(buttonHoverClasses.lift).toContain('hover:-translate-y-0.5')
+
+    expect(buttonHoverClasses.grow).toContain('hover:scale-[1.03]')
+  })
 })
 
 describe('buttonRadius', () => {

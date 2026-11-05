@@ -41,7 +41,12 @@ describe('ProfilePreview', () => {
           ...data,
           appearance: {
             ...data.appearance,
-            buttons: { shape: 'pill', backgroundColor: '#31312e', textColor: '#f7f6f1' },
+            buttons: {
+              shape: 'pill',
+              backgroundColor: '#31312e',
+              textColor: '#f7f6f1',
+              hoverEffect: 'lift',
+            },
           },
         }}
       />,
@@ -52,6 +57,35 @@ describe('ProfilePreview', () => {
     expect(button.style.color).toBe('#f7f6f1')
     expect(button.style.background).toBe('#31312e')
     expect(button.style.borderRadius).toBe('24px')
+  })
+
+  it('applies the hover effect and the hover colors', () => {
+    const data = buildDashboardData()
+
+    render(
+      <ProfilePreview
+        data={{
+          ...data,
+          appearance: {
+            ...data.appearance,
+            buttons: {
+              shape: 'rounded',
+              backgroundColor: '#111111',
+              textColor: '#ffffff',
+              hoverEffect: 'grow',
+              hoverColor: '#ff8d6b',
+            },
+          },
+        }}
+      />,
+    )
+
+    const button = screen.getByRole('link', { name: /Portfólio/ })
+
+    expect(button.className).toContain('hover:scale-[1.03]')
+    expect(button.className).toContain('hover:bg-(--button-hover-bg)!')
+    expect(button.style.getPropertyValue('--button-hover-bg')).toBe('#ff8d6b')
+    expect(button.style.getPropertyValue('--button-hover-fg')).toBe('#ffffff')
   })
 
   it('applies the text color, font and gradient background', () => {

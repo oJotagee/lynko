@@ -4,6 +4,8 @@ import { hexColor, type PageTheme } from './pages.theme'
 
 export const FONT_FAMILIES = ['inter', 'roboto', 'playfair', 'space-grotesk'] as const
 
+export const BUTTON_HOVER_EFFECTS = ['lift', 'grow', 'fade', 'invert', 'none'] as const
+
 const pageBackgroundSchema = z
   .object({
     type: z.enum(['solid', 'gradient', 'image']),
@@ -47,6 +49,8 @@ export const pageAppearanceSchema = z.object({
     shape: z.enum(['square', 'rounded', 'pill']),
     backgroundColor: hexColor,
     textColor: hexColor,
+    hoverEffect: z.enum(BUTTON_HOVER_EFFECTS).default('lift'),
+    hoverColor: hexColor.optional(),
   }),
   socialIcons: z.object({ size: z.enum(['sm', 'md', 'lg']), color: hexColor }),
 })
@@ -58,7 +62,12 @@ export const defaultPageAppearance: PageAppearance = {
   theme: 'minimal',
   background: { type: 'solid', color: '#ffffff' },
   typography: { fontFamily: 'inter', textColor: '#111111' },
-  buttons: { shape: 'rounded', backgroundColor: '#111111', textColor: '#ffffff' },
+  buttons: {
+    shape: 'rounded',
+    backgroundColor: '#111111',
+    textColor: '#ffffff',
+    hoverEffect: 'lift',
+  },
   socialIcons: { size: 'md', color: '#111111' },
 }
 
@@ -79,6 +88,7 @@ export function appearanceFromTheme(theme: PageTheme): PageAppearance {
       shape: buttonShapeByRadius[theme.buttonRadius],
       backgroundColor: theme.buttonColor,
       textColor: theme.buttonTextColor,
+      hoverEffect: 'lift',
     },
     socialIcons: { size: 'md', color: theme.textColor },
   }
@@ -88,7 +98,9 @@ export function resolveAppearance(page: {
   appearance: PageAppearance | null
   theme: PageTheme
 }): PageAppearance {
-  return page.appearance ?? appearanceFromTheme(page.theme)
+  return page.appearance
+    ? pageAppearanceSchema.parse(page.appearance)
+    : appearanceFromTheme(page.theme)
 }
 
 export function getBackgroundMediaId(appearance: PageAppearance | null) {

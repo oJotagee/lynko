@@ -5,7 +5,11 @@ import { Controller, type UseFormReturn } from 'react-hook-form'
 import type { PageAppearance } from '@/app/[locale]/_components/appearance-schema'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
-export type OptionPath = 'typography.fontFamily' | 'buttons.shape' | 'socialIcons.size'
+export type OptionPath =
+  | 'typography.fontFamily'
+  | 'buttons.shape'
+  | 'buttons.hoverEffect'
+  | 'socialIcons.size'
 
 interface OptionGroupProps {
   form: UseFormReturn<PageAppearance>

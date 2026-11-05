@@ -11,7 +11,7 @@ import type { PageAppearance } from '../appearance-schema'
 import { LinkIcon } from '../link-icon'
 import { ProfileAvatar } from '../profile-avatar'
 import type { SocialLinkData } from '../social-links/social-link-schema'
-import { buttonRadius, getBackgroundStyle } from './appearance-style'
+import { buttonHoverClasses, getBackgroundStyle, getButtonStyle } from './appearance-style'
 import { fontFamilyStyles } from './fonts'
 import { SocialIcons } from './social-icons'
 
@@ -66,14 +66,10 @@ export function PageView({
               key={link.id}
               className={cn(
                 buttonVariants({ variant: 'outline' }),
-                'h-auto min-h-11 w-full justify-start gap-2 px-2 py-3 text-left text-xs whitespace-normal motion-safe:transition-[transform,box-shadow] motion-safe:duration-200 motion-safe:hover:-translate-y-0.5 hover:shadow-[0_5px_0_#17171620] motion-safe:focus-visible:-translate-y-0.5',
+                'h-auto min-h-11 w-full justify-start gap-2 px-2 py-3 text-left text-xs whitespace-normal motion-safe:transition-[translate,scale,box-shadow,background-color,color,border-color,opacity] motion-safe:duration-200 motion-reduce:transition-none hover:border-(--button-hover-bg)! hover:bg-(--button-hover-bg)! hover:text-(--button-hover-fg)! focus-visible:border-(--button-hover-bg)! focus-visible:bg-(--button-hover-bg)! focus-visible:text-(--button-hover-fg)!',
+                buttonHoverClasses[buttons.hoverEffect],
               )}
-              style={{
-                background: buttons.backgroundColor,
-                color: buttons.textColor,
-                borderColor: buttons.backgroundColor,
-                borderRadius: buttonRadius[buttons.shape],
-              }}
+              style={getButtonStyle(buttons)}
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"

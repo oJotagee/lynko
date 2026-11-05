@@ -12,6 +12,7 @@ export type ColorPath =
   | 'typography.textColor'
   | 'buttons.backgroundColor'
   | 'buttons.textColor'
+  | 'buttons.hoverColor'
   | 'socialIcons.color'
 
 interface ColorFieldProps {

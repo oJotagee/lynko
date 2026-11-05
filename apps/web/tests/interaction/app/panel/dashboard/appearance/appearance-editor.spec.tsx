@@ -164,6 +164,32 @@ describe('AppearanceEditor', () => {
     )
   })
 
+  it('saves the hover effect and a custom hover color', async () => {
+    const { user } = renderWithProviders(<AppearanceEditor data={buildDashboardData()} hasPage />)
+
+    await user.click(screen.getByRole('button', { name: 'Inverter' }))
+
+    expect(screen.queryByLabelText('Cor no hover')).toBeNull()
+
+    await user.click(screen.getByRole('switch', { name: 'Cor própria no hover' }))
+
+    fireEvent.input(screen.getByLabelText('Cor no hover'), { target: { value: '#ff8d6b' } })
+
+    await user.click(save())
+
+    await waitFor(() =>
+      expect(updatePage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          appearance: expect.objectContaining({
+            theme: 'custom',
+            buttons: expect.objectContaining({ hoverEffect: 'invert', hoverColor: '#ff8d6b' }),
+          }),
+        }),
+        expect.anything(),
+      ),
+    )
+  })
+
   it('switches the background to a gradient', async () => {
     const { user } = renderWithProviders(<AppearanceEditor data={buildDashboardData()} hasPage />)
 
