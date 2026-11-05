@@ -71,6 +71,37 @@ describe('pageAppearanceSchema', () => {
   })
 })
 
+describe('button hover', () => {
+  it('defaults the hover effect to lift', () => {
+    const { hoverEffect: _hoverEffect, ...buttons } = defaultPageAppearance.buttons
+
+    const result = pageAppearanceSchema.parse({ ...defaultPageAppearance, buttons })
+
+    expect(result.buttons.hoverEffect).toBe('lift')
+  })
+
+  it.each(['lift', 'grow', 'fade', 'invert', 'none'])('accepts the %s effect', (hoverEffect) => {
+    const result = pageAppearanceSchema.safeParse({
+      ...defaultPageAppearance,
+      buttons: { ...defaultPageAppearance.buttons, hoverEffect, hoverColor: '#ff8d6b' },
+    })
+
+    expect(result.success).toBe(true)
+  })
+
+  it.each([
+    ['an unknown effect', { hoverEffect: 'spin' }],
+    ['a hover color that is not hex', { hoverColor: 'red' }],
+  ])('rejects %s', (_case, change) => {
+    const result = pageAppearanceSchema.safeParse({
+      ...defaultPageAppearance,
+      buttons: { ...defaultPageAppearance.buttons, ...change },
+    })
+
+    expect(result.success).toBe(false)
+  })
+})
+
 describe('appearanceFromTheme', () => {
   it('maps the legacy theme to a custom appearance', () => {
     const appearance = appearanceFromTheme({
@@ -106,7 +137,17 @@ describe('resolveAppearance', () => {
   it('returns the stored appearance when there is one', () => {
     const appearance = { ...defaultPageAppearance, theme: 'dark' as const }
 
-    expect(resolveAppearance({ appearance, theme: defaultPageTheme })).toBe(appearance)
+    expect(resolveAppearance({ appearance, theme: defaultPageTheme })).toEqual(appearance)
+  })
+
+  it('fills the hover effect of an appearance saved before it existed', () => {
+    const { hoverEffect: _hoverEffect, ...buttons } = defaultPageAppearance.buttons
+
+    const appearance = { ...defaultPageAppearance, buttons } as typeof defaultPageAppearance
+
+    expect(resolveAppearance({ appearance, theme: defaultPageTheme }).buttons.hoverEffect).toBe(
+      'lift',
+    )
   })
 
   it('falls back to the legacy theme when appearance is null', () => {

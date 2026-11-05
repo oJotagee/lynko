@@ -2,9 +2,10 @@
 
 import { Loader2 } from 'lucide-react'
 import { Controller, useWatch } from 'react-hook-form'
-import type {
-  SocialLinkData,
-  SocialPlatform,
+import {
+  formatWhatsappInput,
+  type SocialLinkData,
+  type SocialPlatform,
 } from '@/app/[locale]/_components/social-links/social-link-schema'
 import { socialPlatforms } from '@/app/[locale]/_components/social-links/social-platforms'
 import { Button } from '@/components/ui/button'
@@ -96,6 +97,13 @@ export function SocialLinkDialog({
                 <Input
                   {...field}
                   id={field.name}
+                  onChange={(event) =>
+                    field.onChange(
+                      platform === 'whatsapp'
+                        ? formatWhatsappInput(event.target.value)
+                        : event.target.value,
+                    )
+                  }
                   inputMode={platform === 'whatsapp' ? 'tel' : 'url'}
                   placeholder={socialPlatforms[platform].placeholder}
                   aria-invalid={fieldState.invalid}

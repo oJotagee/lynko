@@ -42,3 +42,10 @@ export const profileSchema = z.object({
 })
 
 export type ProfileSchemaData = z.infer<typeof profileSchema>
+
+export function normalizeUsernameInput(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9_]/g, '')
+    .slice(0, 30)
+}

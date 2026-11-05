@@ -4,6 +4,8 @@ const hexColor = z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Use uma cor hexadecimal 
 
 export const FONT_FAMILIES = ['inter', 'roboto', 'playfair', 'space-grotesk'] as const
 
+export const BUTTON_HOVER_EFFECTS = ['lift', 'grow', 'fade', 'invert', 'none'] as const
+
 export const appearanceSchema = z.object({
   version: z.literal(1),
   theme: z.enum(['minimal', 'dark', 'gradient', 'custom']),
@@ -37,6 +39,8 @@ export const appearanceSchema = z.object({
     shape: z.enum(['square', 'rounded', 'pill']),
     backgroundColor: hexColor,
     textColor: hexColor,
+    hoverEffect: z.enum(BUTTON_HOVER_EFFECTS),
+    hoverColor: hexColor.optional(),
   }),
   socialIcons: z.object({ size: z.enum(['sm', 'md', 'lg']), color: hexColor }),
 })
@@ -45,12 +49,19 @@ export type PageAppearance = z.infer<typeof appearanceSchema>
 
 export type FontFamily = PageAppearance['typography']['fontFamily']
 
+export type ButtonHoverEffect = PageAppearance['buttons']['hoverEffect']
+
 export const defaultAppearance: PageAppearance = {
   version: 1,
   theme: 'minimal',
   background: { type: 'solid', color: '#ffffff' },
   typography: { fontFamily: 'inter', textColor: '#111111' },
-  buttons: { shape: 'rounded', backgroundColor: '#111111', textColor: '#ffffff' },
+  buttons: {
+    shape: 'rounded',
+    backgroundColor: '#111111',
+    textColor: '#ffffff',
+    hoverEffect: 'lift',
+  },
   socialIcons: { size: 'md', color: '#111111' },
 }
 
@@ -64,7 +75,12 @@ export const appearanceThemes = [
       theme: 'dark',
       background: { type: 'solid', color: '#171716' },
       typography: { fontFamily: 'inter', textColor: '#f7f6f1' },
-      buttons: { shape: 'rounded', backgroundColor: '#31312e', textColor: '#f7f6f1' },
+      buttons: {
+        shape: 'rounded',
+        backgroundColor: '#31312e',
+        textColor: '#f7f6f1',
+        hoverEffect: 'lift',
+      },
       socialIcons: { size: 'md', color: '#f7f6f1' },
     },
   },
@@ -76,7 +92,12 @@ export const appearanceThemes = [
       theme: 'gradient',
       background: { type: 'gradient', gradientFrom: '#9b8cff', gradientTo: '#ffd7ca' },
       typography: { fontFamily: 'inter', textColor: '#171716' },
-      buttons: { shape: 'rounded', backgroundColor: '#ffffff', textColor: '#171716' },
+      buttons: {
+        shape: 'rounded',
+        backgroundColor: '#ffffff',
+        textColor: '#171716',
+        hoverEffect: 'lift',
+      },
       socialIcons: { size: 'md', color: '#171716' },
     },
   },

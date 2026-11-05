@@ -67,3 +67,29 @@ export function getSocialLinkHref(link: SocialLinkData): string | null {
     ? `https://wa.me/${url.replace(/\D/g, '')}`
     : url
 }
+
+export function formatWhatsappInput(value: string): string {
+  if (/[a-z/:.]/i.test(value)) return value
+
+  const hasPlus = value.trim().startsWith('+')
+
+  const digits = value.replace(/\D/g, '')
+
+  if (!digits) return hasPlus ? '+' : ''
+
+  const full = hasPlus || digits.startsWith('55') ? digits : `55${digits}`
+
+  if (!full.startsWith('55')) return `+${full.slice(0, 15)}`
+
+  const ddd = full.slice(2, 4)
+
+  const number = full.slice(4, 13)
+
+  if (!number) return ddd ? `+55 (${ddd}` : '+55'
+
+  const split = number.length > 8 ? 5 : 4
+
+  const local = number.length > split ? `${number.slice(0, split)}-${number.slice(split)}` : number
+
+  return `+55 (${ddd}) ${local}`
+}

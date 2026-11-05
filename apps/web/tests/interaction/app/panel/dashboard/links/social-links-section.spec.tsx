@@ -95,6 +95,31 @@ describe('LinksEditor social links', () => {
     await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Instagram adicionado'))
   })
 
+  it('masks the WhatsApp number while typing and saves it formatted', async () => {
+    const used = (
+      ['instagram', 'facebook', 'tiktok', 'youtube', 'linkedin', 'github'] as const
+    ).map((platform) => ({ platform, url: 'https://example.com', isActive: true }))
+
+    const { user } = renderEditor(used)
+
+    await user.click(screen.getByText('Adicionar rede'))
+
+    const input = await screen.findByLabelText('Número ou URL')
+
+    await user.type(input, '11912345678')
+
+    expect(input).toHaveValue('+55 (11) 91234-5678')
+
+    await user.click(screen.getByText('Salvar rede social'))
+
+    await waitFor(() =>
+      expect(updateSocialLinks).toHaveBeenCalledWith(
+        [...used, { platform: 'whatsapp', url: '+55 (11) 91234-5678', isActive: true }],
+        expect.anything(),
+      ),
+    )
+  })
+
   it('validates the url inside the modal', async () => {
     const { user } = renderEditor([])
 

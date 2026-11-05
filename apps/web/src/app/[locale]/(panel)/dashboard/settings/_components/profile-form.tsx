@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { createPage } from '../../_actions/create-page'
 import { updatePage } from '../../_actions/update-page'
 import type { DashboardData } from '../../_components/dashboard-data'
+import { normalizeUsernameInput } from '../../_components/profile/profile-schema'
 import { type ProfileSchemaData, useProfileSchema } from '../../_components/schemas'
 import { useUnsavedMedia } from '../../_components/upload/use-image-upload'
 import { ProfileAvatarField } from './profile-avatar-field'
@@ -69,7 +70,14 @@ export function ProfileForm({ data, hasPage }: ProfileFormProps) {
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
             <FieldLabel htmlFor={field.name}>Nome de usuário</FieldLabel>
-            <Input {...field} id={field.name} aria-invalid={fieldState.invalid} />
+            <Input
+              {...field}
+              id={field.name}
+              autoCapitalize="none"
+              spellCheck={false}
+              onChange={(event) => field.onChange(normalizeUsernameInput(event.target.value))}
+              aria-invalid={fieldState.invalid}
+            />
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}

@@ -87,6 +87,17 @@ describe('ProfileForm', () => {
     )
   })
 
+  it('keeps only lowercase letters, numbers and underscore in the username', async () => {
+    const { user } = renderWithProviders(<ProfileForm data={buildDashboardData()} hasPage />)
+
+    const username = screen.getByLabelText('Nome de usuário')
+
+    await user.clear(username)
+    await user.type(username, 'Maria Silva-2!')
+
+    expect(username).toHaveValue('mariasilva2')
+  })
+
   it('shows the reserved username error and does not submit', async () => {
     const { user } = renderWithProviders(<ProfileForm data={buildDashboardData()} hasPage />)
 
