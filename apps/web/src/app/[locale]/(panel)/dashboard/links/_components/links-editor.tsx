@@ -195,7 +195,8 @@ export function LinksEditor({ data, hasPage, startCreating }: LinksEditorProps) 
         <LinkForm link={editing === 'new' ? undefined : editing} onClose={() => setEditing(null)} />
       )}
       <DeleteLinkDialog
-        link={deleting}
+        item={deleting}
+        name={deleting?.title ?? ''}
         isPending={linksPending}
         onConfirm={confirmDelete}
         onCancel={() => setDeleting(null)}

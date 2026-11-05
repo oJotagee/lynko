@@ -131,7 +131,27 @@ describe('LinksEditor social links', () => {
 
     await user.click(screen.getByLabelText('Remover GitHub'))
 
+    expect(updateSocialLinks).toHaveBeenCalledTimes(2)
+
+    await user.click(await screen.findByText('Remover rede social'))
+
     await waitFor(() => expect(updateSocialLinks).toHaveBeenCalledTimes(3))
+
+    await waitFor(() => expect(screen.queryByText('Remover esta rede social?')).toBeNull())
+  })
+
+  it('asks before removing and keeps the social link when cancelled', async () => {
+    const { user } = renderEditor([github])
+
+    await user.click(screen.getByLabelText('Remover GitHub'))
+
+    expect(await screen.findByText('Remover esta rede social?')).toBeInTheDocument()
+
+    await user.click(screen.getByText('Cancelar'))
+
+    expect(updateSocialLinks).not.toHaveBeenCalled()
+
+    expect(screen.getByLabelText('Remover GitHub')).toBeInTheDocument()
   })
 
   it('updates the preview right away and blocks only the social links while saving', async () => {
@@ -187,9 +207,13 @@ describe('LinksEditor social links', () => {
 
     await user.click(screen.getByLabelText('Remover GitHub'))
 
+    await user.click(await screen.findByText('Remover rede social'))
+
     await waitFor(() => expect(toast.error).toHaveBeenCalledWith('Falhou'))
 
-    expect(screen.getByLabelText('Remover GitHub')).toBeInTheDocument()
+    expect(screen.getByText('Remover esta rede social?')).toBeInTheDocument()
+
+    expect(screen.getByLabelText('Remover GitHub', { selector: 'button' })).toBeInTheDocument()
   })
 
   it('hides a link in the preview right away and saves it', async () => {

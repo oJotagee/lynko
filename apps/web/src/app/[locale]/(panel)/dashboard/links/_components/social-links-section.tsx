@@ -9,6 +9,7 @@ import {
 } from '@/app/[locale]/_components/social-links/social-link-schema'
 import { socialPlatforms } from '@/app/[locale]/_components/social-links/social-platforms'
 import { Button } from '@/components/ui/button'
+import { DeleteLinkDialog } from './delete-link-dialog'
 import { SocialLinkDialog } from './social-link-dialog'
 import { SocialLinkItem } from './social-link-item'
 
@@ -20,6 +21,8 @@ interface SocialLinksSectionProps {
 
 export function SocialLinksSection({ socialLinks, disabled, onSave }: SocialLinksSectionProps) {
   const [editing, setEditing] = useState<SocialLinkData | 'new' | null>(null)
+
+  const [removing, setRemoving] = useState<SocialLinkData | null>(null)
 
   const available = SOCIAL_PLATFORMS.filter(
     (platform) => !socialLinks.some((link) => link.platform === platform),
@@ -64,6 +67,7 @@ export function SocialLinksSection({ socialLinks, disabled, onSave }: SocialLink
     onSave(
       socialLinks.filter((item) => item.platform !== target.platform),
       `${socialPlatforms[target.platform].name} removido`,
+      () => setRemoving(null),
     )
   }
 
@@ -104,7 +108,7 @@ export function SocialLinksSection({ socialLinks, disabled, onSave }: SocialLink
                 onMove={move}
                 onToggle={toggle}
                 onEdit={setEditing}
-                onRemove={remove}
+                onRemove={setRemoving}
               />
             ))}
           </ol>
@@ -127,6 +131,15 @@ export function SocialLinksSection({ socialLinks, disabled, onSave }: SocialLink
           onClose={() => setEditing(null)}
         />
       )}
+      <DeleteLinkDialog
+        item={removing}
+        name={removing ? socialPlatforms[removing.platform].name : ''}
+        title="Remover esta rede social?"
+        confirmLabel="Remover rede social"
+        isPending={disabled}
+        onConfirm={remove}
+        onCancel={() => setRemoving(null)}
+      />
     </section>
   )
 }

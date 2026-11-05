@@ -9,29 +9,38 @@ import {
   DialogFooter,
   DialogTitle,
 } from '@/components/ui/dialog'
-import type { DashboardLink } from '../../_components/dashboard-data'
 import { portalTheme } from '../../_components/portal-theme'
 
-interface DeleteLinkDialogProps {
-  link: DashboardLink | null
+interface DeleteLinkDialogProps<T> {
+  item: T | null
+  name: string
+  title?: string
+  confirmLabel?: string
   isPending: boolean
-  onConfirm: (link: DashboardLink) => void
+  onConfirm: (item: T) => void
   onCancel: () => void
 }
 
-export function DeleteLinkDialog({ link, isPending, onConfirm, onCancel }: DeleteLinkDialogProps) {
+export function DeleteLinkDialog<T>({
+  item,
+  name,
+  title = 'Excluir este link?',
+  confirmLabel = 'Excluir link',
+  isPending,
+  onConfirm,
+  onCancel,
+}: DeleteLinkDialogProps<T>) {
   return (
     <Dialog
-      open={!!link}
+      open={!!item}
       onOpenChange={(open) => {
         if (!open && !isPending) onCancel()
       }}
     >
       <DialogContent className={portalTheme} showCloseButton={false}>
-        <DialogTitle>Excluir este link?</DialogTitle>
+        <DialogTitle>{title}</DialogTitle>
         <DialogDescription>
-          “{link?.title}” será excluído permanentemente da sua página. Essa ação não pode ser
-          desfeita.
+          “{name}” será excluído permanentemente da sua página. Essa ação não pode ser desfeita.
         </DialogDescription>
         <DialogFooter>
           <Button variant="outline" disabled={isPending} onClick={onCancel}>
@@ -41,11 +50,11 @@ export function DeleteLinkDialog({ link, isPending, onConfirm, onCancel }: Delet
             variant="destructive"
             disabled={isPending}
             onClick={() => {
-              if (link) onConfirm(link)
+              if (item) onConfirm(item)
             }}
           >
             {isPending && <Loader2 className="size-4 animate-spin" />}
-            Excluir link
+            {confirmLabel}
           </Button>
         </DialogFooter>
       </DialogContent>
