@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="apps/web/src/app/icon.svg" width="140" alt="Mascote do Lynko" />
+</p>
+
 # Lynko
 
 Página de links personalizável. Cada pessoa cria uma página pública em `/<username>` com seus links, ícones de redes sociais, foto e fundo, e edita tudo num dashboard com prévia ao vivo.
