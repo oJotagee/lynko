@@ -21,6 +21,14 @@ const envSchema = z.object({
   MEDIA_AVATAR_MAX_BYTES: z.coerce.number().int().positive().default(5242880),
   MEDIA_BACKGROUND_MAX_BYTES: z.coerce.number().int().positive().default(10485760),
   MEDIA_MAX_PENDING_PER_PAGE: z.coerce.number().int().positive().default(5),
+  REDIS_URL: z.url({ protocol: /^rediss?$/ }).optional(),
+  QUEUE_REDIS_URL: z.url({ protocol: /^rediss?$/ }).optional(),
+  PUBLIC_PAGE_CACHE_TTL: z.coerce.number().int().positive().default(14400),
+  PUBLIC_PAGE_REF_TTL: z.coerce.number().int().positive().default(1800),
+  PUBLIC_PAGE_REFRESH_THRESHOLD: z.coerce.number().int().positive().default(30),
+  PUBLIC_PAGE_LOCK_TTL_MS: z.coerce.number().int().positive().default(10000),
+  PUBLIC_PAGE_WAIT_TIMEOUT_MS: z.coerce.number().int().positive().default(5000),
+  METRICS_TOKEN: z.string().min(32).optional(),
 })
 
 const parsed = envSchema.safeParse(process.env)

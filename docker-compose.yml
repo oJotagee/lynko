@@ -1,0 +1,31 @@
+services:
+  # ── Redis de cache (páginas públicas) ──────────────────────
+  # Descartável: pode perder chaves por eviction e não grava em disco.
+  redis-cache:
+    image: redis:8.2-alpine
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru --save "" --appendonly no
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── Redis da fila (BullMQ / analytics) ─────────────────────
+  # Durável: o BullMQ exige noeviction; AOF mantém os jobs após reinício.
+  redis-queue:
+    image: redis:8.2-alpine
+    command: redis-server --maxmemory-policy noeviction --appendonly yes
+    ports:
+      - "127.0.0.1:6380:6379"
+    volumes:
+      - redis_queue_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  redis_queue_data:
