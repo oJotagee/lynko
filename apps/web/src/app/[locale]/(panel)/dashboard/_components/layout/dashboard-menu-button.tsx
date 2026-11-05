@@ -1,9 +1,8 @@
 'use client'
 
 import { Menu } from 'lucide-react'
-
-import { useSidebar } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
+import { useSidebar } from '@/components/ui/sidebar'
 
 export function DashboardMenuButton() {
   const { setOpenMobile } = useSidebar()

@@ -76,7 +76,9 @@ describe('LinksEditor', () => {
 
     const items = within(screen.getByRole('list')).getAllByRole('listitem')
 
-    expect(screen.getByRole('heading', { name: '2 links' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Links' })).toBeInTheDocument()
+
+    expect(screen.getByText(/2 de 100/)).toBeInTheDocument()
 
     expect(items.map((item) => item.textContent)).toEqual([
       expect.stringContaining('Primeiro'),

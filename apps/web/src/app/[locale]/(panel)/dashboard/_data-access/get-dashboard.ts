@@ -2,10 +2,11 @@
 
 import { isAxiosError } from 'axios'
 import { cache } from 'react'
-
-import { getApiAuthorization, SessionExpiredError } from '@/lib/get-api-authorization'
-import { getApiErrorMessage } from '@/lib/api-error'
+import type { PageAppearance } from '@/app/[locale]/_components/appearance-schema'
+import type { SocialLinkData } from '@/app/[locale]/_components/social-links/social-link-schema'
 import { api } from '@/lib/api'
+import { getApiErrorMessage } from '@/lib/api-error'
+import { getApiAuthorization, SessionExpiredError } from '@/lib/get-api-authorization'
 
 export interface PageTheme {
   backgroundColor: string
@@ -36,7 +37,11 @@ export interface ApiPage {
   title: string
   bio: string | null
   avatarUrl: string | null
+  avatarMediaId: string | null
+  backgroundImageUrl: string | null
   theme: PageTheme
+  appearance: PageAppearance
+  socialLinks: SocialLinkData[]
   isPublished: boolean
   updatedAt: string
 }

@@ -2,12 +2,11 @@
 
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
-
-import { getApiAuthorization } from '@/lib/get-api-authorization'
-import type { ApiLink } from '../../_data-access/get-dashboard'
-import { getDashboardError } from '@/lib/get-dashboard-error'
-import { linkSchema } from '../_components/link-schema'
 import { api } from '@/lib/api'
+import { getApiAuthorization } from '@/lib/get-api-authorization'
+import { getDashboardError } from '@/lib/get-dashboard-error'
+import type { ApiLink } from '../../_data-access/get-dashboard'
+import { linkSchema } from '../_components/link-schema'
 
 export async function updateLink(
   id: string,

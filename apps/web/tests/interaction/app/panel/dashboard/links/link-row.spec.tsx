@@ -16,6 +16,8 @@ function row(
     dropPosition,
     onEdit: mock(),
     onDelete: mock(),
+    onToggle: mock(),
+    disabled: false,
     onMove: mock(),
     onDragStart: mock(),
     onDragEnd: mock(),

@@ -1,20 +1,20 @@
 'use client'
 
 import { useMutation } from '@tanstack/react-query'
-import { Loader2, RotateCcw } from 'lucide-react'
+import { Loader2, RotateCcw, Undo2 } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
-
-import { ProfilePreview } from '../../_components/profile/profile-preview'
-import { updatePage } from '../../_actions/update-page'
-import { DesignControls } from './design-controls'
+import { defaultAppearance } from '@/app/[locale]/_components/appearance-schema'
 import { Button } from '@/components/ui/button'
-import {
-  type DashboardAppearance,
-  type DashboardData,
-  defaultTheme,
-  themeToAppearance,
-} from '../../_components/dashboard-data'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { cn } from '@/lib/utils'
+import { updatePage } from '../../_actions/update-page'
+import type { DashboardData } from '../../_components/dashboard-data'
+import { useUnsavedMedia } from '../../_components/upload/use-image-upload'
+import { DesignControls } from './design-controls'
+import { LivePreview } from './live-preview'
+import { useAppearanceSchema } from './schemas'
+import { applyAppearance } from './sections/themes'
 
 interface AppearanceEditorProps {
   data: DashboardData
@@ -22,22 +22,48 @@ interface AppearanceEditorProps {
 }
 
 export function AppearanceEditor({ data, hasPage }: AppearanceEditorProps) {
-  const [draft, setDraft] = useState(data)
+  const appearanceForm = useAppearanceSchema(data.appearance)
+
+  const [tab, setTab] = useState('edit')
+
+  const [backgroundImageUrl, setBackgroundImageUrl] = useState(data.backgroundImageUrl)
+
+  const unsavedMedia = useUnsavedMedia()
 
   const { mutateAsync, isPending } = useMutation({ mutationFn: updatePage })
 
-  function changeAppearance(appearance: Partial<DashboardAppearance>) {
-    setDraft((current) => ({ ...current, appearance: { ...current.appearance, ...appearance } }))
+  const isDirty = appearanceForm.formState.isDirty
+
+  function discard() {
+    unsavedMedia.flush(data.appearance.background.imageMediaId)
+
+    appearanceForm.reset()
+
+    setBackgroundImageUrl(data.backgroundImageUrl)
   }
 
   async function save() {
-    const response = await mutateAsync(draft)
+    if (!(await appearanceForm.trigger())) {
+      toast.error('Corrija os campos destacados antes de salvar')
+
+      return
+    }
+
+    const appearanceValues = appearanceForm.getValues()
+
+    const response = await mutateAsync({ ...data, appearance: appearanceValues })
 
     if (response.error) {
       toast.error(response.error)
 
       return
     }
+
+    unsavedMedia.flush(
+      appearanceValues.background.type === 'image'
+        ? appearanceValues.background.imageMediaId
+        : null,
+    )
 
     toast.success('Aparência salva')
   }
@@ -53,31 +79,57 @@ export function AppearanceEditor({ data, hasPage }: AppearanceEditorProps) {
             variant="outline"
             className="min-h-11"
             disabled={!hasPage}
-            onClick={() => changeAppearance(themeToAppearance(defaultTheme))}
+            onClick={() => applyAppearance(appearanceForm, defaultAppearance)}
           >
             <RotateCcw className="size-4" />
             Restaurar padrão
           </Button>
-          <Button className="min-h-11" disabled={!hasPage || isPending} onClick={save}>
+          <Button variant="outline" className="min-h-11" disabled={!isDirty} onClick={discard}>
+            <Undo2 className="size-4" />
+            Descartar
+          </Button>
+          <Button className="min-h-11" disabled={!hasPage || isPending || !isDirty} onClick={save}>
             {isPending && <Loader2 className="size-4 animate-spin" />}
             Salvar aparência
           </Button>
         </div>
       </div>
-      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(310px,0.8fr)]">
-        <div className="rounded-xl border border-border bg-card p-6">
-          <DesignControls appearance={draft.appearance} onChange={changeAppearance} />
+      <Tabs value={tab} onValueChange={setTab} className="gap-5">
+        <TabsList className="xl:hidden">
+          <TabsTrigger value="edit">Editar</TabsTrigger>
+          <TabsTrigger value="preview">Prévia</TabsTrigger>
+        </TabsList>
+        <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(310px,0.8fr)]">
+          <div
+            role="tabpanel"
+            aria-label="Editar"
+            className={cn('space-y-5', tab !== 'edit' && 'hidden xl:block')}
+          >
+            <div className="rounded-xl border border-border bg-card p-6">
+              <DesignControls
+                form={appearanceForm}
+                imageUrl={backgroundImageUrl}
+                onImageChange={(image) => {
+                  if (image) unsavedMedia.track(image.id)
+
+                  setBackgroundImageUrl(image?.url ?? null)
+                }}
+              />
+            </div>
+          </div>
+          <div
+            role="tabpanel"
+            aria-label="Prévia"
+            className={cn('xl:sticky xl:top-6', tab !== 'preview' && 'hidden xl:block')}
+          >
+            <LivePreview
+              control={appearanceForm.control}
+              data={data}
+              backgroundImageUrl={backgroundImageUrl}
+            />
+          </div>
         </div>
-        <aside className="rounded-xl bg-muted p-6 sm:p-10 xl:sticky xl:top-6">
-          <h2 className="mb-8 text-center text-xs text-muted-foreground">
-            Prévia ao vivo · celular
-          </h2>
-          <ProfilePreview data={draft} />
-          <p className="mt-6 text-center text-xs text-muted-foreground">
-            As mudanças só são publicadas depois de salvar.
-          </p>
-        </aside>
-      </div>
+      </Tabs>
     </div>
   )
 }

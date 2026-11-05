@@ -2,8 +2,8 @@
 
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet'
 import { useSidebar } from '@/components/ui/sidebar'
-import { DashboardNav } from './dashboard-nav'
 import { portalTheme } from '../portal-theme'
+import { DashboardNav } from './dashboard-nav'
 
 interface DashboardSidebarProps {
   account: React.ReactNode

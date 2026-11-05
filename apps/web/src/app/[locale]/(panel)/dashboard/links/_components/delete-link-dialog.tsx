@@ -1,9 +1,6 @@
 'use client'
 
 import { Loader2 } from 'lucide-react'
-
-import type { DashboardLink } from '../../_components/dashboard-data'
-import { portalTheme } from '../../_components/portal-theme'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -12,6 +9,8 @@ import {
   DialogFooter,
   DialogTitle,
 } from '@/components/ui/dialog'
+import type { DashboardLink } from '../../_components/dashboard-data'
+import { portalTheme } from '../../_components/portal-theme'
 
 interface DeleteLinkDialogProps {
   link: DashboardLink | null

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 
-import { getLinkBrand } from '@/app/[locale]/(panel)/dashboard/_components/link-icon/brands'
+import { getLinkBrand } from '@/app/[locale]/_components/link-icon/brands'
 
 describe('getLinkBrand', () => {
   it.each([

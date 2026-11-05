@@ -1,10 +1,8 @@
 import { describe, expect, it } from 'bun:test'
 
+import { defaultAppearance } from '@/app/[locale]/_components/appearance-schema'
 import {
-  appearanceToTheme,
-  defaultTheme,
   moveLink,
-  themeToAppearance,
   toDashboardData,
 } from '@/app/[locale]/(panel)/dashboard/_components/dashboard-data'
 import { buildApiDashboard, buildApiLink, buildApiPage } from '../../../../support/builders'
@@ -27,6 +25,7 @@ describe('toDashboardData', () => {
       username: 'perfil_real',
       bio: 'Minha bio',
       image: '',
+      avatarMediaId: null,
       published: false,
     })
 
@@ -46,18 +45,15 @@ describe('toDashboardData', () => {
     const data = toDashboardData(buildApiDashboard({ page: null, links: [] }))
 
     expect(data.profile).toMatchObject({ name: 'Maria Silva', username: '', published: false })
-    expect(appearanceToTheme(data.appearance)).toEqual(defaultTheme)
-  })
-})
-
-describe('themeToAppearance', () => {
-  it('converts back to the same API theme', () => {
-    expect(appearanceToTheme(themeToAppearance(defaultTheme))).toEqual(defaultTheme)
+    expect(data.appearance).toEqual(defaultAppearance)
   })
 
-  it('recognizes a preset by its background and falls back to custom', () => {
-    expect(themeToAppearance({ ...defaultTheme, backgroundColor: '#e9ff9e' }).theme).toBe('lime')
-    expect(themeToAppearance(defaultTheme).theme).toBe('custom')
+  it('uses the appearance returned by the API', () => {
+    const appearance = { ...defaultAppearance, theme: 'dark' as const }
+
+    const data = toDashboardData(buildApiDashboard({ page: buildApiPage({ appearance }) }))
+
+    expect(data.appearance).toEqual(appearance)
   })
 })
 

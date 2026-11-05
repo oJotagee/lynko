@@ -1,17 +1,21 @@
-import { hasLocale, NextIntlClientProvider } from 'next-intl'
-import { Playfair_Display, Roboto } from 'next/font/google'
-import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import { Inter, Playfair_Display, Roboto, Space_Grotesk } from 'next/font/google'
+import { notFound } from 'next/navigation'
+import { hasLocale, NextIntlClientProvider } from 'next-intl'
 
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server'
-import { BASE_OPEN_GRAPH, SITE_NAME, SITE_TITLE, SITE_URL } from '@/lib/site'
-import { Providers } from '../providers'
 import { routing } from '@/i18n/routing'
+import { BASE_OPEN_GRAPH, SITE_NAME, SITE_TITLE, SITE_URL } from '@/lib/site'
 import { cn } from '@/lib/utils'
+import { Providers } from '../providers'
 
 import '../globals.css'
 
 const roboto = Roboto({ variable: '--font-roboto', subsets: ['latin'] })
+
+const inter = Inter({ variable: '--font-inter', subsets: ['latin'] })
+
+const spaceGrotesk = Space_Grotesk({ variable: '--font-space-grotesk', subsets: ['latin'] })
 
 const playfairDisplay = Playfair_Display({
   variable: '--font-playfair-display',
@@ -51,7 +55,14 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
   return (
     <html
       lang={locale === 'pt' ? 'pt-BR' : 'en'}
-      className={cn('h-full', 'antialiased', roboto.variable, playfairDisplay.variable)}
+      className={cn(
+        'h-full',
+        'antialiased',
+        roboto.variable,
+        playfairDisplay.variable,
+        inter.variable,
+        spaceGrotesk.variable,
+      )}
     >
       <body className="min-h-full flex flex-col dark">
         <NextIntlClientProvider messages={messages}>

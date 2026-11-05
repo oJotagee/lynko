@@ -1,7 +1,7 @@
 'use client'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import type { DashboardProfile } from '../dashboard-data'
+import type { DashboardProfile } from '../(panel)/dashboard/_components/dashboard-data'
 
 export function ProfileAvatar({
   profile,

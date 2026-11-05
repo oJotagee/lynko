@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { Field, FieldLabel } from '@/components/ui/field'
 import { Switch } from '@/components/ui/switch'
 import { updatePage } from '../../_actions/update-page'
-import type { DashboardData } from '../dashboard-data'
+import type { DashboardData } from '../../_components/dashboard-data'
 
 interface ProfilePublishedFieldProps {
   data: DashboardData

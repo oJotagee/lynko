@@ -1,3 +1,8 @@
+import {
+  defaultAppearance,
+  type PageAppearance,
+} from '@/app/[locale]/_components/appearance-schema'
+import type { SocialLinkData } from '@/app/[locale]/_components/social-links/social-link-schema'
 import type { ApiDashboard, PageTheme } from '../_data-access/get-dashboard'
 
 export interface DashboardLink {
@@ -14,64 +19,19 @@ export interface DashboardProfile {
   username: string
   bio: string
   image: string
+  avatarMediaId: string | null
   published: boolean
-}
-
-export interface DashboardAppearance {
-  theme: string
-  background: string
-  foreground: string
-  button: string
-  accent: string
-  buttonText: string
-  buttonStyle: PageTheme['buttonStyle']
-  radius: PageTheme['buttonRadius']
 }
 
 export interface DashboardData {
   profile: DashboardProfile
-  appearance: DashboardAppearance
+  appearance: PageAppearance
+  backgroundImageUrl: string | null
+  socialLinks: SocialLinkData[]
   links: DashboardLink[]
 }
 
-export const themes = [
-  {
-    id: 'lime',
-    name: 'Mellow',
-    background: '#e9ff9e',
-    foreground: '#171716',
-    button: '#ffffff',
-    accent: '#9b8cff',
-    buttonText: '#171716',
-  },
-  {
-    id: 'violet',
-    name: 'Daydream',
-    background: '#ded8ff',
-    foreground: '#171716',
-    button: '#ffffff',
-    accent: '#9b8cff',
-    buttonText: '#171716',
-  },
-  {
-    id: 'peach',
-    name: 'Peachy',
-    background: '#ffd7ca',
-    foreground: '#171716',
-    button: '#ffffff',
-    accent: '#ff8d6b',
-    buttonText: '#171716',
-  },
-  {
-    id: 'ink',
-    name: 'After dark',
-    background: '#171716',
-    foreground: '#f7f6f1',
-    button: '#31312e',
-    accent: '#b7f34a',
-    buttonText: '#f7f6f1',
-  },
-] as const
+const linkAccents = ['#9b8cff', '#ff8d6b', '#b7f34a'] as const
 
 export const defaultTheme: PageTheme = {
   backgroundColor: '#ffffff',
@@ -82,30 +42,6 @@ export const defaultTheme: PageTheme = {
   buttonRadius: 'medium',
 }
 
-export function appearanceToTheme(appearance: DashboardAppearance): PageTheme {
-  return {
-    backgroundColor: appearance.background,
-    textColor: appearance.foreground,
-    buttonColor: appearance.button,
-    buttonTextColor: appearance.buttonText,
-    buttonStyle: appearance.buttonStyle,
-    buttonRadius: appearance.radius,
-  }
-}
-
-export function themeToAppearance(theme: PageTheme): DashboardAppearance {
-  return {
-    theme: themes.find((item) => item.background === theme.backgroundColor)?.id ?? 'custom',
-    background: theme.backgroundColor,
-    foreground: theme.textColor,
-    button: theme.buttonColor,
-    buttonText: theme.buttonTextColor,
-    buttonStyle: theme.buttonStyle,
-    radius: theme.buttonRadius,
-    accent: '#9b8cff',
-  }
-}
-
 export function toDashboardData({ user, page, links }: ApiDashboard): DashboardData {
   return {
     profile: {
@@ -114,9 +50,12 @@ export function toDashboardData({ user, page, links }: ApiDashboard): DashboardD
       username: page?.username ?? '',
       bio: page?.bio ?? '',
       image: page?.avatarUrl ?? '',
+      avatarMediaId: page?.avatarMediaId ?? null,
       published: page?.isPublished ?? false,
     },
-    appearance: themeToAppearance(page?.theme ?? defaultTheme),
+    appearance: page?.appearance ?? defaultAppearance,
+    backgroundImageUrl: page?.backgroundImageUrl ?? null,
+    socialLinks: page?.socialLinks ?? [],
     links: [...links]
       .sort((a, b) => a.position - b.position)
       .map((link, index) => ({
@@ -124,7 +63,7 @@ export function toDashboardData({ user, page, links }: ApiDashboard): DashboardD
         title: link.title,
         url: link.url,
         active: link.isActive,
-        color: themes[index % 3].accent,
+        color: linkAccents[index % linkAccents.length],
       })),
   }
 }

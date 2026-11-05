@@ -4,9 +4,9 @@ import { revalidatePath } from 'next/cache'
 import { api } from '@/lib/api'
 
 import { getApiAuthorization } from '@/lib/get-api-authorization'
-import type { LinkSchemaData } from '../_components/link-schema'
-import type { ApiLink } from '../../_data-access/get-dashboard'
 import { getDashboardError } from '@/lib/get-dashboard-error'
+import type { ApiLink } from '../../_data-access/get-dashboard'
+import type { LinkSchemaData } from '../_components/link-schema'
 import { linkSchema } from '../_components/link-schema'
 
 export async function createLink(

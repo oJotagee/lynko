@@ -1,7 +1,7 @@
-import { DashboardMenuButton } from './dashboard-menu-button'
-import { CopyPageUrlButton } from './copy-page-url-button'
-import { PreviewPageButton } from './preview-page-button'
 import type { DashboardData } from '../dashboard-data'
+import { CopyPageUrlButton } from './copy-page-url-button'
+import { DashboardMenuButton } from './dashboard-menu-button'
+import { PreviewPageButton } from './preview-page-button'
 
 interface DashboardHeaderProps {
   title: string
@@ -18,7 +18,7 @@ export function DashboardHeader({ title, data, hasPage }: DashboardHeaderProps) 
         <h1 className="mt-1 text-xl font-bold tracking-tight sm:text-2xl">{title}</h1>
       </div>
       <CopyPageUrlButton profile={data.profile} hasPage={hasPage} />
-      <PreviewPageButton data={data} />
+      <PreviewPageButton profile={data.profile} />
     </header>
   )
 }

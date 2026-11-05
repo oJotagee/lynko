@@ -1,13 +1,12 @@
-import { DashboardMenuButton } from '../layout/dashboard-menu-button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { PageSkeleton } from './page-skeleton'
+import { DashboardMenuButton } from '../layout/dashboard-menu-button'
 
 interface DashboardPageSkeletonProps {
   title: string
-  section: 'dashboard' | 'links' | 'appearance' | 'analytics' | 'settings'
+  children: React.ReactNode
 }
 
-export function DashboardPageSkeleton({ title, section }: DashboardPageSkeletonProps) {
+export function DashboardPageSkeleton({ title, children }: DashboardPageSkeletonProps) {
   return (
     <div role="status" aria-busy="true">
       <span className="sr-only">Carregando seu dashboard…</span>
@@ -21,7 +20,7 @@ export function DashboardPageSkeleton({ title, section }: DashboardPageSkeletonP
         <Skeleton className="h-11 w-11 sm:w-32" />
       </header>
       <div aria-hidden="true" className="mx-auto max-w-[1600px] p-4 sm:p-8 xl:px-12 xl:py-8">
-        <PageSkeleton section={section} />
+        {children}
       </div>
     </div>
   )

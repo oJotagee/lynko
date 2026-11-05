@@ -1,3 +1,4 @@
+import { defaultAppearance } from '@/app/[locale]/_components/appearance-schema'
 import { defaultTheme } from '@/app/[locale]/(panel)/dashboard/_components/dashboard-data'
 import type {
   ApiDashboard,
@@ -14,7 +15,11 @@ export function buildApiPage(overrides: Partial<ApiPage> = {}): ApiPage {
     title: 'Maria Silva',
     bio: null,
     avatarUrl: null,
+    avatarMediaId: null,
+    backgroundImageUrl: null,
     theme: defaultTheme,
+    appearance: defaultAppearance,
+    socialLinks: [],
     isPublished: false,
     updatedAt: '2026-01-01T00:00:00.000Z',
     ...overrides,

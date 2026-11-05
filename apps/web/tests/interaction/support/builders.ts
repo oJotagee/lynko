@@ -1,8 +1,7 @@
-import {
-  type DashboardData,
-  type DashboardLink,
-  defaultTheme,
-  themeToAppearance,
+import { defaultAppearance } from '@/app/[locale]/_components/appearance-schema'
+import type {
+  DashboardData,
+  DashboardLink,
 } from '@/app/[locale]/(panel)/dashboard/_components/dashboard-data'
 
 export function buildLink(overrides: Partial<DashboardLink> = {}): DashboardLink {
@@ -24,9 +23,12 @@ export function buildDashboardData(overrides: Partial<DashboardData> = {}): Dash
       username: 'maria',
       bio: '',
       image: '',
+      avatarMediaId: null,
       published: false,
     },
-    appearance: themeToAppearance(defaultTheme),
+    appearance: defaultAppearance,
+    backgroundImageUrl: null,
+    socialLinks: [],
     links: [buildLink()],
     ...overrides,
   }

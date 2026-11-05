@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
-
+import { OverviewContent } from './_components/overview/overview-content'
 import { DashboardPageSkeleton } from './_components/skeletons/dashboard-page-skeleton'
-import { OverviewContent } from './_components/overview-content'
+import { OverviewSkeleton } from './_components/skeletons/overview-skeleton'
 
 export const metadata: Metadata = {
   title: 'Visão geral',
@@ -11,7 +11,13 @@ export const metadata: Metadata = {
 
 export default function DashboardPage() {
   return (
-    <Suspense fallback={<DashboardPageSkeleton title="Visão geral" section="dashboard" />}>
+    <Suspense
+      fallback={
+        <DashboardPageSkeleton title="Visão geral">
+          <OverviewSkeleton />
+        </DashboardPageSkeleton>
+      }
+    >
       <OverviewContent />
     </Suspense>
   )

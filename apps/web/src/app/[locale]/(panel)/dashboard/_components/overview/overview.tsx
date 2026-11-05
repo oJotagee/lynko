@@ -1,11 +1,10 @@
 import { ArrowRight, EyeOff, Plus } from 'lucide-react'
-
-import { DashboardMascot } from './layout/dashboard-mascot'
-import { ProfilePreview } from './profile/profile-preview'
+import { LinkIcon } from '@/app/[locale]/_components/link-icon'
 import { buttonVariants } from '@/components/ui/button'
-import type { DashboardData } from './dashboard-data'
 import { Link } from '@/i18n/navigation'
-import { LinkIcon } from './link-icon'
+import type { DashboardData } from '../dashboard-data'
+import { DashboardMascot } from '../layout/dashboard-mascot'
+import { ProfilePreview } from '../profile/profile-preview'
 
 export function Overview({ data, hasPage }: { data: DashboardData; hasPage: boolean }) {
   return (

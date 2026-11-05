@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'bun:test'
 
 import {
-  defaultTheme,
-  themeToAppearance,
-} from '@/app/[locale]/(panel)/dashboard/_components/dashboard-data'
-import { profileSchema, themeSchema } from '@/app/[locale]/(panel)/dashboard/_components/schemas'
+  appearanceSchema,
+  appearanceThemes,
+  defaultAppearance,
+} from '@/app/[locale]/_components/appearance-schema'
+import { profileSchema } from '@/app/[locale]/(panel)/dashboard/_components/schemas'
 
 describe('profileSchema', () => {
   const validInput = {
@@ -13,6 +14,7 @@ describe('profileSchema', () => {
     username: 'maria_silva',
     bio: 'Designer',
     image: '',
+    avatarMediaId: null,
     published: false,
   }
 
@@ -44,18 +46,33 @@ describe('profileSchema', () => {
   })
 })
 
-describe('themeSchema', () => {
-  const appearance = themeToAppearance(defaultTheme)
+describe('appearanceSchema', () => {
+  it('accepts the default appearance and every theme preset', () => {
+    expect(appearanceSchema.parse(defaultAppearance)).toEqual(defaultAppearance)
 
-  it('accepts the default appearance', () => {
-    expect(themeSchema.parse(appearance)).toEqual(appearance)
+    for (const theme of appearanceThemes) {
+      expect(appearanceSchema.safeParse(theme.appearance).success).toBe(true)
+    }
   })
 
   it.each([
-    ['a color name', { background: 'red' }],
-    ['a short hex color', { button: '#fff' }],
-    ['an unknown radius', { radius: 'round' }],
+    ['a color name', { typography: { fontFamily: 'inter', textColor: 'red' } }],
+    [
+      'a short hex color',
+      { buttons: { shape: 'rounded', backgroundColor: '#fff', textColor: '#000000' } },
+    ],
+    ['an unknown font', { typography: { fontFamily: 'comic-sans', textColor: '#111111' } }],
+    [
+      'an unknown shape',
+      { buttons: { shape: 'blob', backgroundColor: '#111111', textColor: '#ffffff' } },
+    ],
+    ['a solid background without color', { background: { type: 'solid' } }],
+    [
+      'a gradient background without the second color',
+      { background: { type: 'gradient', gradientFrom: '#000000' } },
+    ],
+    ['an image background without media', { background: { type: 'image' } }],
   ])('rejects %s', (_case, change) => {
-    expect(themeSchema.safeParse({ ...appearance, ...change }).success).toBe(false)
+    expect(appearanceSchema.safeParse({ ...defaultAppearance, ...change }).success).toBe(false)
   })
 })

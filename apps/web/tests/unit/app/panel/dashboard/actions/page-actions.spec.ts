@@ -8,7 +8,7 @@ import {
   spyOnApi,
 } from '../../../../support/mocks'
 
-const { toDashboardData, defaultTheme } = await import(
+const { toDashboardData } = await import(
   '@/app/[locale]/(panel)/dashboard/_components/dashboard-data'
 )
 
@@ -46,7 +46,6 @@ describe('page actions', () => {
           title: 'Maria Silva',
           bio: undefined,
           avatarUrl: undefined,
-          theme: defaultTheme,
         },
         { headers: authorization },
       )
@@ -76,10 +75,80 @@ describe('page actions', () => {
       )
     })
 
+    it('sends the uploaded avatar without copying its CDN url to avatarUrl', async () => {
+      api.patch.mockResolvedValueOnce({ data: buildApiPage() })
+
+      const avatarMediaId = '7f0c9e64-3f1d-4c2b-9a51-2d8e6f4b1a90'
+
+      await updatePage({
+        ...data,
+        profile: { ...data.profile, image: 'https://cdn.lynko.test/media/a.png', avatarMediaId },
+      })
+
+      expect(api.patch).toHaveBeenCalledWith(
+        '/pages/me',
+        expect.objectContaining({ avatarUrl: null, avatarMediaId }),
+        { headers: authorization },
+      )
+    })
+
+    it('keeps the legacy avatar url when there is no upload', async () => {
+      api.patch.mockResolvedValueOnce({ data: buildApiPage() })
+
+      await updatePage({ ...data, profile: { ...data.profile, image: 'https://legacy.dev/a.png' } })
+
+      expect(api.patch).toHaveBeenCalledWith(
+        '/pages/me',
+        expect.objectContaining({ avatarUrl: 'https://legacy.dev/a.png', avatarMediaId: null }),
+        { headers: authorization },
+      )
+    })
+
+    it('sends the social links in order', async () => {
+      api.patch.mockResolvedValueOnce({ data: buildApiPage() })
+
+      const socialLinks = [
+        { platform: 'x' as const, url: 'https://x.com/maria', isActive: true },
+        { platform: 'github' as const, url: 'https://github.com/maria', isActive: false },
+      ]
+
+      await updatePage({ ...data, socialLinks })
+
+      expect(api.patch).toHaveBeenCalledWith(
+        '/pages/me',
+        expect.objectContaining({ socialLinks }),
+        { headers: authorization },
+      )
+    })
+
+    it('rejects an unsafe social link without calling the API', async () => {
+      const result = await updatePage({
+        ...data,
+        socialLinks: [{ platform: 'github', url: 'javascript:alert(1)', isActive: true }],
+      })
+
+      expect(result.error).toBeDefined()
+      expect(api.patch).not.toHaveBeenCalled()
+    })
+
+    it('sends appearance and does not send the legacy theme', async () => {
+      api.patch.mockResolvedValueOnce({ data: buildApiPage() })
+
+      const appearance = { ...data.appearance, theme: 'dark' as const }
+
+      await updatePage({ ...data, appearance })
+
+      const [, body] = api.patch.mock.calls[0] ?? []
+
+      expect(body).toMatchObject({ appearance })
+
+      expect(body).not.toHaveProperty('theme')
+    })
+
     it('rejects an invalid color without calling the API', async () => {
       const result = await updatePage({
         ...data,
-        appearance: { ...data.appearance, background: 'red' },
+        appearance: { ...data.appearance, background: { type: 'solid', color: 'red' } },
       })
 
       expect(result.error).toBeDefined()

@@ -2,10 +2,9 @@
 
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
-
+import { api } from '@/lib/api'
 import { getApiAuthorization } from '@/lib/get-api-authorization'
 import { getDashboardError } from '@/lib/get-dashboard-error'
-import { api } from '@/lib/api'
 
 export async function deleteLink(id: string): Promise<{ data?: true; error?: string }> {
   try {

@@ -1,18 +1,5 @@
 import { z } from 'zod'
 
-const color = z.string().regex(/^#[0-9a-f]{6}$/i, 'Use uma cor hexadecimal válida')
-
-export const themeSchema = z.object({
-  background: color,
-  foreground: color,
-  button: color,
-  buttonText: color,
-  buttonStyle: z.enum(['filled', 'outline']),
-  radius: z.enum(['none', 'small', 'medium', 'full']),
-  theme: z.string(),
-  accent: color,
-})
-
 const reserved = new Set([
   'admin',
   'api',
@@ -50,6 +37,7 @@ export const profileSchema = z.object({
     z.literal(''),
     z.url({ protocol: /^https?$/, error: 'Informe uma URL com http ou https' }).max(2048),
   ]),
+  avatarMediaId: z.uuid().nullable(),
   published: z.boolean(),
 })
 

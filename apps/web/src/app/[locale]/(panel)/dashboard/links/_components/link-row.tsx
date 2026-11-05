@@ -1,12 +1,11 @@
 'use client'
 
-import { LinkIcon } from '../../_components/link-icon'
-import { ArrowDown, ArrowUp, GripVertical, Settings2, Trash2 } from 'lucide-react'
-
-import type { DashboardLink } from '../../_components/dashboard-data'
-import { LinkVisibilitySwitch } from './link-visibility-switch'
+import { ArrowDown, ArrowUp, GripVertical, Pencil, Trash2 } from 'lucide-react'
+import { LinkIcon } from '@/app/[locale]/_components/link-icon'
 import { Button } from '@/components/ui/button'
+import { Switch } from '@/components/ui/switch'
 import { cn } from '@/lib/utils'
+import type { DashboardLink } from '../../_components/dashboard-data'
 
 interface LinkRowProps {
   link: DashboardLink
@@ -14,6 +13,8 @@ interface LinkRowProps {
   total: number
   onEdit: () => void
   onDelete: () => void
+  onToggle: (active: boolean) => void
+  disabled: boolean
   onMove: (id: string, target: number) => void
   draggingId: string | null
   dropPosition: number | null
@@ -29,6 +30,8 @@ export function LinkRow({
   total,
   onEdit,
   onDelete,
+  onToggle,
+  disabled,
   onMove,
   draggingId,
   dropPosition,
@@ -45,7 +48,7 @@ export function LinkRow({
     <li
       className={cn(
         'relative flex flex-col gap-3 rounded-xl border border-border bg-card p-4',
-        'sm:flex-row sm:flex-wrap sm:items-center sm:rounded-none sm:border-0 sm:border-t sm:px-5 sm:py-5',
+        'sm:flex-row sm:flex-wrap sm:items-center sm:rounded-none sm:border-0 sm:border-t sm:px-5 sm:py-5 sm:first:border-t-0',
         draggingId === link.id && 'opacity-40',
       )}
       onDragOver={(event) => {
@@ -161,7 +164,12 @@ export function LinkRow({
           <ArrowDown className="size-3.5" />
         </Button>
         <div className="flex size-11 items-center justify-center">
-          <LinkVisibilitySwitch link={link} />
+          <Switch
+            checked={link.active}
+            disabled={disabled}
+            onCheckedChange={onToggle}
+            aria-label={`Exibir ${link.title} na página`}
+          />
         </div>
         <Button
           size="icon"
@@ -170,7 +178,7 @@ export function LinkRow({
           aria-label={`Editar ${link.title}`}
           onClick={onEdit}
         >
-          <Settings2 className="size-4" />
+          <Pencil className="size-4" />
         </Button>
         <Button
           size="icon"
