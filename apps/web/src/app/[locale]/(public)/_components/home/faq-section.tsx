@@ -1,12 +1,11 @@
 import { useTranslations } from 'next-intl'
-
-import { LynkoMascot } from '../lynko-mascot'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+import { LynkoMascot } from '../lynko-mascot'
 
 export function FaqSection() {
   const t = useTranslations('Home.Faq')

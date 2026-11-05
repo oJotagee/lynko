@@ -1,11 +1,10 @@
 import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
-
+import { auth } from '@/lib/auth'
 import { LocaleSwitcher } from '../locale-switcher'
-import { UserAvatar } from './user-avatar'
 import { LynkoLogo } from '../lynko-logo'
 import { CtaLink } from './cta-link'
-import { auth } from '@/lib/auth'
+import { UserAvatar } from './user-avatar'
 
 const NAV_LINK_CLASS = 'underline-offset-2 hover:underline'
 

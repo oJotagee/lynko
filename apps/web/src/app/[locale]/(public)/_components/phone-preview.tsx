@@ -1,5 +1,5 @@
-import { useTranslations } from 'next-intl'
 import { Share2 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 import { cn } from '@/lib/utils'
 

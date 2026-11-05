@@ -1,9 +1,8 @@
 'use server'
 
 import { isAxiosError } from 'axios'
-
-import { getApiErrorMessage } from '@/lib/api-error'
 import { api } from '@/lib/api'
+import { getApiErrorMessage } from '@/lib/api-error'
 
 export interface RegisterInput {
   name: string

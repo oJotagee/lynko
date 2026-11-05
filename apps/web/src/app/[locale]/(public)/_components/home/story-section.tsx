@@ -2,12 +2,11 @@
 
 import { useTranslations } from 'next-intl'
 import { useRef, useState } from 'react'
-
-import { type PhoneButtonShape, PhonePreview } from '../phone-preview'
-import { useScrollProgress } from './use-scroll-progress'
-import { AppearancePanel } from './appearance-panel'
 import { LynkoMascot } from '../lynko-mascot'
+import { type PhoneButtonShape, PhonePreview } from '../phone-preview'
+import { AppearancePanel } from './appearance-panel'
 import type { PaletteId } from './palettes'
+import { useScrollProgress } from './use-scroll-progress'
 
 export function StorySection() {
   const t = useTranslations('Home.Story')

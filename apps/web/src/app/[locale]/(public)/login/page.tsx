@@ -1,10 +1,9 @@
-import { getTranslations } from 'next-intl/server'
 import type { Metadata } from 'next'
-
-import { PasswordVisibilityProvider } from '../_components/password-visibility'
+import { getTranslations } from 'next-intl/server'
 import { LegalNotice } from '../_components/legal-notice'
-import { LoginBrand } from './_components/login-brand'
+import { PasswordVisibilityProvider } from '../_components/password-visibility'
 import { AuthCard } from './_components/auth-card'
+import { LoginBrand } from './_components/login-brand'
 
 export async function generateMetadata({
   params,

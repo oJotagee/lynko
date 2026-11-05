@@ -1,8 +1,8 @@
 import { useTranslations } from 'next-intl'
 
 import { Button } from '@/components/ui/button'
-import { RegisterForm } from './register-form'
 import { Link } from '@/i18n/navigation'
+import { RegisterForm } from './register-form'
 
 export function RegisterCard() {
   const t = useTranslations('Auth.Register')

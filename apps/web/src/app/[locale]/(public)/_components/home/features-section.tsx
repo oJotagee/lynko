@@ -1,8 +1,8 @@
-import { AnalyticsPreview } from './analytics-preview'
-import { PhonePreview } from '../phone-preview'
-import { LynkoMascot } from '../lynko-mascot'
 import { Eye, Sparkles } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { LynkoMascot } from '../lynko-mascot'
+import { PhonePreview } from '../phone-preview'
+import { AnalyticsPreview } from './analytics-preview'
 
 export function FeaturesSection() {
   const t = useTranslations('Home.Features')

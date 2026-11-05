@@ -3,18 +3,17 @@
 import { useMutation } from '@tanstack/react-query'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { getSession } from 'next-auth/react'
-import { Controller } from 'react-hook-form'
 import { useTranslations } from 'next-intl'
+import { Controller } from 'react-hook-form'
 import { toast } from 'sonner'
-
-import { usePasswordVisibility } from '../../_components/password-visibility'
-import { Field, FieldError, FieldLabel } from '@/components/ui/field'
-import { type LoginSchemaData, useLoginSchema } from './schemas'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Link, useRouter } from '@/i18n/navigation'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Field, FieldError, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
+import { Link, useRouter } from '@/i18n/navigation'
+import { usePasswordVisibility } from '../../_components/password-visibility'
 import { login } from '../_actions/login'
+import { type LoginSchemaData, useLoginSchema } from './schemas'
 
 export function LoginForm() {
   const form = useLoginSchema()

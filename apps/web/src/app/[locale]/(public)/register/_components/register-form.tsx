@@ -2,18 +2,17 @@
 
 import { useMutation } from '@tanstack/react-query'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
-import { Controller } from 'react-hook-form'
 import { useTranslations } from 'next-intl'
+import { Controller } from 'react-hook-form'
 import { toast } from 'sonner'
-
-import { usePasswordVisibility } from '../../_components/password-visibility'
-import { type RegisterSchemaData, useRegisterSchema } from './schemas'
-import { Field, FieldError, FieldLabel } from '@/components/ui/field'
-import { registerUser } from '../_actions/register'
-import { login } from '../../login/_actions/login'
 import { Button } from '@/components/ui/button'
+import { Field, FieldError, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { useRouter } from '@/i18n/navigation'
+import { usePasswordVisibility } from '../../_components/password-visibility'
+import { login } from '../../login/_actions/login'
+import { registerUser } from '../_actions/register'
+import { type RegisterSchemaData, useRegisterSchema } from './schemas'
 
 export function RegisterForm() {
   const form = useRegisterSchema()

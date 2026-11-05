@@ -1,10 +1,10 @@
 import { useTranslations } from 'next-intl'
 
 import { buttonVariants } from '@/components/ui/button'
-import { PhonePreview } from '../phone-preview'
-import { LynkoMascot } from '../lynko-mascot'
-import { CtaLink } from './cta-link'
 import { cn } from '@/lib/utils'
+import { LynkoMascot } from '../lynko-mascot'
+import { PhonePreview } from '../phone-preview'
+import { CtaLink } from './cta-link'
 
 export function HeroSection() {
   const t = useTranslations('Home.Hero')
