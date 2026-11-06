@@ -17,6 +17,8 @@ export function registerSecurity(app: FastifyInstance) {
   app.register(fastifyRateLimit, {
     max: 100,
     timeWindow: '1 minute',
+    hook: 'preHandler',
+    keyGenerator: (request) => (request.user?.sub ? `user:${request.user.sub}` : request.ip),
   })
 }
 
