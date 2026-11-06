@@ -9,6 +9,7 @@ import { api } from '@/lib/api'
 import { getApiErrorMessage } from '@/lib/api-error'
 
 export interface ApiPublicPage {
+  id: string
   username: string
   title: string
   bio: string | null

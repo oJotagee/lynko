@@ -20,8 +20,8 @@ export interface PageViewProps {
     published?: boolean
   }
   appearance: PageAppearance
-  socialLinks: SocialLinkData[]
-  links: Pick<DashboardLink, 'id' | 'title' | 'url' | 'color'>[]
+  socialLinks: (SocialLinkData & { href?: string })[]
+  links: (Pick<DashboardLink, 'id' | 'title' | 'url' | 'color'> & { href?: string })[]
   backgroundImageUrl?: string | null
   headingAs?: 'h1' | 'h2'
   fixedFooter?: boolean
@@ -70,7 +70,7 @@ export function PageView({
                 buttonHoverClasses[buttons.hoverEffect],
               )}
               style={getButtonStyle(buttons)}
-              href={link.url}
+              href={link.href ?? link.url}
               target="_blank"
               rel="noopener noreferrer"
             >

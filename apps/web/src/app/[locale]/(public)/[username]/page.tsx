@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation'
 import { setRequestLocale } from 'next-intl/server'
 
 import { PageView } from '@/app/[locale]/_components/page-view/page-view'
+import { publicApiUrl } from '@/lib/public-api-url'
+import { TrackPageView } from './_components/track-page-view'
 import { getPublicPage } from './_data-access/get-public-page'
 
 const LINK_COLOR = '#9b8cff'
@@ -45,9 +47,18 @@ export default async function PublicPage({ params }: PageProps<'/[locale]/[usern
         }}
         appearance={page.appearance}
         backgroundImageUrl={page.backgroundImageUrl}
-        socialLinks={page.socialLinks.map((link) => ({ ...link, isActive: true }))}
-        links={page.links.map((link) => ({ ...link, color: LINK_COLOR }))}
+        socialLinks={page.socialLinks.map((link) => ({
+          ...link,
+          isActive: true,
+          href: `${publicApiUrl}/r/social/${page.id}/${link.platform}`,
+        }))}
+        links={page.links.map((link) => ({
+          ...link,
+          color: LINK_COLOR,
+          href: `${publicApiUrl}/r/${link.id}`,
+        }))}
       />
+      <TrackPageView pageId={page.id} />
     </main>
   )
 }

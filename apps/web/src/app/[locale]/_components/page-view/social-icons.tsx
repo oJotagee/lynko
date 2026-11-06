@@ -5,7 +5,7 @@ import { socialPlatforms } from '../social-links/social-platforms'
 import { socialIconSizes } from './appearance-style'
 
 interface SocialIconsProps {
-  links: SocialLinkData[]
+  links: (SocialLinkData & { href?: string })[]
   appearance: PageAppearance['socialIcons']
 }
 
@@ -13,7 +13,7 @@ export function SocialIcons({ links, appearance }: SocialIconsProps) {
   const items = links
     .filter((link) => link.isActive)
     .flatMap((link) => {
-      const href = getSocialLinkHref(link)
+      const href = link.href ?? getSocialLinkHref(link)
 
       return href ? [{ link, href }] : []
     })

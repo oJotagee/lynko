@@ -15,7 +15,7 @@ export async function AnalyticsContent() {
     <>
       <DashboardHeader title="Analytics" data={data} hasPage={hasPage} />
       <DashboardMain hasPage={hasPage}>
-        <Analytics links={data.links} />
+        <Analytics />
       </DashboardMain>
     </>
   )

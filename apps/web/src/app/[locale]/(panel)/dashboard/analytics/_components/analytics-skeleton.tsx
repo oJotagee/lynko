@@ -2,17 +2,18 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 export function AnalyticsSkeleton() {
   return (
-    <div className="space-y-5">
+    <div className="space-y-5" role="status" aria-busy="true">
+      <span className="sr-only">Carregando analytics…</span>
       <Skeleton className="h-4 w-80 max-w-full" />
-      <div className="space-y-4 rounded-xl border border-border bg-card p-6">
-        <Skeleton className="h-4 w-28" />
-        <Skeleton className="h-8 w-20" />
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {[0, 1, 2, 3].map((item) => (
+          <Skeleton key={item} className="h-24 rounded-xl" />
+        ))}
       </div>
-      <div className="space-y-5 rounded-xl border border-border bg-card p-8 sm:p-12">
-        <Skeleton className="size-10" />
-        <Skeleton className="h-7 w-80 max-w-full" />
-        <Skeleton className="h-12 w-full max-w-xl" />
-        <Skeleton className="h-9 w-52" />
+      <Skeleton className="h-80 rounded-xl" />
+      <div className="grid gap-3 lg:grid-cols-2">
+        <Skeleton className="h-56 rounded-xl" />
+        <Skeleton className="h-56 rounded-xl" />
       </div>
     </div>
   )

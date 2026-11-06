@@ -1,41 +1,87 @@
-import { ChartNoAxesColumn } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+'use client'
 
-import type { DashboardLink } from '../../_components/dashboard-data'
+import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
 
-export function Analytics({ links }: { links: DashboardLink[] }) {
+import type { AnalyticsPeriod } from '../_data-access/analytics-period'
+import { getAnalyticsLinks } from '../_data-access/get-analytics-links'
+import { getAnalyticsOverview } from '../_data-access/get-analytics-overview'
+import { getAnalyticsSocial } from '../_data-access/get-analytics-social'
+import { getAnalyticsTimeseries } from '../_data-access/get-analytics-timeseries'
+import { AnalyticsEmpty } from './analytics-empty'
+import { AnalyticsError } from './analytics-error'
+import { AnalyticsSkeleton } from './analytics-skeleton'
+import { OverviewCards } from './overview-cards'
+import { PeriodFilter } from './period-filter'
+import { SocialPerformance } from './social-performance'
+import { TimeseriesChart } from './timeseries-chart'
+import { TopLinks } from './top-links'
+
+const staleTime = 60_000
+
+export function Analytics() {
+  const [period, setPeriod] = useState<AnalyticsPeriod>('7d')
+
+  const overview = useQuery({
+    queryKey: ['analytics', 'overview', period],
+    queryFn: () => getAnalyticsOverview(period),
+    staleTime,
+  })
+
+  const timeseries = useQuery({
+    queryKey: ['analytics', 'timeseries', period],
+    queryFn: () => getAnalyticsTimeseries(period),
+    staleTime,
+  })
+
+  const links = useQuery({
+    queryKey: ['analytics', 'links', period],
+    queryFn: () => getAnalyticsLinks(period),
+    staleTime,
+  })
+
+  const social = useQuery({
+    queryKey: ['analytics', 'social', period],
+    queryFn: () => getAnalyticsSocial(period),
+    staleTime,
+  })
+
+  const queries = [overview, timeseries, links, social]
+
+  const retry = () => {
+    for (const query of queries) if (query.isError) void query.refetch()
+  }
+
+  function renderBody() {
+    if (queries.some((query) => query.isError)) return <AnalyticsError onRetry={retry} />
+
+    if (!overview.data || !timeseries.data || !links.data || !social.data) {
+      return <AnalyticsSkeleton />
+    }
+
+    if (overview.data.pageViews === 0 && overview.data.totalClicks === 0) return <AnalyticsEmpty />
+
+    return (
+      <>
+        <OverviewCards overview={overview.data} />
+        <TimeseriesChart data={timeseries.data} />
+        <div className="grid gap-3 lg:grid-cols-2">
+          <TopLinks links={links.data} />
+          <SocialPerformance items={social.data} />
+        </div>
+      </>
+    )
+  }
+
   return (
     <div className="space-y-5">
-      <p className="text-sm text-muted-foreground">
-        Acompanhe as informações disponíveis sobre sua página.
-      </p>
-      <section className="rounded-xl border border-border bg-card p-6">
-        <h2 className="text-base font-semibold">Links ativos</h2>
-        <p className="mt-4 text-3xl font-bold">
-          {links.filter((link) => link.active).length}
-          <span className="ml-2 text-sm font-normal text-muted-foreground">
-            de {links.length} cadastrados
-          </span>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-muted-foreground">
+          Acompanhe as visitas e os cliques da sua página.
         </p>
-      </section>
-      <section className="rounded-xl border border-border bg-card p-8 sm:p-12">
-        <ChartNoAxesColumn className="mb-5 size-10 text-muted-foreground" />
-        <h2 className="text-2xl font-bold">Analytics ainda não está disponível</h2>
-        <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-          A API atual não fornece visualizações, cliques, histórico, origem do tráfego ou
-          dispositivos. Esses números serão exibidos quando a integração estiver disponível.
-        </p>
-        <fieldset
-          className="mt-6 flex flex-wrap gap-2"
-          aria-label="Filtros de período indisponíveis"
-        >
-          {[7, 30, 90].map((days) => (
-            <Button key={days} variant="outline" disabled>
-              {days} dias
-            </Button>
-          ))}
-        </fieldset>
-      </section>
+        <PeriodFilter value={period} onChange={setPeriod} />
+      </div>
+      {renderBody()}
     </div>
   )
 }
