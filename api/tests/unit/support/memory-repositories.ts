@@ -302,12 +302,11 @@ export function useInMemoryRepositories() {
     groupCounts(
       analytics.links.filter((row) => inRange(row, pageId, from, to)),
       (row) => row.linkId,
-    ).map(([linkId, clicks]) => ({
-      linkId,
-      title:
-        store.links.find((link) => link.id === linkId && link.pageId === pageId)?.title ?? null,
-      clicks,
-    })),
+    ).map(([linkId, clicks]) => {
+      const link = store.links.find((item) => item.id === linkId && item.pageId === pageId)
+
+      return { linkId, title: link?.title ?? null, url: link?.url ?? null, clicks }
+    }),
   )
 
   spyOn(analyticsRepository, 'topSocial').mockImplementation(async (pageId, from, to) =>

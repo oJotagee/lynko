@@ -173,7 +173,12 @@ export const analyticsRepository = {
     const clicks = total(linkClicksDailySchema.clicks)
 
     return db
-      .select({ linkId: linkClicksDailySchema.linkId, title: linkSchema.title, clicks })
+      .select({
+        linkId: linkClicksDailySchema.linkId,
+        title: linkSchema.title,
+        url: linkSchema.url,
+        clicks,
+      })
       .from(linkClicksDailySchema)
       .leftJoin(
         linkSchema,
@@ -183,7 +188,7 @@ export const analyticsRepository = {
         ),
       )
       .where(inRange(linkClicksDailySchema, pageId, from, to))
-      .groupBy(linkClicksDailySchema.linkId, linkSchema.title)
+      .groupBy(linkClicksDailySchema.linkId, linkSchema.title, linkSchema.url)
       .orderBy(desc(clicks))
   },
 

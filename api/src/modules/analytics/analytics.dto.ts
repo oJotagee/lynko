@@ -51,6 +51,7 @@ export const topLinksResponse = z.array(
   z.object({
     linkId: z.uuid(),
     title: z.string().nullable(),
+    url: z.string().nullable(),
     clicks: z.number(),
     share: z.number(),
   }),

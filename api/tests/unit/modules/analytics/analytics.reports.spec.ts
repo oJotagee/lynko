@@ -121,8 +121,8 @@ describe('analytics reports', () => {
     addLinkClicks(deleted, '2026-11-06', 1)
 
     expect(await analyticsService.getTopLinks(page.userId, '7d', now)).toEqual([
-      { linkId: kept.id, title: 'Portfólio', clicks: 3, share: 75 },
-      { linkId: deleted, title: null, clicks: 1, share: 25 },
+      { linkId: kept.id, title: 'Portfólio', url: kept.url, clicks: 3, share: 75 },
+      { linkId: deleted, title: null, url: null, clicks: 1, share: 25 },
     ])
   })
 
