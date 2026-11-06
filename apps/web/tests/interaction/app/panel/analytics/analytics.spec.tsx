@@ -18,8 +18,14 @@ const timeseries = mock(async (_period: AnalyticsPeriod) => [
 ])
 
 const links = mock(async (_period: AnalyticsPeriod) => [
-  { linkId: 'a', title: 'Portfólio', clicks: 60, share: 66.67 },
-  { linkId: 'b', title: null, clicks: 30, share: 33.33 },
+  {
+    linkId: 'a',
+    title: 'Portfólio',
+    url: 'https://example.com/portfolio',
+    clicks: 60,
+    share: 66.67,
+  },
+  { linkId: 'b', title: null, url: null, clicks: 30, share: 33.33 },
 ])
 
 const social = mock(async (_period: AnalyticsPeriod) => [
@@ -55,11 +61,33 @@ describe('Analytics', () => {
 
     expect(await screen.findByText('1.200')).toBeInTheDocument()
     expect(screen.getByText('10%')).toBeInTheDocument()
-    expect(screen.getByText('Visualizações e cliques por dia')).toBeInTheDocument()
+    expect(screen.getByText('Visualizações e cliques')).toBeInTheDocument()
     expect(document.querySelector('[data-slot="chart"]')).not.toBeNull()
     expect(screen.getByText('Portfólio')).toBeInTheDocument()
     expect(screen.getByText('Link removido')).toBeInTheDocument()
-    expect(screen.getByText('Instagram', { selector: 'span' })).toBeInTheDocument()
+    expect(screen.getAllByText('Instagram', { selector: 'p' })).toHaveLength(2)
+    expect(screen.getByText('example.com')).toBeInTheDocument()
+    expect(screen.getAllByRole('progressbar').length).toBeGreaterThanOrEqual(3)
+  })
+
+  it('shows the most clicked social network as a card', async () => {
+    renderWithProviders(<Analytics />)
+
+    expect(await screen.findByText('100% dos cliques em redes')).toBeInTheDocument()
+  })
+
+  it('switches the chart between lines and bars', async () => {
+    const { user } = renderWithProviders(<Analytics />)
+
+    await screen.findByText('1.200')
+
+    const bars = screen.getByRole('button', { name: 'Barras' })
+
+    expect(screen.getByRole('button', { name: 'Linhas' })).toHaveAttribute('aria-pressed', 'true')
+
+    await user.click(bars)
+
+    expect(bars).toHaveAttribute('aria-pressed', 'true')
   })
 
   it('reloads the four queries with the new period', async () => {

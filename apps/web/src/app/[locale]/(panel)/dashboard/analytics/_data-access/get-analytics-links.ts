@@ -6,6 +6,7 @@ import { fetchAnalytics } from './fetch-analytics'
 export interface AnalyticsTopLink {
   linkId: string
   title: string | null
+  url: string | null
   clicks: number
   share: number
 }
