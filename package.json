@@ -21,7 +21,9 @@
     "test": "bun run --filter '*' test",
     "db:generate": "bun --filter '@lynko/api' db:generate",
     "db:migrate": "bun --filter '@lynko/api' db:migrate",
-    "db:studio": "bun --filter '@lynko/api' db:studio"
+    "db:studio": "bun --filter '@lynko/api' db:studio",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down"
   },
   "type": "module",
   "workspaces": [
