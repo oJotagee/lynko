@@ -1,0 +1,715 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "f5c7ad31-8f84-4663-a69e-bcaf5711a206",
+  "prevIds": [
+    "d4139c67-c7d8-4c64-881d-64615f4b5577"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_sequence",
+      "statementTarget": [
+        "sequence",
+        "public",
+        "pages_revision_seq"
+      ],
+      "writes": [
+        "s|seq|public.pages_revision_seq",
+        "n|seq|public.pages_revision_seq",
+        "e|seq|public.pages_revision_seq",
+        "n|rel|public.pages_revision_seq"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "analytics_processed_events"
+      ],
+      "writes": [
+        "s|tbl|public.analytics_processed_events",
+        "n|tbl|public.analytics_processed_events",
+        "e|tbl|public.analytics_processed_events",
+        "n|rel|public.analytics_processed_events",
+        "n|type|public.analytics_processed_events",
+        "n|rel|public.analytics_processed_events_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "link_clicks_daily"
+      ],
+      "writes": [
+        "s|tbl|public.link_clicks_daily",
+        "n|tbl|public.link_clicks_daily",
+        "e|tbl|public.link_clicks_daily",
+        "n|rel|public.link_clicks_daily",
+        "n|type|public.link_clicks_daily",
+        "n|rel|public.link_clicks_daily_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "page_views_daily"
+      ],
+      "writes": [
+        "s|tbl|public.page_views_daily",
+        "n|tbl|public.page_views_daily",
+        "e|tbl|public.page_views_daily",
+        "n|rel|public.page_views_daily",
+        "n|type|public.page_views_daily",
+        "n|rel|public.page_views_daily_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "social_clicks_daily"
+      ],
+      "writes": [
+        "s|tbl|public.social_clicks_daily",
+        "n|tbl|public.social_clicks_daily",
+        "e|tbl|public.social_clicks_daily",
+        "n|rel|public.social_clicks_daily",
+        "n|type|public.social_clicks_daily",
+        "n|rel|public.social_clicks_daily_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "pages",
+        "revision"
+      ],
+      "writes": [
+        "s|col|public.pages.revision",
+        "n|col|public.pages.revision",
+        "e|col|public.pages.revision"
+      ],
+      "reads": [
+        "n|tbl|public.pages",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "analytics_processed_events",
+        "analytics_processed_events_processed_at_idx"
+      ],
+      "writes": [
+        "s|idx|public.analytics_processed_events_processed_at_idx",
+        "n|idx|public.analytics_processed_events_processed_at_idx",
+        "e|idx|public.analytics_processed_events_processed_at_idx",
+        "n|rel|public.analytics_processed_events_processed_at_idx"
+      ],
+      "reads": [
+        "n|tbl|public.analytics_processed_events",
+        "n|sch|public",
+        "n|col|public.analytics_processed_events.processed_at"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "link_clicks_daily",
+        "link_clicks_daily_page_id_date_idx"
+      ],
+      "writes": [
+        "s|idx|public.link_clicks_daily_page_id_date_idx",
+        "n|idx|public.link_clicks_daily_page_id_date_idx",
+        "e|idx|public.link_clicks_daily_page_id_date_idx",
+        "n|rel|public.link_clicks_daily_page_id_date_idx"
+      ],
+      "reads": [
+        "n|tbl|public.link_clicks_daily",
+        "n|sch|public",
+        "n|col|public.link_clicks_daily.page_id",
+        "n|col|public.link_clicks_daily.date"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "social_clicks_daily",
+        "social_clicks_daily_page_id_date_idx"
+      ],
+      "writes": [
+        "s|idx|public.social_clicks_daily_page_id_date_idx",
+        "n|idx|public.social_clicks_daily_page_id_date_idx",
+        "e|idx|public.social_clicks_daily_page_id_date_idx",
+        "n|rel|public.social_clicks_daily_page_id_date_idx"
+      ],
+      "reads": [
+        "n|tbl|public.social_clicks_daily",
+        "n|sch|public",
+        "n|col|public.social_clicks_daily.page_id",
+        "n|col|public.social_clicks_daily.date"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "analytics_processed_events",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "link_clicks_daily",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "page_views_daily",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "social_clicks_daily",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "analytics_processed_events",
+        "name": "event_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "analytics_processed_events",
+        "name": "event_type",
+        "type": "varchar(16)",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "analytics_processed_events",
+        "name": "processed_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "link_clicks_daily",
+        "name": "page_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "link_clicks_daily",
+        "name": "link_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "link_clicks_daily",
+        "name": "date",
+        "type": "date",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "link_clicks_daily",
+        "name": "clicks",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "link_clicks_daily",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "link_clicks_daily",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "pages",
+        "name": "revision",
+        "type": "bigint",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "nextval('pages_revision_seq')",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "page_views_daily",
+        "name": "page_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "page_views_daily",
+        "name": "date",
+        "type": "date",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "page_views_daily",
+        "name": "views",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "page_views_daily",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "page_views_daily",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "social_clicks_daily",
+        "name": "page_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "social_clicks_daily",
+        "name": "platform",
+        "type": "varchar(32)",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "social_clicks_daily",
+        "name": "date",
+        "type": "date",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "social_clicks_daily",
+        "name": "clicks",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "social_clicks_daily",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "social_clicks_daily",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "analytics_processed_events",
+        "name": "analytics_processed_events_processed_at_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "processed_at",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "link_clicks_daily",
+        "name": "link_clicks_daily_page_id_date_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "page_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "date",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "social_clicks_daily",
+        "name": "social_clicks_daily_page_id_date_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "page_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "date",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "link_clicks_daily",
+        "name": "link_clicks_daily_pkey",
+        "columns": [
+          "page_id",
+          "link_id",
+          "date"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "page_views_daily",
+        "name": "page_views_daily_pkey",
+        "columns": [
+          "page_id",
+          "date"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "social_clicks_daily",
+        "name": "social_clicks_daily_pkey",
+        "columns": [
+          "page_id",
+          "platform",
+          "date"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "analytics_processed_events",
+        "name": "analytics_processed_events_pkey",
+        "columns": [
+          "event_id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "pages_revision_seq",
+        "incrementBy": "1",
+        "minValue": "1",
+        "maxValue": "9223372036854775807",
+        "startWith": "1",
+        "cacheSize": 1,
+        "cycle": false,
+        "entityType": "sequences"
+      }
+    }
+  ]
+}
