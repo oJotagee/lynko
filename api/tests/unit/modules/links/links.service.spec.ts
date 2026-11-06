@@ -1,6 +1,7 @@
-import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test'
 import { MAX_LINKS_PER_PAGE } from '../../../../src/modules/links/links.dto'
 import { linksService } from '../../../../src/modules/links/links.service'
+import { publicPageCache } from '../../../../src/modules/pages/pages.service'
 import { BadRequestError, ConflictError, NotFoundError } from '../../../../src/shared/errors'
 import { buildLink, buildPage, type Page } from '../../support/builders'
 import { useInMemoryRepositories } from '../../support/memory-repositories'
@@ -116,6 +117,101 @@ describe('linksService', () => {
       await expect(
         linksService.reorder(userId, change(links.map((link) => link.id))),
       ).rejects.toBeInstanceOf(BadRequestError)
+    })
+  })
+
+  describe('cache invalidation', () => {
+    it('invalidates the page with its id and revision after each link write', async () => {
+      page.isPublished = true
+
+      const invalidate = spyOn(publicPageCache, 'invalidate')
+
+      const link = await linksService.create(userId, { title: 'Blog', url: 'https://blog.com' })
+
+      await linksService.update(userId, link.id, { isActive: false })
+
+      await linksService.reorder(userId, [link.id])
+
+      await linksService.delete(userId, link.id)
+
+      expect(invalidate).toHaveBeenCalledTimes(4)
+
+      const revisions = invalidate.mock.calls.map(([entries]) => entries[0]?.revision)
+
+      expect(new Set(revisions).size).toBe(4)
+
+      expect(invalidate).toHaveBeenLastCalledWith([
+        { username: page.username, revision: page.revision, pageId: page.id },
+      ])
+    })
+
+    it('invalidates an unpublished page as not found', async () => {
+      const invalidate = spyOn(publicPageCache, 'invalidate')
+
+      await linksService.create(userId, { title: 'Blog', url: 'https://blog.com' })
+
+      expect(invalidate).toHaveBeenCalledWith([
+        { username: page.username, revision: page.revision },
+      ])
+    })
+
+    it('does not invalidate when the link is not found or the write is rejected', async () => {
+      const invalidate = spyOn(publicPageCache, 'invalidate')
+
+      const missing = crypto.randomUUID()
+
+      await expect(linksService.update(userId, missing, { title: 'X' })).rejects.toBeInstanceOf(
+        NotFoundError,
+      )
+
+      await expect(linksService.delete(userId, missing)).rejects.toBeInstanceOf(NotFoundError)
+
+      await expect(linksService.reorder(userId, [missing])).rejects.toBeInstanceOf(BadRequestError)
+
+      expect(invalidate).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('revision', () => {
+    it('bumps the page revision on every link write', async () => {
+      const revisions = [page.revision]
+
+      const link = await linksService.create(userId, { title: 'Blog', url: 'https://blog.com' })
+
+      revisions.push(page.revision)
+
+      await linksService.update(userId, link.id, { isActive: false })
+
+      revisions.push(page.revision)
+
+      await linksService.reorder(userId, [link.id])
+
+      revisions.push(page.revision)
+
+      await linksService.delete(userId, link.id)
+
+      revisions.push(page.revision)
+
+      expect(revisions).toEqual([...revisions].sort((a, b) => a - b))
+      expect(new Set(revisions).size).toBe(5)
+    })
+
+    it('keeps the revision when the write is rejected', async () => {
+      store.links.push(
+        ...Array.from({ length: MAX_LINKS_PER_PAGE }, (_, position) =>
+          buildLink({ pageId: page.id, position }),
+        ),
+      )
+
+      const revision = page.revision
+
+      await expect(
+        linksService.create(userId, { title: 'Extra', url: 'https://extra.com' }),
+      ).rejects.toBeInstanceOf(ConflictError)
+
+      await expect(linksService.reorder(userId, [])).rejects.toBeInstanceOf(BadRequestError)
+
+      expect(page.revision).toBe(revision)
     })
   })
 })

@@ -26,6 +26,10 @@ export const authRateLimit = {
   refresh: { max: 30, timeWindow: '1 minute' },
 }
 
+export const analyticsRateLimit = {
+  views: { max: 30, timeWindow: '1 minute' },
+}
+
 export const mediaRateLimit = {
   presign: { max: 10, timeWindow: '1 minute' },
   confirm: { max: 20, timeWindow: '1 minute' },

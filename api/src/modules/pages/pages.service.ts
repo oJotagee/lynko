@@ -1,3 +1,5 @@
+import { env } from '../../config/env'
+import { cacheRedis } from '../../db/redis'
 import type { pageSchema } from '../../db/schema'
 import { getUniqueViolation } from '../../shared/db-errors'
 import { ConflictError, NotFoundError } from '../../shared/errors'
@@ -6,6 +8,15 @@ import type { MediaType } from '../media/media.dto'
 import { mediaRepository } from '../media/media.repository'
 import { getMediaUrl, mediaService } from '../media/media.service'
 import { getBackgroundMediaId, resolveAppearance } from './pages.appearance'
+import {
+  cacheMetrics,
+  createPublicPageCache,
+  FALLBACK_LIMIT,
+  NOT_FOUND_TTL_MS,
+  sharedCacheLogger,
+  toInvalidateEntry,
+} from './pages.cache'
+import { createPublicPageCacheRepository } from './pages.cache.repository'
 import type { CreatePageBody, UpdatePageBody } from './pages.dto'
 import { pagesRepository } from './pages.repository'
 import type { SocialLink } from './pages.social'
@@ -79,6 +90,35 @@ function toPublicSocialLinks(socialLinks: SocialLink[]) {
   return socialLinks.filter((link) => link.isActive).map(({ platform, url }) => ({ platform, url }))
 }
 
+async function loadPublicPage(pageId: string) {
+  const page = await pagesRepository.findPublishedById(pageId)
+
+  if (!page) return undefined
+
+  return {
+    ...(await toPageResponse(page)),
+    socialLinks: toPublicSocialLinks(page.socialLinks),
+    links: await linksRepository.findActiveByPageId(page.id),
+  }
+}
+
+export const publicPageCache = createPublicPageCache({
+  repository: cacheRedis && createPublicPageCacheRepository(cacheRedis),
+  config: {
+    contentTtlMs: env.PUBLIC_PAGE_CACHE_TTL * 1000,
+    refTtlMs: env.PUBLIC_PAGE_REF_TTL * 1000,
+    notFoundTtlMs: NOT_FOUND_TTL_MS,
+    refreshThresholdMs: env.PUBLIC_PAGE_REFRESH_THRESHOLD * 1000,
+    lockTtlMs: env.PUBLIC_PAGE_LOCK_TTL_MS,
+    waitTimeoutMs: env.PUBLIC_PAGE_WAIT_TIMEOUT_MS,
+    fallbackLimit: FALLBACK_LIMIT,
+  },
+  resolve: (username) => pagesRepository.findRefByUsername(username),
+  load: loadPublicPage,
+  metrics: cacheMetrics,
+  log: sharedCacheLogger,
+})
+
 export const pagesService = {
   async create(userId: string, data: CreatePageBody) {
     if (await pagesRepository.findByUserId(userId)) {
@@ -93,6 +133,8 @@ export const pagesService = {
       const page = await pagesRepository.create({ ...data, userId })
 
       if (!page) throw new Error('Failed to create page')
+
+      await publicPageCache.invalidate([toInvalidateEntry(page)])
 
       return toPageResponse(page)
     } catch (error) {
@@ -114,6 +156,8 @@ export const pagesService = {
         throw new ConflictError(USERNAME_TAKEN)
       }
     }
+
+    const previousUsername = current.username
 
     const previousAvatar = current.avatarMediaId
 
@@ -150,6 +194,13 @@ export const pagesService = {
 
     await discardReplaced(current.id, previousBackground, nextBackground)
 
+    await publicPageCache.invalidate([
+      toInvalidateEntry(page),
+      ...(previousUsername === page.username
+        ? []
+        : [{ username: previousUsername, revision: page.revision }]),
+    ])
+
     return toPageResponse(page)
   },
 
@@ -159,20 +210,18 @@ export const pagesService = {
     if (!deleted) {
       throw new NotFoundError('Page not found')
     }
+
+    await publicPageCache.invalidate([{ username: deleted.username, revision: deleted.revision }])
   },
 
   async getPublic(username: string) {
-    const page = await pagesRepository.findPublishedByUsername(username)
+    const page = await publicPageCache.get(username)
 
     if (!page) {
       throw new NotFoundError('Page not found')
     }
 
-    return {
-      ...(await toPageResponse(page)),
-      socialLinks: toPublicSocialLinks(page.socialLinks),
-      links: await linksRepository.findActiveByPageId(page.id),
-    }
+    return page
   },
 
   async getPreview(userId: string) {

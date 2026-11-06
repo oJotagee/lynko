@@ -5,7 +5,7 @@ import {
   defaultPageAppearance,
 } from '../../../../src/modules/pages/pages.appearance'
 import { pagesRepository } from '../../../../src/modules/pages/pages.repository'
-import { pagesService } from '../../../../src/modules/pages/pages.service'
+import { pagesService, publicPageCache } from '../../../../src/modules/pages/pages.service'
 import { defaultPageTheme } from '../../../../src/modules/pages/pages.theme'
 import { ConflictError, NotFoundError } from '../../../../src/shared/errors'
 import { buildLink, buildMedia, buildPage, type Media, type Page } from '../../support/builders'
@@ -59,6 +59,32 @@ describe('pagesService', () => {
   })
 
   describe('updateMine', () => {
+    it('bumps the revision on a successful update', async () => {
+      const current = buildPage({ userId })
+
+      store.pages.push(current)
+
+      const revision = current.revision
+
+      await pagesService.updateMine(userId, { bio: 'Nova bio' })
+
+      expect(current.revision).toBeGreaterThan(revision)
+    })
+
+    it('keeps the revision when the username is taken', async () => {
+      const current = buildPage({ userId, username: 'maria' })
+
+      store.pages.push(current, buildPage({ username: 'joana' }))
+
+      const revision = current.revision
+
+      await expect(pagesService.updateMine(userId, { username: 'joana' })).rejects.toBeInstanceOf(
+        ConflictError,
+      )
+
+      expect(current.revision).toBe(revision)
+    })
+
     it('merges the partial theme with the current one', async () => {
       store.pages.push(buildPage({ userId }))
 
@@ -148,6 +174,101 @@ describe('pagesService', () => {
 
     it('throws NotFoundError when there is nothing to delete', async () => {
       await expect(pagesService.deleteMine(userId)).rejects.toBeInstanceOf(NotFoundError)
+    })
+  })
+
+  describe('cache invalidation', () => {
+    it('invalidates a new unpublished page as not found', async () => {
+      const invalidate = spyOn(publicPageCache, 'invalidate')
+
+      await pagesService.create(userId, {
+        username: 'maria',
+        title: 'Maria Silva',
+        theme: defaultPageTheme,
+      })
+
+      const created = store.pages[0] as Page
+
+      expect(invalidate).toHaveBeenCalledWith([{ username: 'maria', revision: created.revision }])
+    })
+
+    it('invalidates a published page with its id and the new revision', async () => {
+      const current = buildPage({ userId, username: 'maria' })
+
+      store.pages.push(current)
+
+      const invalidate = spyOn(publicPageCache, 'invalidate')
+
+      await pagesService.updateMine(userId, { isPublished: true })
+
+      expect(invalidate).toHaveBeenCalledTimes(1)
+
+      expect(invalidate).toHaveBeenCalledWith([
+        { username: 'maria', revision: current.revision, pageId: current.id },
+      ])
+    })
+
+    it('invalidates an unpublished page as not found', async () => {
+      const current = buildPage({ userId, username: 'maria', isPublished: true })
+
+      store.pages.push(current)
+
+      const invalidate = spyOn(publicPageCache, 'invalidate')
+
+      await pagesService.updateMine(userId, { isPublished: false })
+
+      expect(invalidate).toHaveBeenCalledWith([{ username: 'maria', revision: current.revision }])
+    })
+
+    it('invalidates both usernames when the username changes', async () => {
+      const current = buildPage({ userId, username: 'maria', isPublished: true })
+
+      store.pages.push(current)
+
+      const invalidate = spyOn(publicPageCache, 'invalidate')
+
+      await pagesService.updateMine(userId, { username: 'maria_nova' })
+
+      expect(invalidate).toHaveBeenCalledWith([
+        { username: 'maria_nova', revision: current.revision, pageId: current.id },
+        { username: 'maria', revision: current.revision },
+      ])
+    })
+
+    it('invalidates as not found when the page is deleted', async () => {
+      const current = buildPage({ userId, username: 'maria', isPublished: true })
+
+      store.pages.push(current)
+
+      const invalidate = spyOn(publicPageCache, 'invalidate')
+
+      await pagesService.deleteMine(userId)
+
+      expect(invalidate).toHaveBeenCalledWith([{ username: 'maria', revision: current.revision }])
+    })
+
+    it('does not invalidate when the write is rejected', async () => {
+      store.pages.push(buildPage({ userId, username: 'maria' }), buildPage({ username: 'joana' }))
+
+      const invalidate = spyOn(publicPageCache, 'invalidate')
+
+      await expect(pagesService.updateMine(userId, { username: 'joana' })).rejects.toBeInstanceOf(
+        ConflictError,
+      )
+
+      await expect(
+        pagesService.create(userId, { username: 'nova', title: 'Nova', theme: defaultPageTheme }),
+      ).rejects.toBeInstanceOf(ConflictError)
+
+      expect(invalidate).not.toHaveBeenCalled()
+    })
+
+    it('does not invalidate when there is nothing to delete', async () => {
+      const invalidate = spyOn(publicPageCache, 'invalidate')
+
+      await expect(pagesService.deleteMine(userId)).rejects.toBeInstanceOf(NotFoundError)
+
+      expect(invalidate).not.toHaveBeenCalled()
     })
   })
 

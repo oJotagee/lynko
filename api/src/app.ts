@@ -1,8 +1,12 @@
 import Fastify from 'fastify'
+import { cacheRedis } from './db/redis'
+import { analyticsProducer } from './modules/analytics/analytics.queue'
+import { analyticsRoutes, redirectRoutes } from './modules/analytics/analytics.routes'
 import { authRoutes } from './modules/auth/auth.routes'
 import { healthRoutes } from './modules/health/health.routes'
 import { linksRoutes } from './modules/links/links.routes'
 import { mediaRoutes } from './modules/media/media.routes'
+import { setPublicPageCacheLogger } from './modules/pages/pages.cache'
 import { pagesRoutes } from './modules/pages/pages.routes'
 import { usersRoutes } from './modules/users/users.routes'
 import { authPlugin } from './plugins/auth'
@@ -29,6 +33,14 @@ export function buildApp() {
     trustProxy: isDev ? false : (_address: string, hop: number) => hop === 0,
   })
 
+  setPublicPageCacheLogger(app.log)
+
+  app.addHook('onClose', async () => {
+    cacheRedis?.disconnect()
+
+    await analyticsProducer.close()
+  })
+
   registerZod(app)
 
   registerErrorHandler(app)
@@ -45,6 +57,8 @@ export function buildApp() {
   app.register(pagesRoutes, { prefix: '/pages' })
   app.register(linksRoutes, { prefix: '/links' })
   app.register(mediaRoutes, { prefix: '/media' })
+  app.register(analyticsRoutes, { prefix: '/analytics' })
+  app.register(redirectRoutes, { prefix: '/r' })
 
   return app
 }

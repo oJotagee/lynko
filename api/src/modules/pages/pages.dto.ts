@@ -91,6 +91,7 @@ export const pageResponse = z.object({
 
 export const publicPageResponse = pageResponse
   .pick({
+    id: true,
     username: true,
     title: true,
     bio: true,

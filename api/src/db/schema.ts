@@ -1,9 +1,14 @@
+import { sql } from 'drizzle-orm'
 import {
+  bigint,
   boolean,
+  date,
   index,
   integer,
   jsonb,
+  pgSequence,
   pgTable,
+  primaryKey,
   text,
   timestamp,
   uuid,
@@ -45,6 +50,8 @@ export const sessionSchema = pgTable(
   (table) => [index('sessions_user_id_idx').on(table.userId)],
 )
 
+export const pageRevisionSequence = pgSequence('pages_revision_seq')
+
 export const pageSchema = pgTable('pages', {
   id: uuid('id').primaryKey().defaultRandom(),
   userId: uuid('user_id')
@@ -60,6 +67,9 @@ export const pageSchema = pgTable('pages', {
   appearance: jsonb('appearance').$type<PageAppearance>(),
   socialLinks: jsonb('social_links').$type<SocialLink[]>().notNull().default([]),
   isPublished: boolean('is_published').notNull().default(false),
+  revision: bigint('revision', { mode: 'number' })
+    .notNull()
+    .default(sql`nextval('pages_revision_seq')`),
   ...timestamps,
 })
 
@@ -97,4 +107,55 @@ export const mediaSchema = pgTable(
     ...timestamps,
   },
   (table) => [index('media_page_id_status_idx').on(table.pageId, table.status)],
+)
+
+export const pageViewsDailySchema = pgTable(
+  'page_views_daily',
+  {
+    pageId: uuid('page_id').notNull(),
+    date: date('date', { mode: 'string' }).notNull(),
+    views: integer('views').notNull().default(0),
+    ...timestamps,
+  },
+  (table) => [primaryKey({ columns: [table.pageId, table.date] })],
+)
+
+export const linkClicksDailySchema = pgTable(
+  'link_clicks_daily',
+  {
+    pageId: uuid('page_id').notNull(),
+    linkId: uuid('link_id').notNull(),
+    date: date('date', { mode: 'string' }).notNull(),
+    clicks: integer('clicks').notNull().default(0),
+    ...timestamps,
+  },
+  (table) => [
+    primaryKey({ columns: [table.pageId, table.linkId, table.date] }),
+    index('link_clicks_daily_page_id_date_idx').on(table.pageId, table.date),
+  ],
+)
+
+export const socialClicksDailySchema = pgTable(
+  'social_clicks_daily',
+  {
+    pageId: uuid('page_id').notNull(),
+    platform: varchar('platform', { length: 32 }).notNull(),
+    date: date('date', { mode: 'string' }).notNull(),
+    clicks: integer('clicks').notNull().default(0),
+    ...timestamps,
+  },
+  (table) => [
+    primaryKey({ columns: [table.pageId, table.platform, table.date] }),
+    index('social_clicks_daily_page_id_date_idx').on(table.pageId, table.date),
+  ],
+)
+
+export const analyticsProcessedEventsSchema = pgTable(
+  'analytics_processed_events',
+  {
+    eventId: uuid('event_id').primaryKey(),
+    eventType: varchar('event_type', { length: 16 }).notNull(),
+    processedAt: timestamp('processed_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index('analytics_processed_events_processed_at_idx').on(table.processedAt)],
 )

@@ -67,6 +67,35 @@ Sem `REDIS_URL` a API lê direto do Postgres. Sem `QUEUE_REDIS_URL` a captura de
 
 Em produção: senha, `rediss://` (TLS), nenhuma porta pública, alerta de memória no cache e `noeviction` obrigatório na fila.
 
+### Cache da página pública
+
+`GET /pages/:username` passa pelo Redis (cache-aside). O conteúdo vive 4 h (`PUBLIC_PAGE_CACHE_TTL`) e não é renovado por leituras. Quem encontra menos de 30 s de TTL (`PUBLIC_PAGE_REFRESH_THRESHOLD`) reconstrói a página; as demais requisições esperam o resultado.
+
+- **Consistência:** toda escrita que muda o conteúdo público incrementa `pages.revision` na mesma transação e, depois de persistir, aponta a chave `lynko:page:ref:<username>` para a revisão nova. Uma reconstrução baseada em revisão antiga é recusada.
+- **Uma consulta por vez:** singleflight na instância e lock `SET NX PX` no Redis (`PUBLIC_PAGE_LOCK_TTL_MS`); a espera tem timeout (`PUBLIC_PAGE_WAIT_TIMEOUT_MS`). O lock só é liberado pelo dono.
+- **Redis fora ou espera estourada:** a leitura vai ao Postgres, uma por página em cada instância e no máximo 20 simultâneas; acima disso, 503. Nunca serve conteúdo antigo.
+- **Invalidação perdida:** se o Redis falhar durante uma escrita, a escrita continua e o erro é logado (`cache.invalidation_failed`). A versão antiga vive no máximo `PUBLIC_PAGE_REF_TTL` (30 min).
+- **Métricas:** `GET /health/metrics` com o header `x-metrics-token`. Responde 404 sem `METRICS_TOKEN`. Os contadores são por instância.
+
+**Next.js (RF-RD-09):** a rota `/[locale]/[username]` é renderizada a cada request (`ƒ Dynamic` no `next build`) e busca os dados por axios, fora do Data Cache. Por isso o Next não guarda a página e reflete o Redis na hora. Não adicione `generateStaticParams`, `revalidate` nem `use cache` nessa rota sem revalidar junto, e confira a tabela de rotas do `next build`.
+
+### Analytics e worker
+
+`POST /analytics/views`, `GET /r/:linkId` e `GET /r/social/:pageId/:platform` validam no banco e enfileiram no `redis-queue` (BullMQ). O redirect e o 202 não dependem da fila. Bots e requisições sem User-Agent não contam. Nenhum IP é guardado.
+
+O worker é um processo separado da API:
+
+```bash
+bun run --filter '@lynko/api' worker
+```
+
+- Exige `QUEUE_REDIS_URL`; sem ela, sai com erro.
+- Cada evento tem `jobId = eventId` e até 5 tentativas com backoff exponencial. Payload inválido não é refeito.
+- A contagem e a deduplicação (`analytics_processed_events`) acontecem num único statement SQL, então um evento repetido nunca conta duas vezes. A data é o dia do evento em UTC.
+- Um job diário (03:00) apaga de `analytics_processed_events` o que tem mais de 30 dias.
+- As tabelas `*_daily` não têm FK: apagar uma página ou link deixa agregações órfãs, só contadores por UUID, sem dado pessoal e sem rota que as exponha.
+- O backlog da fila (`waiting`, `active`, `delayed`, `failed`) aparece em `GET /health/metrics`, em `queue`.
+
 ## Scripts
 
 | Comando                    | Faz                                                                                                   |
@@ -84,14 +113,14 @@ Em produção: senha, `rediss://` (TLS), nenhuma porta pública, alerta de memó
 
 Caminhos relativos ao prefixo (`POST /` em `/links` é `POST /links`).
 
-| Prefixo   | Rotas                                                                                                      | Auth                     |
-| --------- | ---------------------------------------------------------------------------------------------------------- | ------------------------ |
-| `/health` | `GET /health`                                                                                              | não                      |
-| `/auth`   | `POST /register`, `/login`, `/refresh`, `/logout`                                                          | não (com rate limit)     |
-| `/users`  | `GET /me`                                                                                                  | sim                      |
-| `/pages`  | `POST /`, `GET` `PATCH` `DELETE /me`, `GET /me/preview`, `GET /:username` (pública, só páginas publicadas) | sim, exceto `/:username` |
-| `/links`  | `GET /`, `POST /`, `PUT /reorder`, `PATCH /:id`, `DELETE /:id`                                             | sim                      |
-| `/media`  | `POST /presign`, `POST /:id/confirm`, `GET /:id`, `DELETE /:id`                                            | sim (com rate limit)     |
+| Prefixo   | Rotas                                                                                                      | Auth                                 |
+| --------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| `/health` | `GET /`, `GET /metrics` (404 sem `METRICS_TOKEN`)                                                          | `/metrics`: header `x-metrics-token` |
+| `/auth`   | `POST /register`, `/login`, `/refresh`, `/logout`                                                          | não (com rate limit)                 |
+| `/users`  | `GET /me`                                                                                                  | sim                                  |
+| `/pages`  | `POST /`, `GET` `PATCH` `DELETE /me`, `GET /me/preview`, `GET /:username` (pública, só páginas publicadas) | sim, exceto `/:username`             |
+| `/links`  | `GET /`, `POST /`, `PUT /reorder`, `PATCH /:id`, `DELETE /:id`                                             | sim                                  |
+| `/media`  | `POST /presign`, `POST /:id/confirm`, `GET /:id`, `DELETE /:id`                                            | sim (com rate limit)                 |
 
 Detalhes de cada body e resposta em `/docs`.
 

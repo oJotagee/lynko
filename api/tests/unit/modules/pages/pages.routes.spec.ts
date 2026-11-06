@@ -260,7 +260,11 @@ describe('pages routes', () => {
     const response = await app.inject({ method: 'GET', url: '/pages/MARIA' })
 
     expect(response.statusCode).toBe(200)
-    expect(response.json()).not.toHaveProperty('id')
+    expect(response.json().id).toBe(page.id)
+
+    expect(response.json()).not.toHaveProperty('userId')
+
+    expect(response.json()).not.toHaveProperty('revision')
 
     expect(response.json().links).toEqual([
       expect.objectContaining({ title: 'Visível', url: 'https://example.com' }),

@@ -1,6 +1,7 @@
 import { and, asc, eq, sql } from 'drizzle-orm'
 import { db } from '../../db'
-import { linkSchema } from '../../db/schema'
+import { linkSchema, pageSchema } from '../../db/schema'
+import { bumpRevision } from '../pages/pages.repository'
 
 type LinkChanges = Partial<Pick<typeof linkSchema.$inferInsert, 'title' | 'url' | 'isActive'>>
 
@@ -25,29 +26,51 @@ export const linksRepository = {
       .orderBy(...pageOrder)
   },
 
-  async create(data: NewLink) {
-    const [link] = await db.insert(linkSchema).values(data).returning()
+  async findPublicTarget(id: string) {
+    const [target] = await db
+      .select({ url: linkSchema.url, pageId: linkSchema.pageId })
+      .from(linkSchema)
+      .innerJoin(pageSchema, eq(pageSchema.id, linkSchema.pageId))
+      .where(
+        and(eq(linkSchema.id, id), eq(linkSchema.isActive, true), eq(pageSchema.isPublished, true)),
+      )
+      .limit(1)
 
-    return link
+    return target
+  },
+
+  async create(data: NewLink) {
+    const [[link], [page]] = await db.batch([
+      db.insert(linkSchema).values(data).returning(),
+      bumpRevision(data.pageId),
+    ])
+
+    return { link, page }
   },
 
   async update(id: string, pageId: string, changes: LinkChanges) {
-    const [link] = await db
-      .update(linkSchema)
-      .set(changes)
-      .where(and(eq(linkSchema.id, id), eq(linkSchema.pageId, pageId)))
-      .returning()
+    const [[link], [page]] = await db.batch([
+      db
+        .update(linkSchema)
+        .set(changes)
+        .where(and(eq(linkSchema.id, id), eq(linkSchema.pageId, pageId)))
+        .returning(),
+      bumpRevision(pageId),
+    ])
 
-    return link
+    return { link, page }
   },
 
   async delete(id: string, pageId: string) {
-    const [link] = await db
-      .delete(linkSchema)
-      .where(and(eq(linkSchema.id, id), eq(linkSchema.pageId, pageId)))
-      .returning({ id: linkSchema.id })
+    const [[link], [page]] = await db.batch([
+      db
+        .delete(linkSchema)
+        .where(and(eq(linkSchema.id, id), eq(linkSchema.pageId, pageId)))
+        .returning({ id: linkSchema.id }),
+      bumpRevision(pageId),
+    ])
 
-    return link
+    return { link, page }
   },
 
   async reorder(pageId: string, linkIds: string[]) {
@@ -55,9 +78,14 @@ export const linksRepository = {
       (id, position) => sql`WHEN ${linkSchema.id} = ${id}::uuid THEN ${position}::integer`,
     )
 
-    await db
-      .update(linkSchema)
-      .set({ position: sql`CASE ${sql.join(cases, sql` `)} ELSE ${linkSchema.position} END` })
-      .where(eq(linkSchema.pageId, pageId))
+    const [, [page]] = await db.batch([
+      db
+        .update(linkSchema)
+        .set({ position: sql`CASE ${sql.join(cases, sql` `)} ELSE ${linkSchema.position} END` })
+        .where(eq(linkSchema.pageId, pageId)),
+      bumpRevision(pageId),
+    ])
+
+    return page
   },
 }

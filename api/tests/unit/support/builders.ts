@@ -21,6 +21,14 @@ export type Media = typeof mediaSchema.$inferSelect
 
 const createdAt = new Date('2026-01-01T00:00:00.000Z')
 
+let pageRevision = 0
+
+export function nextRevision() {
+  pageRevision += 1
+
+  return pageRevision
+}
+
 export function buildUser(overrides: Partial<User> = {}): User {
   return {
     id: randomUUID(),
@@ -59,6 +67,7 @@ export function buildPage(overrides: Partial<Page> = {}): Page {
     socialLinks: [],
     appearance: null,
     isPublished: false,
+    revision: nextRevision(),
     createdAt,
     updatedAt: createdAt,
     ...overrides,
