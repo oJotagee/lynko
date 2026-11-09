@@ -14,4 +14,8 @@ describe('password', () => {
   it('returns false when there is no hash (unknown user)', async () => {
     expect(await verifyPassword('any-password', undefined)).toBe(false)
   })
+
+  it('returns false when the account has no password (null hash)', async () => {
+    expect(await verifyPassword('any-password', null)).toBe(false)
+  })
 })

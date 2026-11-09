@@ -3,10 +3,13 @@ import { spyOn } from 'bun:test'
 import { analyticsRepository } from '../../../src/modules/analytics/analytics.repository'
 import { authRepository } from '../../../src/modules/auth/auth.repository'
 import { linksRepository } from '../../../src/modules/links/links.repository'
+import { type MailMessage, mailService } from '../../../src/modules/mail/mail.service'
 import { mediaRepository } from '../../../src/modules/media/media.repository'
 import { pagesRepository } from '../../../src/modules/pages/pages.repository'
 import { usersRepository } from '../../../src/modules/users/users.repository'
 import {
+  type AuthToken,
+  buildAuthToken,
   buildLink,
   buildMedia,
   buildPage,
@@ -20,8 +23,13 @@ import {
   type User,
 } from './builders'
 
-function toPublicUser({ passwordHash: _passwordHash, ...user }: User) {
-  return user
+function toPublicUser({ passwordHash, googleId, emailVerifiedAt, ...user }: User) {
+  return {
+    ...user,
+    hasPassword: passwordHash !== null,
+    hasGoogle: googleId !== null,
+    emailVerified: emailVerifiedAt !== null,
+  }
 }
 
 function bumpRevision(store: { pages: Page[] }, pageId: string) {
@@ -65,6 +73,8 @@ export function useInMemoryRepositories() {
   const store = {
     users: [] as User[],
     sessions: [] as Session[],
+    authTokens: [] as AuthToken[],
+    mails: [] as MailMessage[],
     pages: [] as Page[],
     links: [] as Link[],
     media: [] as Media[],
@@ -91,9 +101,43 @@ export function useInMemoryRepositories() {
     return toPublicUser(user)
   })
 
-  spyOn(authRepository, 'createSession').mockImplementation(async ({ id, userId, ...data }) => {
-    store.sessions.push(buildSession({ ...(id && { id }), userId, ...data, revokedAt: null }))
-  })
+  spyOn(authRepository, 'findByGoogleId').mockImplementation(async (googleId) =>
+    store.users.find((user) => user.googleId === googleId),
+  )
+
+  spyOn(authRepository, 'linkGoogle').mockImplementation(
+    async (userId, googleId, clearCredentials) => {
+      const user = store.users.find((item) => item.id === userId && !item.googleId)
+
+      if (!user) return false
+
+      user.googleId = googleId
+
+      user.emailVerifiedAt ??= new Date()
+
+      if (clearCredentials) {
+        user.passwordHash = null
+
+        for (const session of store.sessions) {
+          if (session.userId === userId && !session.revokedAt) session.revokedAt = new Date()
+        }
+      }
+
+      return true
+    },
+  )
+
+  spyOn(authRepository, 'createSession').mockImplementation(
+    async ({ id, userId, ...data }, expectedPasswordHash) => {
+      const user = store.users.find((item) => item.id === userId)
+
+      if (user?.passwordHash !== expectedPasswordHash) return false
+
+      store.sessions.push(buildSession({ id, userId, ...data, revokedAt: null }))
+
+      return true
+    },
+  )
 
   spyOn(authRepository, 'findSessionById').mockImplementation(async (id) =>
     store.sessions.find((session) => session.id === id),
@@ -113,10 +157,136 @@ export function useInMemoryRepositories() {
     if (session) session.revokedAt = new Date()
   })
 
+  spyOn(mailService, 'send').mockImplementation(async (message) => {
+    store.mails.push(message)
+  })
+
+  spyOn(authRepository, 'markEmailVerified').mockImplementation(async (userId) => {
+    const user = store.users.find((item) => item.id === userId && !item.emailVerifiedAt)
+
+    if (user) user.emailVerifiedAt = new Date()
+  })
+
+  spyOn(authRepository, 'resetPasswordAndRevokeSessions').mockImplementation(
+    async (userId, passwordHash) => {
+      const user = store.users.find((item) => item.id === userId)
+
+      if (user) {
+        user.passwordHash = passwordHash
+
+        user.emailVerifiedAt ??= new Date()
+      }
+
+      for (const session of store.sessions) {
+        if (session.userId === userId && !session.revokedAt) session.revokedAt = new Date()
+      }
+    },
+  )
+
+  spyOn(authRepository, 'updatePasswordRevokingOthers').mockImplementation(
+    async (userId, passwordHash, keepSessionId, expectedPasswordHash) => {
+      const user = store.users.find(
+        (item) => item.id === userId && item.passwordHash === expectedPasswordHash,
+      )
+
+      if (!user) return false
+
+      user.passwordHash = passwordHash
+
+      for (const session of store.sessions) {
+        if (session.userId === userId && session.id !== keepSessionId && !session.revokedAt) {
+          session.revokedAt = new Date()
+        }
+      }
+
+      return true
+    },
+  )
+
+  spyOn(authRepository, 'replaceToken').mockImplementation(
+    async (userId, type, token, cooldownSeconds) => {
+      const current = store.authTokens.find((item) => item.userId === userId && item.type === type)
+
+      if (
+        current &&
+        cooldownSeconds !== undefined &&
+        current.createdAt.getTime() > Date.now() - cooldownSeconds * 1000
+      ) {
+        return false
+      }
+
+      store.authTokens = store.authTokens.filter((item) => item !== current)
+
+      store.authTokens.push(buildAuthToken({ ...token, userId, type, createdAt: new Date() }))
+
+      return true
+    },
+  )
+
+  spyOn(authRepository, 'findToken').mockImplementation(async (id, type) =>
+    store.authTokens.find((item) => item.id === id && item.type === type),
+  )
+
+  spyOn(authRepository, 'consumeToken').mockImplementation(async (id, type) => {
+    const token = store.authTokens.find(
+      (item) => item.id === id && item.type === type && item.expiresAt > new Date(),
+    )
+
+    if (!token) return undefined
+
+    store.authTokens = store.authTokens.filter((item) => item !== token)
+
+    return token.userId
+  })
+
+  spyOn(authRepository, 'findLatestTokenCreatedAt').mockImplementation(
+    async (userId, type) =>
+      store.authTokens
+        .filter((item) => item.userId === userId && item.type === type)
+        .map((item) => item.createdAt)
+        .sort((a, b) => b.getTime() - a.getTime())[0],
+  )
+
   spyOn(usersRepository, 'findById').mockImplementation(async (id) => {
     const user = store.users.find((item) => item.id === id)
 
     return user && toPublicUser(user)
+  })
+
+  spyOn(usersRepository, 'findWithPassword').mockImplementation(async (id) =>
+    store.users.find((item) => item.id === id),
+  )
+
+  spyOn(usersRepository, 'deleteWithData').mockImplementation(async (userId, expectedHash) => {
+    const owner = store.users.find((item) => item.id === userId)
+
+    if (!owner || owner.passwordHash !== expectedHash) return undefined
+
+    const page = store.pages.find((item) => item.userId === userId)
+
+    const mediaKeys = store.media.filter((item) => item.pageId === page?.id).map((item) => item.key)
+
+    const isOwn = (row: { pageId: string }) => row.pageId === page?.id
+
+    store.analytics.views = store.analytics.views.filter((row) => !isOwn(row))
+
+    store.analytics.links = store.analytics.links.filter((row) => !isOwn(row))
+
+    store.analytics.social = store.analytics.social.filter((row) => !isOwn(row))
+
+    store.media = store.media.filter((item) => !isOwn(item))
+
+    store.links = store.links.filter((item) => !isOwn(item))
+
+    store.pages = store.pages.filter((item) => item.userId !== userId)
+
+    store.sessions = store.sessions.filter((item) => item.userId !== userId)
+
+    store.authTokens = store.authTokens.filter((item) => item.userId !== userId)
+
+    store.users = store.users.filter((item) => item.id !== userId)
+
+    return { page: page && { username: page.username, revision: page.revision }, mediaKeys }
   })
 
   spyOn(pagesRepository, 'findByUserId').mockImplementation(async (userId) =>

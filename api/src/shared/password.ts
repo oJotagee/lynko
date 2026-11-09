@@ -6,7 +6,7 @@ export function hashPassword(password: string) {
   return Bun.password.hash(password, HASH_OPTIONS)
 }
 
-export async function verifyPassword(password: string, hash: string | undefined) {
+export async function verifyPassword(password: string, hash: string | null | undefined) {
   if (!hash) {
     await Bun.password.verify(password, DUMMY_HASH)
 

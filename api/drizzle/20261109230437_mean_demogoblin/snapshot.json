@@ -1,0 +1,43 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "0e9647e3-4f0f-4934-8342-01cf298946fc",
+  "prevIds": [
+    "b8a463fe-440c-42e8-98e9-a433dd666e06"
+  ],
+  "footprints": [
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "auth_tokens",
+        "auth_tokens_user_id_type_idx"
+      ],
+      "writes": [
+        "s|idx|public.auth_tokens_user_id_type_idx",
+        "n|idx|public.auth_tokens_user_id_type_idx",
+        "e|idx|public.auth_tokens_user_id_type_idx",
+        "n|rel|public.auth_tokens_user_id_type_idx"
+      ],
+      "reads": [
+        "n|tbl|public.auth_tokens",
+        "n|sch|public",
+        "n|col|public.auth_tokens.user_id",
+        "n|col|public.auth_tokens.type"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "25dc05724d611716"
+    }
+  ],
+  "deltas": [
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"auth_tokens_user_id_type_idx\"]",
+      "set": {
+        "isUnique": true
+      }
+    }
+  ]
+}

@@ -98,16 +98,26 @@ bun run --filter '@lynko/api' worker
 
 ## Scripts
 
-| Comando                    | Faz                                                                                                   |
-| -------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `bun run dev`              | servidor com reload                                                                                   |
-| `bun run typecheck`        | TypeScript                                                                                            |
-| `bun run test`             | testes unitários (`tests/unit`)                                                                       |
-| `bun run test:integration` | testes contra Redis real (`tests/integration`; precisam de `REDIS_TEST_URL` / `QUEUE_REDIS_TEST_URL`) |
-| `bun run worker`           | worker da fila de analytics                                                                           |
-| `bun run db:generate`      | gera migration a partir de `src/db/schema.ts`                                                         |
-| `bun run db:migrate`       | aplica as migrations de `drizzle/`                                                                    |
-| `bun run db:studio`        | Drizzle Studio                                                                                        |
+| Comando                    | Faz                                                                                                                                       |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `bun run dev`              | servidor com reload                                                                                                                       |
+| `bun run typecheck`        | TypeScript                                                                                                                                |
+| `bun run test`             | testes unitários (`tests/unit`)                                                                                                           |
+| `bun run test:integration` | testes contra Redis e Postgres reais (`tests/integration`; precisam de `REDIS_TEST_URL` / `QUEUE_REDIS_TEST_URL` / `NEON_PROXY_TEST_URL`) |
+| `bun run worker`           | worker da fila de analytics                                                                                                               |
+| `bun run db:generate`      | gera migration a partir de `src/db/schema.ts`                                                                                             |
+| `bun run db:migrate`       | aplica as migrations de `drizzle/`                                                                                                        |
+| `bun run db:studio`        | Drizzle Studio                                                                                                                            |
+
+### Testes de lock com Postgres descartável
+
+`tests/integration/account-locks.spec.ts` exercita com duas conexões os bloqueios de linha da exclusão de conta, do vínculo com Google e da troca de senha. Ele recria o schema a partir de `src/db/schema.ts` num Postgres local, nunca no Neon, e pula sozinho sem `NEON_PROXY_TEST_URL`.
+
+```bash
+docker compose --profile db-test up -d postgres-test neon-proxy-test
+NEON_PROXY_TEST_URL=http://localhost:4444 bun test tests/integration/account-locks.spec.ts
+docker compose --profile db-test down
+```
 
 ## Rotas
 

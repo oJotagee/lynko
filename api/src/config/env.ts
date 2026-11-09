@@ -29,6 +29,16 @@ const envSchema = z.object({
   PUBLIC_PAGE_LOCK_TTL_MS: z.coerce.number().int().positive().default(10000),
   PUBLIC_PAGE_WAIT_TIMEOUT_MS: z.coerce.number().int().positive().default(5000),
   METRICS_TOKEN: z.string().min(32).optional(),
+  SMTP_HOST: z.string().min(1).optional(),
+  SMTP_PORT: z.coerce.number().int().positive().default(465),
+  SMTP_USER: z.string().min(1).optional(),
+  SMTP_PASS: z.string().min(1).optional(),
+  MAIL_FROM: z.string().min(1).optional(),
+  WEB_URL: z
+    .url({ protocol: /^https?$/ })
+    .transform((value) => value.replace(/\/+$/, ''))
+    .optional(),
+  GOOGLE_CLIENT_ID: z.string().min(1).optional(),
 })
 
 const parsed = envSchema.safeParse(process.env)

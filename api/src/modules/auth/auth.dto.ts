@@ -19,6 +19,39 @@ export const accessTokenResponse = z.object({
   accessToken: z.string(),
 })
 
+const linkToken = z.string().min(1).max(200)
+
+export const verifyEmailBody = z.object({
+  token: linkToken,
+})
+
+export const googleLoginBody = z.object({
+  idToken: z.string().min(1).max(4096),
+})
+
+export const confirmDeletionBody = z.object({
+  token: linkToken,
+})
+
+export const forgotPasswordBody = z.object({
+  email,
+})
+
+export const resetPasswordBody = z.object({
+  token: linkToken,
+  password,
+})
+
+export const resendVerificationResponse = z.object({
+  retryAfter: z.number(),
+})
+
 export type RegisterBody = z.infer<typeof registerBody>
 
 export type LoginBody = z.infer<typeof loginBody>
+
+export type GoogleLoginBody = z.infer<typeof googleLoginBody>
+
+export type ForgotPasswordBody = z.infer<typeof forgotPasswordBody>
+
+export type ResetPasswordBody = z.infer<typeof resetPasswordBody>

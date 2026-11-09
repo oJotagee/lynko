@@ -4,7 +4,18 @@ import { z } from 'zod'
 import { env } from '../../config/env'
 import { authRateLimit } from '../../plugins/security'
 import { userResponse } from '../users/users.dto'
-import { accessTokenResponse, loginBody, registerBody } from './auth.dto'
+import { usersService } from '../users/users.service'
+import {
+  accessTokenResponse,
+  confirmDeletionBody,
+  forgotPasswordBody,
+  googleLoginBody,
+  loginBody,
+  registerBody,
+  resendVerificationResponse,
+  resetPasswordBody,
+  verifyEmailBody,
+} from './auth.dto'
 import { authService } from './auth.service'
 
 const REFRESH_COOKIE = 'refreshToken'
@@ -63,6 +74,30 @@ export const authRoutes: FastifyPluginAsyncZod = async (app) => {
   )
 
   app.post(
+    '/google',
+    {
+      config: { rateLimit: authRateLimit.google },
+      schema: {
+        tags: ['Auth'],
+        summary: 'Authenticate with a Google ID token',
+        description:
+          'Creates the account, or links it by e-mail when Google verified it. Returns the access token and sets the refresh token in an httpOnly cookie.',
+        body: googleLoginBody,
+        response: { 200: accessTokenResponse },
+      },
+    },
+    async (request, reply) => {
+      const session = await authService.loginWithGoogle(request.body)
+
+      setRefreshCookie(reply, session.refreshToken, session.refreshTokenExpiresAt)
+
+      const accessToken = app.jwt.sign({ sub: session.userId, sid: session.sessionId })
+
+      return { accessToken }
+    },
+  )
+
+  app.post(
     '/refresh',
     {
       config: { rateLimit: authRateLimit.refresh },
@@ -87,6 +122,101 @@ export const authRoutes: FastifyPluginAsyncZod = async (app) => {
 
         throw error
       }
+    },
+  )
+
+  app.post(
+    '/verify-email',
+    {
+      config: { rateLimit: authRateLimit.verifyEmail },
+      schema: {
+        tags: ['Auth'],
+        summary: 'Verify the e-mail with the link token',
+        body: verifyEmailBody,
+        response: { 204: z.null() },
+      },
+    },
+    async (request, reply) => {
+      await authService.verifyEmail(request.body.token)
+
+      return reply.status(204).send(null)
+    },
+  )
+
+  app.post(
+    '/verify-email/resend',
+    {
+      onRequest: [app.authenticate],
+      config: { rateLimit: authRateLimit.resend },
+      schema: {
+        tags: ['Auth'],
+        summary: 'Resend the e-mail verification link',
+        description: 'Allowed once every 60 seconds. The response tells how long to wait.',
+        security: [{ bearerAuth: [] }],
+        response: { 202: resendVerificationResponse },
+      },
+    },
+    async (request, reply) => {
+      const result = await authService.resendVerification(request.user.sub)
+
+      return reply.status(202).send(result)
+    },
+  )
+
+  app.post(
+    '/forgot-password',
+    {
+      config: { rateLimit: authRateLimit.forgotPassword },
+      schema: {
+        tags: ['Auth'],
+        summary: 'Request a password reset link',
+        description: 'Always answers 204, whether or not the account exists.',
+        body: forgotPasswordBody,
+        response: { 204: z.null() },
+      },
+    },
+    async (request, reply) => {
+      await authService.forgotPassword(request.body)
+
+      return reply.status(204).send(null)
+    },
+  )
+
+  app.post(
+    '/reset-password',
+    {
+      config: { rateLimit: authRateLimit.resetPassword },
+      schema: {
+        tags: ['Auth'],
+        summary: 'Set a new password with the link token',
+        description: 'Revokes every session of the account.',
+        body: resetPasswordBody,
+        response: { 204: z.null() },
+      },
+    },
+    async (request, reply) => {
+      await authService.resetPassword(request.body)
+
+      return reply.status(204).send(null)
+    },
+  )
+
+  app.post(
+    '/confirm-deletion',
+    {
+      config: { rateLimit: authRateLimit.confirmDeletion },
+      schema: {
+        tags: ['Auth'],
+        summary: 'Confirm the account deletion with the link token',
+        description: 'Deletes the account and all its data. This cannot be undone.',
+        body: confirmDeletionBody,
+        response: { 204: z.null() },
+      },
+    },
+    async (request, reply) => {
+      await usersService.confirmDeletion(request.body.token)
+
+      return reply.status(204).send(null)
     },
   )
 

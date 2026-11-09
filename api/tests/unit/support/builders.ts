@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto'
 
 import type {
+  authTokenSchema,
   linkSchema,
   mediaSchema,
   pageSchema,
@@ -12,6 +13,8 @@ import { defaultPageTheme } from '../../../src/modules/pages/pages.theme'
 export type User = typeof userSchema.$inferSelect
 
 export type Session = typeof sessionSchema.$inferSelect
+
+export type AuthToken = typeof authTokenSchema.$inferSelect
 
 export type Page = typeof pageSchema.$inferSelect
 
@@ -35,6 +38,8 @@ export function buildUser(overrides: Partial<User> = {}): User {
     name: 'Maria Silva',
     email: 'maria@example.com',
     passwordHash: 'hashed-password',
+    googleId: null,
+    emailVerifiedAt: null,
     createdAt,
     updatedAt: createdAt,
     ...overrides,
@@ -48,6 +53,19 @@ export function buildSession(overrides: Partial<Session> = {}): Session {
     refreshTokenHash: 'hashed-secret',
     expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
     revokedAt: null,
+    createdAt,
+    updatedAt: createdAt,
+    ...overrides,
+  }
+}
+
+export function buildAuthToken(overrides: Partial<AuthToken> = {}): AuthToken {
+  return {
+    id: randomUUID(),
+    userId: randomUUID(),
+    type: 'email_verification',
+    tokenHash: 'hashed-secret',
+    expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
     createdAt,
     updatedAt: createdAt,
     ...overrides,

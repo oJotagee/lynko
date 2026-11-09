@@ -11,6 +11,7 @@ import {
   primaryKey,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core'
@@ -31,9 +32,28 @@ export const userSchema = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: varchar({ length: 100 }).notNull(),
   email: varchar({ length: 50 }).notNull().unique(),
-  passwordHash: text('password_hash').notNull(),
+  passwordHash: text('password_hash'),
+  googleId: varchar('google_id', { length: 32 }).unique('users_google_id_unique'),
+  emailVerifiedAt: timestamp('email_verified_at', { withTimezone: true }),
   ...timestamps,
 })
+
+export const authTokenSchema = pgTable(
+  'auth_tokens',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => userSchema.id, { onDelete: 'cascade' }),
+    type: varchar('type', { length: 24 })
+      .$type<'email_verification' | 'password_reset' | 'account_deletion'>()
+      .notNull(),
+    tokenHash: text('token_hash').notNull(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    ...timestamps,
+  },
+  (table) => [uniqueIndex('auth_tokens_user_id_type_idx').on(table.userId, table.type)],
+)
 
 export const sessionSchema = pgTable(
   'sessions',
