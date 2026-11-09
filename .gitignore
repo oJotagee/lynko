@@ -41,3 +41,5 @@ desktop.ini
 .claude
 skills-lock.json
 tasks/
+tools/hermes/skills
+.maestri/
