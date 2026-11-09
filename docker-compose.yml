@@ -33,6 +33,7 @@ services:
   postgres-test:
     profiles: ["db-test"]
     image: postgres:17-alpine
+    command: postgres -c lynko.disposable=yes
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres

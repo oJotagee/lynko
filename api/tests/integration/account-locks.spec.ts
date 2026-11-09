@@ -8,7 +8,7 @@ const connection = 'postgres://postgres:postgres@db.localtest.me:5432/lynko_test
 
 const sql = neon(connection)
 
-const BLOCKED_MS = 500
+const LOCALHOSTS = ['localhost', '127.0.0.1', '[::1]']
 
 const future = () => new Date(Date.now() + 60 * 60 * 1000)
 
@@ -16,8 +16,24 @@ function wait(ms: number) {
   return new Promise<void>((done) => setTimeout(done, ms))
 }
 
-async function settlesWithin<T>(promise: Promise<T>, ms: number) {
-  return Promise.race([promise.then(() => true), wait(ms).then(() => false)])
+async function rows(text: string, params: unknown[] = []) {
+  return (await sql.query(text, params)) as Record<string, unknown>[]
+}
+
+async function assertDisposableDatabase() {
+  if (!LOCALHOSTS.includes(new URL(proxy).hostname)) {
+    throw new Error('NEON_PROXY_TEST_URL must point to localhost')
+  }
+
+  const [target] = await rows(
+    "select current_database() as name, current_setting('lynko.disposable', true) as disposable",
+  )
+
+  if (target?.name !== 'lynko_test' || target?.disposable !== 'yes') {
+    throw new Error(
+      'Refusing to run: the database behind the proxy is not the disposable lynko_test (docker compose --profile db-test)',
+    )
+  }
 }
 
 async function createSchema() {
@@ -37,8 +53,20 @@ async function createSchema() {
   for (const statement of statements) await sql.query(statement)
 }
 
-async function rows(text: string, params: unknown[] = []) {
-  return (await sql.query(text, params)) as Record<string, unknown>[]
+async function waitForLockWait() {
+  const deadline = Date.now() + 5_000
+
+  while (Date.now() < deadline) {
+    const waiting = await rows(
+      "select 1 from pg_stat_activity where datname = current_database() and wait_event_type = 'Lock' and pid <> pg_backend_pid()",
+    )
+
+    if (waiting.length > 0) return
+
+    await wait(50)
+  }
+
+  throw new Error('No query is waiting on a lock')
 }
 
 async function activeSessions(userId: string) {
@@ -73,9 +101,33 @@ describe.skipIf(!proxy)('account locks on a real Postgres', () => {
 
   let usersRepository: typeof import('../../src/modules/users/users.repository').usersRepository
 
-  beforeAll(async () => {
-    process.env.DATABASE_URL = connection
+  const pending: Promise<unknown>[] = []
 
+  const originalDatabaseUrl = process.env.DATABASE_URL
+
+  const originalNeon = {
+    fetchEndpoint: neonConfig.fetchEndpoint,
+    useSecureWebSocket: neonConfig.useSecureWebSocket,
+    pipelineTLS: neonConfig.pipelineTLS,
+    pipelineConnect: neonConfig.pipelineConnect,
+    wsProxy: neonConfig.wsProxy,
+  }
+
+  function track<T>(promise: Promise<T>) {
+    const state = { done: false }
+
+    pending.push(promise)
+
+    promise
+      .finally(() => {
+        state.done = true
+      })
+      .catch(() => undefined)
+
+    return state
+  }
+
+  beforeAll(async () => {
     neonConfig.fetchEndpoint = `${proxy}/sql`
 
     neonConfig.useSecureWebSocket = false
@@ -86,6 +138,10 @@ describe.skipIf(!proxy)('account locks on a real Postgres', () => {
 
     neonConfig.wsProxy = () => `${new URL(proxy).host}/v2`
 
+    await assertDisposableDatabase()
+
+    process.env.DATABASE_URL = connection
+
     await createSchema()
 
     pool = new Pool({ connectionString: connection })
@@ -95,6 +151,11 @@ describe.skipIf(!proxy)('account locks on a real Postgres', () => {
 
   afterAll(async () => {
     await pool?.end()
+
+    Object.assign(neonConfig, originalNeon)
+
+    if (originalDatabaseUrl === undefined) delete process.env.DATABASE_URL
+    else process.env.DATABASE_URL = originalDatabaseUrl
   })
 
   beforeEach(async () => {
@@ -109,6 +170,8 @@ describe.skipIf(!proxy)('account locks on a real Postgres', () => {
     await holder.query('rollback').catch(() => undefined)
 
     holder.release()
+
+    await Promise.allSettled(pending.splice(0))
   })
 
   async function holdLoginLock(userId: string, hash: string) {
@@ -134,7 +197,11 @@ describe.skipIf(!proxy)('account locks on a real Postgres', () => {
       'hash-old',
     )
 
-    expect(await settlesWithin(login, BLOCKED_MS)).toBe(false)
+    const state = track(login)
+
+    await waitForLockWait()
+
+    expect(state.done).toBe(false)
 
     await holder.query('commit')
 
@@ -150,7 +217,11 @@ describe.skipIf(!proxy)('account locks on a real Postgres', () => {
 
     const reset = authRepository.resetPasswordAndRevokeSessions(userId, 'hash-new')
 
-    expect(await settlesWithin(reset, BLOCKED_MS)).toBe(false)
+    const state = track(reset)
+
+    await waitForLockWait()
+
+    expect(state.done).toBe(false)
 
     await holder.query('commit')
 
@@ -166,7 +237,11 @@ describe.skipIf(!proxy)('account locks on a real Postgres', () => {
 
     const link = authRepository.linkGoogle(userId, 'google-1', true)
 
-    expect(await settlesWithin(link, BLOCKED_MS)).toBe(false)
+    const state = track(link)
+
+    await waitForLockWait()
+
+    expect(state.done).toBe(false)
 
     await holder.query('commit')
 
@@ -208,7 +283,11 @@ describe.skipIf(!proxy)('account locks on a real Postgres', () => {
 
     const deletion = usersRepository.deleteWithData(userId, 'hash-old')
 
-    expect(await settlesWithin(deletion, BLOCKED_MS)).toBe(false)
+    const state = track(deletion)
+
+    await waitForLockWait()
+
+    expect(state.done).toBe(false)
 
     await holder.query('commit')
 
@@ -231,7 +310,11 @@ describe.skipIf(!proxy)('account locks on a real Postgres', () => {
 
     const deletion = usersRepository.deleteWithData(userId, 'hash-old')
 
-    expect(await settlesWithin(deletion, BLOCKED_MS)).toBe(false)
+    const state = track(deletion)
+
+    await waitForLockWait()
+
+    expect(state.done).toBe(false)
 
     await holder.query('commit')
 
@@ -280,8 +363,14 @@ describe.skipIf(!proxy)('account locks on a real Postgres', () => {
 
     expect(await authRepository.findToken(first.id, 'password_reset')).toBeDefined()
 
-    expect(await authRepository.consumeToken(first.id, 'password_reset')).toBe(userId)
+    await sql.query("update auth_tokens set created_at = now() - interval '2 minutes'")
 
-    expect(await authRepository.consumeToken(first.id, 'password_reset')).toBeUndefined()
+    expect(await authRepository.replaceToken(userId, 'password_reset', second, 60)).toBe(true)
+
+    expect(await authRepository.findToken(first.id, 'password_reset')).toBeUndefined()
+
+    expect(await authRepository.consumeToken(second.id, 'password_reset')).toBe(userId)
+
+    expect(await authRepository.consumeToken(second.id, 'password_reset')).toBeUndefined()
   })
 })
