@@ -5,6 +5,7 @@ import Google from 'next-auth/providers/google'
 import { z } from 'zod'
 import { api } from './api'
 import { type ApiTokens, readApiTokens } from './read-api-tokens'
+import { signInWithGoogle } from './sign-in-with-google'
 import { type UserSession, userSessionSchema } from './user-session'
 
 const REFRESH_REUSE_MS = 30_000
@@ -92,8 +93,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Google,
   ],
   callbacks: {
-    signIn({ account }) {
-      return account?.provider === 'credentials'
+    signIn({ user, account }) {
+      if (account?.provider === 'credentials') return true
+
+      return signInWithGoogle(user, account)
     },
     async jwt({ token, user, trigger }) {
       if (user) {

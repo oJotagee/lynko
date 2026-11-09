@@ -21,6 +21,9 @@ export interface ApiUser {
   id: string
   name: string
   email: string
+  hasPassword: boolean
+  hasGoogle: boolean
+  emailVerified: boolean
 }
 
 export interface ApiLink {

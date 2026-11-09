@@ -39,7 +39,14 @@ export function buildApiLink(overrides: Partial<ApiLink> = {}): ApiLink {
 
 export function buildApiDashboard(overrides: Partial<ApiDashboard> = {}): ApiDashboard {
   return {
-    user: { id: 'user-1', name: 'Maria Silva', email: 'maria@example.com' },
+    user: {
+      id: 'user-1',
+      name: 'Maria Silva',
+      email: 'maria@example.com',
+      hasPassword: true,
+      hasGoogle: false,
+      emailVerified: true,
+    },
     page: buildApiPage(),
     links: [buildApiLink()],
     ...overrides,

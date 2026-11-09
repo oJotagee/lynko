@@ -6,6 +6,8 @@ import { Link } from '@/i18n/navigation'
 import type { DashboardData } from '../../_components/dashboard-data'
 import { ProfilePreview } from '../../_components/profile/profile-preview'
 import type { ApiUser } from '../../_data-access/get-dashboard'
+import { ChangePasswordForm } from './change-password-form'
+import { DeleteAccountDialog } from './delete-account-dialog'
 import { ProfileForm } from './profile-form'
 
 interface SettingsPanelProps {
@@ -66,23 +68,29 @@ export function SettingsPanel({ user, data, hasPage }: SettingsPanelProps) {
           <section className="rounded-xl border border-destructive/40 bg-card p-6">
             <h2 className="text-lg font-semibold">Excluir sua conta Lynko</h2>
             <p className="mt-2 mb-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
-              A exclusão de conta ainda não está disponível na API.
+              Apaga sua conta, sua página, seus links, suas mídias e suas estatísticas. Não há como
+              desfazer.
             </p>
-            <Button variant="destructive" disabled>
-              Excluir conta — indisponível
-            </Button>
+            <DeleteAccountDialog hasPassword={user.hasPassword} />
           </section>
         </>
       )}
       {tab === 'security' && (
         <section className="rounded-xl border border-border bg-card p-6 sm:p-8">
           <h2 className="text-2xl font-bold">Segurança da conta</h2>
-          <p className="mt-3 mb-6 text-sm leading-relaxed text-muted-foreground">
-            A alteração de senha e o gerenciamento de sessões ainda não estão disponíveis na API.
-          </p>
-          <Button variant="outline" disabled>
-            Alterar senha — indisponível
-          </Button>
+          {user.hasPassword ? (
+            <>
+              <p className="mt-3 mb-6 max-w-xl text-sm leading-relaxed text-muted-foreground">
+                Ao alterar a senha, os outros dispositivos conectados à sua conta são desconectados.
+                Esta sessão continua ativa.
+              </p>
+              <ChangePasswordForm />
+            </>
+          ) : (
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
+              Sua conta entra com o Google, então não há senha para alterar.
+            </p>
+          )}
         </section>
       )}
       {tab === 'public' && (

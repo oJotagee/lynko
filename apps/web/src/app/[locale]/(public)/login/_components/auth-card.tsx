@@ -1,10 +1,10 @@
 import { useTranslations } from 'next-intl'
 
-import { Button } from '@/components/ui/button'
 import { Link } from '@/i18n/navigation'
+import { GoogleButton } from '../../_components/google-button'
 import { LoginForm } from './login-form'
 
-export function AuthCard() {
+export function AuthCard({ googleError = false }: { googleError?: boolean }) {
   const t = useTranslations('Auth.Login')
 
   return (
@@ -17,17 +17,16 @@ export function AuthCard() {
         <p className="m-0 text-sm text-[#77766f] max-[600px]:text-[13px]">{t('description')}</p>
       </header>
 
-      <Button
-        className="h-[52px] w-full rounded-[10px] !border-[#d8d7d1] !bg-white text-sm !text-[#171716] shadow-none transition-[transform,box-shadow,background-color] duration-200 hover:-translate-y-0.5 hover:!bg-white hover:!text-[#171716] hover:shadow-[0_5px_0_#17171620] disabled:pointer-events-auto disabled:opacity-100 cursor-pointer"
-        variant="outline"
-        type="button"
-        disabled
-      >
-        <b className="text-sm text-[#4285f4]" aria-hidden="true">
-          G
-        </b>{' '}
-        {t('google')}
-      </Button>
+      {googleError && (
+        <p
+          role="alert"
+          className="mb-4 rounded-[10px] border border-destructive/40 bg-destructive/10 p-3 text-xs text-destructive"
+        >
+          {t('googleError')}
+        </p>
+      )}
+
+      <GoogleButton>{t('google')}</GoogleButton>
 
       <div className="my-6 flex items-center gap-2.5 text-xs text-[#8a8983]">
         <span className="h-px flex-1 bg-[#e4e3dd]" />

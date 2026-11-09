@@ -4,6 +4,7 @@ import { SidebarProvider } from '@/components/ui/sidebar'
 import { DashboardSidebar } from './_components/layout/dashboard-sidebar'
 import { LinksBadge } from './_components/layout/links-badge'
 import { NavAccount } from './_components/layout/nav-account'
+import { VerifyEmailBannerGate } from './_components/layout/verify-email-banner-gate'
 
 const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-dashboard-body' })
 
@@ -27,7 +28,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </Suspense>
           }
         />
-        <div className="min-w-0 flex-1 lg:ml-60">{children}</div>
+        <div className="min-w-0 flex-1 lg:ml-60">
+          <Suspense fallback={null}>
+            <VerifyEmailBannerGate />
+          </Suspense>
+          {children}
+        </div>
       </SidebarProvider>
     </div>
   )
