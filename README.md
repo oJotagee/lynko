@@ -6,18 +6,24 @@
 
 Página de links personalizável. Cada pessoa cria uma página pública em `/<username>` com seus links, ícones de redes sociais, foto e fundo, e edita tudo num dashboard com prévia ao vivo.
 
+Contas com e-mail e senha ou com Google, confirmação de e-mail, recuperação e troca de senha e exclusão de conta com todos os dados.
+
 Monorepo com [Bun](https://bun.com) workspaces:
 
-| Pasta                             | O que é                                                                 |
-| --------------------------------- | ----------------------------------------------------------------------- |
-| [`api/`](api/README.md)           | API REST em Fastify, Drizzle e Postgres (Neon), upload de imagens no S3 |
-| [`apps/web/`](apps/web/README.md) | Site, dashboard e página pública em Next.js 16                          |
+| Pasta                             | O que é                                                              |
+| --------------------------------- | -------------------------------------------------------------------- |
+| [`api/`](api/README.md)           | API REST em Fastify, Drizzle e Postgres (Neon), upload no S3, e-mail |
+| [`apps/web/`](apps/web/README.md) | Site, dashboard e página pública em Next.js 16                       |
 
 ## Requisitos
 
 - Bun 1.4.2 ou mais novo
 - Um banco Postgres (Neon ou local)
 - Opcional, para upload de foto e fundo: bucket S3 e distribuição CloudFront
+- Opcional, para e-mails de verificação, redefinição e exclusão de conta: um servidor SMTP (por exemplo, Gmail com senha de app)
+- Opcional, para entrar com Google: um OAuth Client ID do Google Cloud
+
+Sem SMTP a API funciona, mas nenhum e-mail é enviado. Sem o Client ID do Google, o botão "Continuar com Google" não conclui o login. As variáveis estão em [`api/.env.example`](api/.env.example) e [`apps/web/.env.example`](apps/web/.env.example).
 
 ## Como rodar
 
@@ -43,6 +49,8 @@ Monorepo com [Bun](https://bun.com) workspaces:
    bun run db:migrate
    ```
 
+   Depois de mudar `api/src/db/schema.ts`, gere uma migration nova com `bun run db:generate` antes de aplicar. Uma migration já aplicada não é reescrita: se o schema mudar (por exemplo, um índice que passa a ser único), gere outra.
+
 4. Suba a API (porta 8080) e o web (porta 3000):
 
    ```bash
@@ -53,21 +61,22 @@ Abra http://localhost:3000. A documentação da API fica em http://localhost:808
 
 ## Scripts da raiz
 
-| Comando               | Faz                                                   |
-| --------------------- | ----------------------------------------------------- |
-| `bun run dev`         | API e web juntos                                      |
-| `bun run dev:api`     | só a API                                              |
-| `bun run dev:web`     | só o web                                              |
-| `bun run build`       | build de todos os pacotes                             |
-| `bun run typecheck`   | TypeScript em todos os pacotes                        |
-| `bun run test`        | testes unitários de todos os pacotes                  |
-| `bun run lint`        | Biome (lint e formatação) no repositório              |
-| `bun run lint:fix`    | Biome corrigindo o que for automático                 |
-| `bun run db:generate` | gera uma migration a partir de `api/src/db/schema.ts` |
-| `bun run db:migrate`  | aplica as migrations pendentes                        |
-| `bun run db:studio`   | abre o Drizzle Studio                                 |
+| Comando               | Faz                                                                                              |
+| --------------------- | ------------------------------------------------------------------------------------------------ |
+| `bun run dev`         | API e web juntos                                                                                 |
+| `bun run dev:api`     | só a API                                                                                         |
+| `bun run dev:web`     | só o web                                                                                         |
+| `bun run build`       | build de todos os pacotes                                                                        |
+| `bun run typecheck`   | TypeScript em todos os pacotes                                                                   |
+| `bun run test`        | testes unitários de todos os pacotes                                                             |
+| `bun run lint`        | Biome (lint e formatação) no repositório                                                         |
+| `bun run lint:fix`    | Biome corrigindo o que for automático                                                            |
+| `bun run db:generate` | gera uma migration a partir de `api/src/db/schema.ts`                                            |
+| `bun run db:migrate`  | aplica as migrations pendentes                                                                   |
+| `bun run db:studio`   | abre o Drizzle Studio                                                                            |
+| `bun run db:reset`    | apaga os schemas `public` e `drizzle` e reaplica as migrations (só em dev; apaga todos os dados) |
 
-Os testes de interação do web rodam à parte: `cd apps/web && bun run test:interaction`.
+Os testes de interação do web rodam à parte: `cd apps/web && bun run test:interaction`. Os testes de lock da API usam um Postgres descartável e também rodam à parte (veja o [README da API](api/README.md#testes-de-lock-com-postgres-descartável)).
 
 ## Convenções
 
