@@ -3,7 +3,7 @@
 import { Copy } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
-import { SITE_URL } from '@/lib/site'
+import { getPublicPageLabel, getPublicPageUrl } from '@/lib/site'
 import type { DashboardProfile } from '../dashboard-data'
 
 interface CopyPageUrlButtonProps {
@@ -14,7 +14,7 @@ interface CopyPageUrlButtonProps {
 export function CopyPageUrlButton({ profile, hasPage }: CopyPageUrlButtonProps) {
   async function copyUrl() {
     try {
-      await navigator.clipboard.writeText(`${SITE_URL}/${profile.username}`)
+      await navigator.clipboard.writeText(getPublicPageUrl(profile.username, profile.customDomain))
 
       toast.success('URL copiada')
     } catch {
@@ -32,7 +32,11 @@ export function CopyPageUrlButton({ profile, hasPage }: CopyPageUrlButtonProps) 
       <span
         className={`size-1.5 rounded-full ${profile.published ? 'bg-chart-2' : 'bg-muted-foreground'}`}
       />
-      {profile.username ? `${new URL(SITE_URL).host}/${profile.username}` : 'Crie sua página'}
+      <span className="max-w-48 truncate">
+        {profile.username
+          ? getPublicPageLabel(profile.username, profile.customDomain)
+          : 'Crie sua página'}
+      </span>
       <Copy className="size-3" />
     </Button>
   )

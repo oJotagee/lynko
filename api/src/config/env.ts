@@ -52,6 +52,15 @@ const envSchema = z.object({
     .preprocess(blankAsUnset, z.string().default('CARD'))
     .transform((value) => value.split(',').map((method) => method.trim()))
     .pipe(z.array(z.enum(['CARD', 'PIX'])).min(1)),
+  VERCEL_API_TOKEN: optionalText(1),
+  VERCEL_PROJECT_ID: optionalText(1),
+  VERCEL_TEAM_ID: optionalText(1),
+  PLATFORM_HOSTS: z.preprocess(blankAsUnset, z.string().default('')).transform((value) =>
+    value
+      .split(',')
+      .map((host) => host.trim().toLowerCase())
+      .filter(Boolean),
+  ),
   TOTP_ENCRYPTION_KEY: z
     .string()
     .transform((value) => Buffer.from(value, 'base64'))

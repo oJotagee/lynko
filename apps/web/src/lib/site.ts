@@ -17,10 +17,14 @@ export const BASE_OPEN_GRAPH = {
   siteName: SITE_NAME,
 } satisfies NonNullable<Metadata['openGraph']>
 
-export function getPublicPageUrl(username: string) {
-  return `${SITE_URL}/${username}`
+export function getPublicPageUrl(username: string, customDomain?: string | null) {
+  return customDomain ? `https://${customDomain}` : `${SITE_URL}/${username}`
 }
 
-export function getQrCodeUrl(username: string) {
-  return `${getPublicPageUrl(username)}?src=qr`
+export function getPublicPageLabel(username: string, customDomain?: string | null) {
+  return customDomain ?? `${new URL(SITE_URL).host}/${username}`
+}
+
+export function getQrCodeUrl(username: string, customDomain?: string | null) {
+  return `${getPublicPageUrl(username, customDomain)}?src=qr`
 }

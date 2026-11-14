@@ -56,6 +56,28 @@ describe('analytics routes', () => {
       expect(enqueue.mock.calls[0]?.[0]).not.toHaveProperty('source', 'qr')
     })
 
+    it('accepts views from any origin without credentials, unlike the panel routes', async () => {
+      const preflight = (url: string) =>
+        app.inject({
+          method: 'OPTIONS',
+          url,
+          headers: {
+            origin: 'https://seunome.com',
+            'access-control-request-method': 'POST',
+            'access-control-request-headers': 'content-type',
+          },
+        })
+
+      const views = await preflight('/analytics/views')
+
+      expect(views.headers['access-control-allow-origin']).toBe('*')
+      expect(views.headers['access-control-allow-credentials']).toBeUndefined()
+
+      const panel = await preflight('/pages/me')
+
+      expect(panel.headers['access-control-allow-origin']).toBeUndefined()
+    })
+
     it('enqueues a QR view with its source', async () => {
       const page = publish()
 

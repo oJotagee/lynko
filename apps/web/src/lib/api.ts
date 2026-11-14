@@ -1,7 +1,10 @@
 import axios, { type InternalAxiosRequestConfig } from 'axios'
 
+export const API_URL =
+  process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080'
+
 export const api = axios.create({
-  baseURL: process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080',
+  baseURL: API_URL,
   timeout: 15000,
   withCredentials: true,
 })

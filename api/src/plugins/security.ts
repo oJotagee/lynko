@@ -5,13 +5,25 @@ import type { FastifyInstance } from 'fastify'
 
 import { env } from '../config/env'
 
+const PUBLIC_VIEWS_PATH = '/analytics/views'
+
 export function registerSecurity(app: FastifyInstance) {
   app.register(fastifyHelmet)
 
-  app.register(fastifyCors, {
+  const panelCors = {
     origin: env.CORS_ORIGIN,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  }
+
+  const publicViewsCors = { origin: '*', credentials: false, methods: ['POST'] }
+
+  app.register(fastifyCors, {
+    delegator: (request, callback) => {
+      const path = request.url?.split('?')[0]
+
+      callback(null, path === PUBLIC_VIEWS_PATH ? publicViewsCors : panelCors)
+    },
   })
 
   app.register(fastifyRateLimit, {
@@ -49,6 +61,12 @@ export const analyticsRateLimit = {
 export const mediaRateLimit = {
   presign: { max: 10, timeWindow: '1 minute' },
   confirm: { max: 20, timeWindow: '1 minute' },
+}
+
+export const domainRateLimit = {
+  create: { max: 5, timeWindow: '1 hour' },
+  check: { max: 10, timeWindow: '15 minutes' },
+  resolve: { max: 300, timeWindow: '1 minute' },
 }
 
 export const billingRateLimit = {

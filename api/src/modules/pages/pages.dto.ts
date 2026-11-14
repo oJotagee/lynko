@@ -87,6 +87,7 @@ export const pageResponse = z.object({
   socialLinks: z.array(socialLinkResponse),
   isPublished: z.boolean(),
   showBranding: z.boolean(),
+  customDomain: z.string().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
 })
@@ -102,6 +103,7 @@ export const publicPageResponse = pageResponse
     theme: true,
     appearance: true,
     showBranding: true,
+    customDomain: true,
   })
   .extend({
     socialLinks: z.array(socialLinkResponse.pick({ platform: true, url: true })),

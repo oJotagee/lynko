@@ -42,7 +42,12 @@ export function QrCodeButton({ profile }: { profile: DashboardProfile }) {
         <QrCode />
         {label}
       </Button>
-      <QrCodeDialog username={profile.username} open={open} onOpenChange={setOpen} />
+      <QrCodeDialog
+        username={profile.username}
+        customDomain={profile.customDomain}
+        open={open}
+        onOpenChange={setOpen}
+      />
     </>
   )
 }

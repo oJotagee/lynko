@@ -32,16 +32,17 @@ function download(href: string, fileName: string) {
 
 interface QrCodeDialogProps {
   username: string
+  customDomain: string | null
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-export function QrCodeDialog({ username, open, onOpenChange }: QrCodeDialogProps) {
-  const pageUrl = getPublicPageUrl(username)
+export function QrCodeDialog({ username, customDomain, open, onOpenChange }: QrCodeDialogProps) {
+  const pageUrl = getPublicPageUrl(username, customDomain)
 
   const { data, isPending, isError } = useQuery({
-    queryKey: ['qr-code', username],
-    queryFn: () => createQrCode(getQrCodeUrl(username)),
+    queryKey: ['qr-code', username, customDomain],
+    queryFn: () => createQrCode(getQrCodeUrl(username, customDomain)),
     enabled: open,
     staleTime: Number.POSITIVE_INFINITY,
   })

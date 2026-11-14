@@ -6,6 +6,7 @@ import {
   billingRepository,
   type Subscription,
 } from '../../../src/modules/billing/billing.repository'
+import { domainsRepository } from '../../../src/modules/domains/domains.repository'
 import { linksRepository } from '../../../src/modules/links/links.repository'
 import { type MailMessage, mailService } from '../../../src/modules/mail/mail.service'
 import { mediaRepository } from '../../../src/modules/media/media.repository'
@@ -15,12 +16,14 @@ import { usersRepository } from '../../../src/modules/users/users.repository'
 import {
   type AuthToken,
   buildAuthToken,
+  buildCustomDomain,
   buildLink,
   buildMedia,
   buildPage,
   buildSession,
   buildSubscription,
   buildUser,
+  type CustomDomain,
   type Link,
   type Media,
   nextRevision,
@@ -99,6 +102,7 @@ export function useInMemoryRepositories() {
     authTokens: [] as AuthToken[],
     recoveryCodes: [] as RecoveryCode[],
     subscriptions: [] as Subscription[],
+    customDomains: [] as CustomDomain[],
     billingEvents: new Set<string>(),
     mails: [] as MailMessage[],
     pages: [] as Page[],
@@ -603,6 +607,8 @@ export function useInMemoryRepositories() {
 
     store.authTokens = store.authTokens.filter((item) => item.userId !== userId)
 
+    store.customDomains = store.customDomains.filter((item) => item.userId !== userId)
+
     store.users = store.users.filter((item) => item.id !== userId)
 
     return { page: page && { username: page.username, revision: page.revision }, mediaKeys }
@@ -821,6 +827,102 @@ export function useInMemoryRepositories() {
       analytics.social.filter((row) => inRange(row, pageId, from, to)),
       (row) => row.platform,
     ).map(([platform, clicks]) => ({ platform, clicks })),
+  )
+
+  const findDomain = (find: (item: CustomDomain) => boolean) => store.customDomains.find(find)
+
+  spyOn(domainsRepository, 'findByUserId').mockImplementation(async (userId) =>
+    findDomain((item) => item.userId === userId),
+  )
+
+  spyOn(domainsRepository, 'findVerifiedByHostname').mockImplementation(async (hostname) =>
+    findDomain((item) => item.hostname === hostname && item.ownerVerifiedAt !== null),
+  )
+
+  spyOn(domainsRepository, 'create').mockImplementation(async (values) => {
+    const domain = buildCustomDomain({ ...values, status: 'pending_owner' })
+
+    store.customDomains.push(domain)
+
+    return domain
+  })
+
+  spyOn(domainsRepository, 'update').mockImplementation(async (id, changes) => {
+    const domain = findDomain((item) => item.id === id)
+
+    const takenByOther =
+      domain &&
+      changes.ownerVerifiedAt &&
+      findDomain(
+        (item) =>
+          item.id !== id && item.hostname === domain.hostname && item.ownerVerifiedAt !== null,
+      )
+
+    if (takenByOther) {
+      throw new Error('duplicate', {
+        cause: { code: '23505', constraint: 'custom_domains_hostname_verified_unique' },
+      })
+    }
+
+    if (domain) Object.assign(domain, changes, { updatedAt: new Date() })
+
+    return domain
+  })
+
+  spyOn(domainsRepository, 'activate').mockImplementation(async (id, checkedAt) => {
+    const domain = findDomain((item) => item.id === id)
+
+    if (!domain) return { domain: undefined, firstActivation: false }
+
+    const firstActivation = domain.activatedAt === null
+
+    Object.assign(domain, {
+      status: 'active',
+      lastError: null,
+      lastCheckedAt: checkedAt,
+      activatedAt: domain.activatedAt ?? checkedAt,
+    })
+
+    return { domain, firstActivation }
+  })
+
+  spyOn(domainsRepository, 'deleteByUserId').mockImplementation(async (userId) => {
+    const domain = findDomain((item) => item.userId === userId)
+
+    store.customDomains = store.customDomains.filter((item) => item.userId !== userId)
+
+    return domain
+  })
+
+  spyOn(domainsRepository, 'findActiveHostname').mockImplementation(
+    async (userId) =>
+      findDomain((item) => item.userId === userId && item.status === 'active')?.hostname ?? null,
+  )
+
+  spyOn(domainsRepository, 'findActiveOwner').mockImplementation(async (hostname) => {
+    const domain = findDomain((item) => item.hostname === hostname && item.status === 'active')
+
+    const page = domain && store.pages.find((item) => item.userId === domain.userId)
+
+    return domain && page ? { userId: domain.userId, username: page.username } : undefined
+  })
+
+  spyOn(domainsRepository, 'findDue').mockImplementation(
+    async (pendingBefore, activeBefore, limit) =>
+      store.customDomains
+        .filter((item) => {
+          const checked = item.lastCheckedAt?.getTime() ?? Number.NEGATIVE_INFINITY
+
+          if (item.status === 'active') return checked < activeBefore.getTime()
+
+          return item.status !== 'error' && checked < pendingBefore.getTime()
+        })
+        .sort(
+          (a, b) =>
+            (a.lastCheckedAt?.getTime() ?? Number.NEGATIVE_INFINITY) -
+            (b.lastCheckedAt?.getTime() ?? Number.NEGATIVE_INFINITY),
+        )
+        .slice(0, limit),
   )
 
   return store

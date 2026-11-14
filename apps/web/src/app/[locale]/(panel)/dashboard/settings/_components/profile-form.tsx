@@ -34,7 +34,11 @@ export function ProfileForm({ data, hasPage }: ProfileFormProps) {
   async function onSubmit(profile: ProfileSchemaData) {
     const response = await mutateAsync({
       ...data,
-      profile: { ...profile, published: data.profile.published },
+      profile: {
+        ...profile,
+        published: data.profile.published,
+        customDomain: data.profile.customDomain,
+      },
     })
 
     if (response.error) {

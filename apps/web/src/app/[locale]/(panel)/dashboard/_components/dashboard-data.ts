@@ -23,6 +23,7 @@ export interface DashboardProfile {
   image: string
   avatarMediaId: string | null
   published: boolean
+  customDomain: string | null
 }
 
 export interface DashboardData {
@@ -56,6 +57,7 @@ export function toDashboardData({ user, page, links }: ApiDashboard): DashboardD
       image: page?.avatarUrl ?? '',
       avatarMediaId: page?.avatarMediaId ?? null,
       published: page?.isPublished ?? false,
+      customDomain: page?.customDomain ?? null,
     },
     appearance: page?.appearance ?? defaultAppearance,
     backgroundImageUrl: page?.backgroundImageUrl ?? null,

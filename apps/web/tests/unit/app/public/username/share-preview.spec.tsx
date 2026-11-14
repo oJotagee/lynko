@@ -5,7 +5,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { defaultAppearance } from '@/app/[locale]/_components/appearance-schema'
 import { getInitials } from '@/app/[locale]/_components/initials'
 import type { ApiPublicPage } from '@/app/[locale]/(public)/[username]/_data-access/get-public-page'
-import { getPublicPageUrl, SITE_URL } from '@/lib/site'
+import { getPublicPageLabel, getPublicPageUrl, getQrCodeUrl, SITE_URL } from '@/lib/site'
 import { createAxiosError, spyOnApi } from '../../../support/mocks'
 
 const CDN = 'https://cdn.lynko.test'
@@ -20,6 +20,7 @@ function buildPage(overrides: Partial<ApiPublicPage> = {}): ApiPublicPage {
     backgroundImageUrl: null,
     appearance: defaultAppearance,
     showBranding: true,
+    customDomain: null,
     socialLinks: [],
     links: [],
     ...overrides,
@@ -39,6 +40,18 @@ const params = (username: string) => ({
 describe('share preview helpers', () => {
   it('builds the public page url', () => {
     expect(getPublicPageUrl('maria')).toBe(`${SITE_URL}/maria`)
+  })
+
+  it('uses the custom domain when there is one', () => {
+    expect(getPublicPageUrl('maria', 'seunome.com')).toBe('https://seunome.com')
+
+    expect(getQrCodeUrl('maria', 'seunome.com')).toBe('https://seunome.com?src=qr')
+
+    expect(getQrCodeUrl('maria', null)).toBe(`${SITE_URL}/maria?src=qr`)
+
+    expect(getPublicPageLabel('maria', 'seunome.com')).toBe('seunome.com')
+
+    expect(getPublicPageLabel('maria')).toBe(`${new URL(SITE_URL).host}/maria`)
   })
 
   it.each([
@@ -159,6 +172,16 @@ describe('generateMetadata', () => {
       },
       twitter: { card: 'summary_large_image' },
     })
+  })
+
+  it('points the canonical and open graph url to the custom domain', async () => {
+    api.get.mockResolvedValue({ data: buildPage({ customDomain: 'seunome.com' }) })
+
+    const metadata = await generateMetadata(params('maria') as never)
+
+    expect(metadata.alternates?.canonical).toBe('https://seunome.com')
+
+    expect(metadata.openGraph?.url).toBe('https://seunome.com')
   })
 
   it('uses a default description without a bio', async () => {

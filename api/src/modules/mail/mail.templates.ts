@@ -153,6 +153,20 @@ export function proActivatedMessage(name: string, periodEnd: Date | null): Conte
   }
 }
 
+export function customDomainLiveMessage(name: string, hostname: string): Content {
+  return {
+    subject: `Seu domínio ${hostname} está no ar`,
+    ...layout(
+      name,
+      [
+        `O domínio ${hostname} está conectado à sua página da Lynko, com HTTPS.`,
+        'O QR code e o link copiado no painel já usam o novo endereço.',
+      ],
+      { label: 'Abrir minha página', url: `https://${hostname}` },
+    ),
+  }
+}
+
 export function proCancelledMessage(name: string, accessUntil: Date | null): Content {
   return {
     subject: 'Sua assinatura Pro da Lynko foi cancelada',

@@ -3,6 +3,8 @@ import createMiddleware from 'next-intl/middleware'
 
 import { routing } from './i18n/routing'
 import { auth } from './lib/auth'
+import { isPlatformHost, resolveHost } from './lib/custom-domain'
+import { SITE_URL } from './lib/site'
 
 const intlMiddleware = createMiddleware(routing)
 
@@ -26,7 +28,49 @@ const authenticatedProxy = auth((request) => {
   return intlMiddleware(request)
 })
 
+const OG_IMAGE_PATH = /^\/(opengraph-image|twitter-image)[\w-]*(\/.*)?$/
+
+async function customDomainProxy(request: NextRequest, host: string) {
+  const owner = await resolveHost(host)
+
+  if (owner === undefined) return new NextResponse(null, { status: 503 })
+
+  if (owner === null) return new NextResponse(null, { status: 404 })
+
+  const username = encodeURIComponent(owner.username)
+
+  if (!owner.pro) return NextResponse.redirect(`${SITE_URL}/${username}`, 307)
+
+  const { pathname } = request.nextUrl
+
+  const target = request.nextUrl.clone()
+
+  if (pathname === '/') {
+    target.pathname = `/${routing.defaultLocale}/${username}`
+
+    return NextResponse.rewrite(target)
+  }
+
+  if (OG_IMAGE_PATH.test(pathname)) {
+    target.pathname = `/${routing.defaultLocale}/${username}${pathname}`
+
+    return NextResponse.rewrite(target)
+  }
+
+  target.pathname = '/'
+
+  target.search = ''
+
+  return NextResponse.redirect(target, 308)
+}
+
 export default async function proxy(request: NextRequest) {
+  const host = request.nextUrl.hostname.toLowerCase()
+
+  if (!isPlatformHost(host)) return customDomainProxy(request, host)
+
+  if (request.nextUrl.pathname.startsWith('/api/')) return NextResponse.next()
+
   const response =
     (await authenticatedProxy(request, { params: Promise.resolve({}) })) ?? NextResponse.next()
 
@@ -38,5 +82,5 @@ export default async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)',
+  matcher: ['/((?!api|trpc|_next|_vercel|.*\\..*).*)', '/api/:path*'],
 }

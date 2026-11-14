@@ -5,6 +5,8 @@ import { getUniqueViolation } from '../../shared/db-errors'
 import { ConflictError, ForbiddenError, NotFoundError } from '../../shared/errors'
 import { isPro, PRO_PLAN_REQUIRED, proAccessUntil } from '../billing/billing.access'
 import { billingRepository } from '../billing/billing.repository'
+import { resolveCache } from '../domains/domains.cache'
+import { domainsRepository } from '../domains/domains.repository'
 import { linksRepository } from '../links/links.repository'
 import { isLinkLive } from '../links/links.schedule'
 import type { MediaType } from '../media/media.dto'
@@ -60,7 +62,20 @@ async function toPageResponse(page: Page) {
     appearance,
     avatarUrl: urlOf(page.avatarMediaId) ?? page.avatarUrl,
     backgroundImageUrl: urlOf(backgroundMediaId),
+    customDomain: await domainsRepository.findActiveHostname(page.userId),
   }
+}
+
+function visibleDomain(customDomain: string | null, accessUntil: Date | null, now = new Date()) {
+  return accessUntil && accessUntil > now ? customDomain : null
+}
+
+async function toOwnerResponse(page: Page) {
+  const response = await toPageResponse(page)
+
+  const accessUntil = proAccessUntil(await billingRepository.findByUserId(page.userId))
+
+  return { ...response, customDomain: visibleDomain(response.customDomain, accessUntil) }
 }
 
 async function findMineOrThrow(userId: string) {
@@ -144,14 +159,14 @@ export const pagesService = {
 
       await publicPageCache.invalidate([toInvalidateEntry(page)])
 
-      return toPageResponse(page)
+      return toOwnerResponse(page)
     } catch (error) {
       throw toConflictError(error)
     }
   },
 
   async getMine(userId: string) {
-    return toPageResponse(await findMineOrThrow(userId))
+    return toOwnerResponse(await findMineOrThrow(userId))
   },
 
   async updateMine(userId: string, { theme, ...changes }: UpdatePageBody) {
@@ -213,7 +228,15 @@ export const pagesService = {
         : [{ username: previousUsername, revision: page.revision }]),
     ])
 
-    return toPageResponse(page)
+    const response = await toOwnerResponse(page)
+
+    if (previousUsername !== page.username) {
+      const hostname = await domainsRepository.findActiveHostname(userId)
+
+      if (hostname) await resolveCache.invalidate(hostname)
+    }
+
+    return response
   },
 
   async deleteMine(userId: string) {
@@ -238,6 +261,7 @@ export const pagesService = {
     return {
       ...publicPage,
       showBranding: effectiveBranding(page.showBranding, accessUntil),
+      customDomain: visibleDomain(page.customDomain, accessUntil),
       links: page.links.filter((link) => isLinkLive(link)),
     }
   },

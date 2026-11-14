@@ -23,10 +23,13 @@ export async function generateMetadata({
 
   const description = page.bio || `Todos os links de ${page.title} no ${SITE_NAME}.`
 
+  const url = getPublicPageUrl(page.username, page.customDomain)
+
   return {
     title,
     description,
-    openGraph: { ...BASE_OPEN_GRAPH, title, description, url: getPublicPageUrl(page.username) },
+    alternates: { canonical: url },
+    openGraph: { ...BASE_OPEN_GRAPH, title, description, url },
     twitter: { card: 'summary_large_image', title, description },
   }
 }
