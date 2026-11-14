@@ -6,6 +6,7 @@ import { linksRepository } from '../../../src/modules/links/links.repository'
 import { type MailMessage, mailService } from '../../../src/modules/mail/mail.service'
 import { mediaRepository } from '../../../src/modules/media/media.repository'
 import { pagesRepository } from '../../../src/modules/pages/pages.repository'
+import { twoFactorRepository } from '../../../src/modules/two-factor/two-factor.repository'
 import { usersRepository } from '../../../src/modules/users/users.repository'
 import {
   type AuthToken,
@@ -23,12 +24,27 @@ import {
   type User,
 } from './builders'
 
-function toPublicUser({ passwordHash, googleId, emailVerifiedAt, ...user }: User) {
+function toPublicUser({
+  id,
+  name,
+  email,
+  passwordHash,
+  googleId,
+  emailVerifiedAt,
+  totpEnabledAt,
+  createdAt,
+  updatedAt,
+}: User) {
   return {
-    ...user,
+    id,
+    name,
+    email,
+    createdAt,
+    updatedAt,
     hasPassword: passwordHash !== null,
     hasGoogle: googleId !== null,
     emailVerified: emailVerifiedAt !== null,
+    twoFactorEnabled: totpEnabledAt !== null,
   }
 }
 
@@ -69,11 +85,14 @@ function byPosition(a: Link, b: Link) {
   return a.position - b.position || a.createdAt.getTime() - b.createdAt.getTime()
 }
 
+type RecoveryCode = { userId: string; codeHash: string; usedAt: Date | null }
+
 export function useInMemoryRepositories() {
   const store = {
     users: [] as User[],
     sessions: [] as Session[],
     authTokens: [] as AuthToken[],
+    recoveryCodes: [] as RecoveryCode[],
     mails: [] as MailMessage[],
     pages: [] as Page[],
     links: [] as Link[],
@@ -151,6 +170,37 @@ export function useInMemoryRepositories() {
       if (session) Object.assign(session, { refreshTokenHash, expiresAt })
     },
   )
+
+  spyOn(authRepository, 'listActiveSessions').mockImplementation(async (userId) =>
+    store.sessions
+      .filter(
+        (session) =>
+          session.userId === userId && !session.revokedAt && session.expiresAt > new Date(),
+      )
+      .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
+      .map(({ id, userAgent, createdAt, updatedAt }) => ({ id, userAgent, createdAt, updatedAt })),
+  )
+
+  spyOn(authRepository, 'revokeUserSession').mockImplementation(async (userId, id) => {
+    const session = store.sessions.find(
+      (item) =>
+        item.id === id && item.userId === userId && !item.revokedAt && item.expiresAt > new Date(),
+    )
+
+    if (session) session.revokedAt = new Date()
+
+    return Boolean(session)
+  })
+
+  spyOn(authRepository, 'revokeOtherSessions').mockImplementation(async (userId, keepSessionId) => {
+    const others = store.sessions.filter(
+      (item) => item.userId === userId && item.id !== keepSessionId && !item.revokedAt,
+    )
+
+    for (const session of others) session.revokedAt = new Date()
+
+    return others.length
+  })
 
   spyOn(authRepository, 'revokeSession').mockImplementation(async (id) => {
     const session = store.sessions.find((item) => item.id === id && !item.revokedAt)
@@ -252,6 +302,134 @@ export function useInMemoryRepositories() {
     const user = store.users.find((item) => item.id === id)
 
     return user && toPublicUser(user)
+  })
+
+  const findUser = (id: string) => store.users.find((item) => item.id === id)
+
+  function replaceCodes(userId: string, codeHashes: string[]) {
+    store.recoveryCodes = [
+      ...store.recoveryCodes.filter((item) => item.userId !== userId),
+      ...codeHashes.map((codeHash) => ({ userId, codeHash, usedAt: null })),
+    ]
+  }
+
+  spyOn(twoFactorRepository, 'findUser').mockImplementation(async (id) => findUser(id))
+
+  spyOn(twoFactorRepository, 'countRecoveryCodesLeft').mockImplementation(
+    async (userId) =>
+      store.recoveryCodes.filter((item) => item.userId === userId && !item.usedAt).length,
+  )
+
+  spyOn(twoFactorRepository, 'savePendingSecret').mockImplementation(
+    async (userId, pendingSecret) => {
+      const user = findUser(userId)
+
+      if (!user || user.totpEnabledAt) return false
+
+      user.totpPendingSecret = pendingSecret
+
+      return true
+    },
+  )
+
+  spyOn(twoFactorRepository, 'enable').mockImplementation(
+    async (userId, keepSessionId, pendingSecret, step, codeHashes) => {
+      const user = findUser(userId)
+
+      if (!user || user.totpEnabledAt || user.totpPendingSecret !== pendingSecret) return false
+
+      Object.assign(user, {
+        totpSecret: pendingSecret,
+        totpPendingSecret: null,
+        totpEnabledAt: new Date(),
+        totpLastStep: step,
+        totpFailedAttempts: 0,
+        totpLockedUntil: null,
+      })
+
+      replaceCodes(userId, codeHashes)
+
+      for (const session of store.sessions) {
+        if (session.userId === userId && session.id !== keepSessionId && !session.revokedAt) {
+          session.revokedAt = new Date()
+        }
+      }
+
+      return true
+    },
+  )
+
+  spyOn(twoFactorRepository, 'consumeStep').mockImplementation(async (userId, secret, step) => {
+    const user = findUser(userId)
+
+    if (!user || user.totpSecret !== secret) return false
+
+    if (user.totpLastStep !== null && user.totpLastStep >= step) return false
+
+    user.totpLastStep = step
+
+    return true
+  })
+
+  spyOn(twoFactorRepository, 'useRecoveryCode').mockImplementation(async (userId, codeHash) => {
+    const code = store.recoveryCodes.find(
+      (item) => item.userId === userId && item.codeHash === codeHash && !item.usedAt,
+    )
+
+    if (!code || !findUser(userId)?.totpEnabledAt) return false
+
+    code.usedAt = new Date()
+
+    return true
+  })
+
+  spyOn(twoFactorRepository, 'registerFailure').mockImplementation(
+    async (userId, maxAttempts, lockMinutes) => {
+      const user = findUser(userId)
+
+      if (!user) return
+
+      if (user.totpFailedAttempts + 1 >= maxAttempts) {
+        user.totpFailedAttempts = 0
+
+        user.totpLockedUntil = new Date(Date.now() + lockMinutes * 60_000)
+
+        return
+      }
+
+      user.totpFailedAttempts += 1
+    },
+  )
+
+  spyOn(twoFactorRepository, 'clearFailures').mockImplementation(async (userId) => {
+    const user = findUser(userId)
+
+    if (user) Object.assign(user, { totpFailedAttempts: 0, totpLockedUntil: null })
+  })
+
+  spyOn(twoFactorRepository, 'replaceRecoveryCodes').mockImplementation(
+    async (userId, secret, codeHashes) => {
+      if (findUser(userId)?.totpSecret === secret) replaceCodes(userId, codeHashes)
+    },
+  )
+
+  spyOn(twoFactorRepository, 'disable').mockImplementation(async (userId, secret) => {
+    const user = findUser(userId)
+
+    if (!user || user.totpSecret !== secret) return false
+
+    Object.assign(user, {
+      totpSecret: null,
+      totpPendingSecret: null,
+      totpEnabledAt: null,
+      totpLastStep: null,
+      totpFailedAttempts: 0,
+      totpLockedUntil: null,
+    })
+
+    store.recoveryCodes = store.recoveryCodes.filter((item) => item.userId !== userId)
+
+    return true
   })
 
   spyOn(usersRepository, 'findWithPassword').mockImplementation(async (id) =>

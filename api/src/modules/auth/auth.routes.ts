@@ -1,4 +1,4 @@
-import type { FastifyReply } from 'fastify'
+import type { FastifyReply, FastifyRequest } from 'fastify'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 import { env } from '../../config/env'
@@ -11,12 +11,15 @@ import {
   forgotPasswordBody,
   googleLoginBody,
   loginBody,
+  loginResponse,
   registerBody,
   resendVerificationResponse,
   resetPasswordBody,
+  twoFactorLoginBody,
   verifyEmailBody,
 } from './auth.dto'
 import { authService } from './auth.service'
+import { normalizeUserAgent } from './auth.user-agent'
 
 const REFRESH_COOKIE = 'refreshToken'
 
@@ -26,6 +29,10 @@ const refreshCookieOptions = {
   sameSite: 'strict',
   path: '/auth',
 } as const
+
+function readUserAgent(request: FastifyRequest) {
+  return normalizeUserAgent(request.headers['x-client-user-agent'])
+}
 
 function setRefreshCookie(reply: FastifyReply, token: string, expires: Date) {
   reply.setCookie(REFRESH_COOKIE, token, { ...refreshCookieOptions, expires })
@@ -57,13 +64,42 @@ export const authRoutes: FastifyPluginAsyncZod = async (app) => {
       schema: {
         tags: ['Auth'],
         summary: 'Authenticate with email and password',
-        description: 'Returns the access token and sets the refresh token in an httpOnly cookie.',
+        description:
+          'Returns the access token and sets the refresh token in an httpOnly cookie. With two-factor authentication enabled, returns a challenge for /auth/login/two-factor instead. The web sends the browser user agent in x-client-user-agent.',
         body: loginBody,
+        response: { 200: loginResponse },
+      },
+    },
+    async (request, reply) => {
+      const result = await authService.login(request.body, readUserAgent(request))
+
+      if ('challengeToken' in result) {
+        return { twoFactorRequired: true as const, challengeToken: result.challengeToken }
+      }
+
+      setRefreshCookie(reply, result.refreshToken, result.refreshTokenExpiresAt)
+
+      const accessToken = app.jwt.sign({ sub: result.userId, sid: result.sessionId })
+
+      return { accessToken }
+    },
+  )
+
+  app.post(
+    '/login/two-factor',
+    {
+      config: { rateLimit: authRateLimit.twoFactor },
+      schema: {
+        tags: ['Auth'],
+        summary: 'Finish the login with a two-factor code',
+        description:
+          'Takes the challenge from /auth/login and a code from the app or a recovery code. Five wrong codes lock the step for 15 minutes.',
+        body: twoFactorLoginBody,
         response: { 200: accessTokenResponse },
       },
     },
     async (request, reply) => {
-      const session = await authService.login(request.body)
+      const session = await authService.loginWithTwoFactor(request.body, readUserAgent(request))
 
       setRefreshCookie(reply, session.refreshToken, session.refreshTokenExpiresAt)
 
@@ -87,7 +123,7 @@ export const authRoutes: FastifyPluginAsyncZod = async (app) => {
       },
     },
     async (request, reply) => {
-      const session = await authService.loginWithGoogle(request.body)
+      const session = await authService.loginWithGoogle(request.body, readUserAgent(request))
 
       setRefreshCookie(reply, session.refreshToken, session.refreshTokenExpiresAt)
 

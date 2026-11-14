@@ -11,3 +11,5 @@ process.env.AWS_REGION = 'us-east-1'
 process.env.S3_BUCKET = 'lynko-test'
 
 process.env.CDN_URL = 'https://cdn.lynko.test'
+
+process.env.TOTP_ENCRYPTION_KEY = 's1NFexs2RHQq7V/wk/YY3PaY8jtpjjeuL9mYOQMnY8k='

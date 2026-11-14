@@ -16,6 +16,7 @@ export const publicUserColumns = {
   hasPassword: sql<boolean>`${userSchema.passwordHash} is not null`,
   hasGoogle: sql<boolean>`${userSchema.googleId} is not null`,
   emailVerified: sql<boolean>`${userSchema.emailVerifiedAt} is not null`,
+  twoFactorEnabled: sql<boolean>`${userSchema.totpEnabledAt} is not null`,
   createdAt: userSchema.createdAt,
   updatedAt: userSchema.updatedAt,
 }

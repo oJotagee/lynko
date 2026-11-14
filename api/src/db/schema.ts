@@ -36,6 +36,12 @@ export const userSchema = pgTable('users', {
   passwordHash: text('password_hash'),
   googleId: varchar('google_id', { length: 32 }).unique('users_google_id_unique'),
   emailVerifiedAt: timestamp('email_verified_at', { withTimezone: true }),
+  totpSecret: text('totp_secret'),
+  totpPendingSecret: text('totp_pending_secret'),
+  totpEnabledAt: timestamp('totp_enabled_at', { withTimezone: true }),
+  totpLastStep: integer('totp_last_step'),
+  totpFailedAttempts: integer('totp_failed_attempts').notNull().default(0),
+  totpLockedUntil: timestamp('totp_locked_until', { withTimezone: true }),
   ...timestamps,
 })
 
@@ -66,9 +72,24 @@ export const sessionSchema = pgTable(
     refreshTokenHash: text('refresh_token_hash').notNull(),
     expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
     revokedAt: timestamp('revoked_at', { withTimezone: true }),
+    userAgent: varchar('user_agent', { length: 255 }),
     ...timestamps,
   },
   (table) => [index('sessions_user_id_idx').on(table.userId)],
+)
+
+export const recoveryCodeSchema = pgTable(
+  'recovery_codes',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => userSchema.id, { onDelete: 'cascade' }),
+    codeHash: text('code_hash').notNull(),
+    usedAt: timestamp('used_at', { withTimezone: true }),
+    ...timestamps,
+  },
+  (table) => [uniqueIndex('recovery_codes_user_id_code_hash_idx').on(table.userId, table.codeHash)],
 )
 
 export const pageRevisionSequence = pgSequence('pages_revision_seq')

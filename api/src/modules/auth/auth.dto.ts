@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { twoFactorCode, twoFactorRecoveryCode } from '../two-factor/two-factor.dto'
 
 const email = z.string().trim().toLowerCase().pipe(z.email().max(50))
 
@@ -55,3 +56,17 @@ export type GoogleLoginBody = z.infer<typeof googleLoginBody>
 export type ForgotPasswordBody = z.infer<typeof forgotPasswordBody>
 
 export type ResetPasswordBody = z.infer<typeof resetPasswordBody>
+
+export const loginResponse = z.union([
+  accessTokenResponse,
+  z.object({ twoFactorRequired: z.literal(true), challengeToken: z.string() }),
+])
+
+const challengeToken = z.string().min(1).max(1024)
+
+export const twoFactorLoginBody = z.union([
+  z.object({ challengeToken, code: twoFactorCode }).strict(),
+  z.object({ challengeToken, recoveryCode: twoFactorRecoveryCode }).strict(),
+])
+
+export type TwoFactorLoginBody = z.infer<typeof twoFactorLoginBody>

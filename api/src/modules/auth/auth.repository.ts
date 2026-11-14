@@ -94,6 +94,7 @@ export const authRepository = {
             userId: userSchema.id,
             refreshTokenHash: sql<string>`${data.refreshTokenHash}::text`.as('refresh_token_hash'),
             expiresAt: sql<Date>`${data.expiresAt.toISOString()}::timestamptz`.as('expires_at'),
+            userAgent: sql<string | null>`${data.userAgent ?? null}::varchar`.as('user_agent'),
           })
           .from(userSchema)
           .where(
@@ -127,6 +128,58 @@ export const authRepository = {
       .update(sessionSchema)
       .set({ revokedAt: new Date() })
       .where(and(eq(sessionSchema.id, id), isNull(sessionSchema.revokedAt)))
+  },
+
+  async listActiveSessions(userId: string) {
+    return db
+      .select({
+        id: sessionSchema.id,
+        userAgent: sessionSchema.userAgent,
+        createdAt: sessionSchema.createdAt,
+        updatedAt: sessionSchema.updatedAt,
+      })
+      .from(sessionSchema)
+      .where(
+        and(
+          eq(sessionSchema.userId, userId),
+          isNull(sessionSchema.revokedAt),
+          gt(sessionSchema.expiresAt, sql`now()`),
+        ),
+      )
+      .orderBy(desc(sessionSchema.updatedAt))
+  },
+
+  async revokeUserSession(userId: string, id: string) {
+    const revoked = await db
+      .update(sessionSchema)
+      .set({ revokedAt: sql`now()` })
+      .where(
+        and(
+          eq(sessionSchema.id, id),
+          eq(sessionSchema.userId, userId),
+          isNull(sessionSchema.revokedAt),
+          gt(sessionSchema.expiresAt, sql`now()`),
+        ),
+      )
+      .returning({ id: sessionSchema.id })
+
+    return revoked.length > 0
+  },
+
+  async revokeOtherSessions(userId: string, keepSessionId: string) {
+    const revoked = await db
+      .update(sessionSchema)
+      .set({ revokedAt: sql`now()` })
+      .where(
+        and(
+          eq(sessionSchema.userId, userId),
+          isNull(sessionSchema.revokedAt),
+          ne(sessionSchema.id, keepSessionId),
+        ),
+      )
+      .returning({ id: sessionSchema.id })
+
+    return revoked.length
   },
 
   async markEmailVerified(userId: string) {

@@ -32,11 +32,14 @@ export const authRateLimit = {
   resetPassword: { max: 10, timeWindow: '1 hour' },
   confirmDeletion: { max: 10, timeWindow: '1 hour' },
   google: { max: 10, timeWindow: '1 minute' },
+  twoFactor: { max: 10, timeWindow: '1 minute' },
 }
 
 export const accountRateLimit = {
   changePassword: { max: 5, timeWindow: '15 minutes' },
   deletion: { max: 5, timeWindow: '1 hour' },
+  sessions: { max: 30, timeWindow: '1 minute' },
+  twoFactor: { max: 10, timeWindow: '15 minutes' },
 }
 
 export const analyticsRateLimit = {

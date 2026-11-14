@@ -107,3 +107,33 @@ export function accountDeletedMessage(name: string): Content {
     ]),
   }
 }
+
+export function twoFactorEnabledMessage(name: string): Content {
+  return {
+    subject: 'Login em duas etapas ativado na Lynko',
+    ...layout(name, [
+      'O login em duas etapas foi ativado na sua conta. A partir de agora, além da senha, pedimos um código do seu app autenticador.',
+      'Se não foi você, redefina sua senha imediatamente.',
+    ]),
+  }
+}
+
+export function twoFactorDisabledMessage(name: string): Content {
+  return {
+    subject: 'Login em duas etapas desativado na Lynko',
+    ...layout(name, [
+      'O login em duas etapas foi desativado na sua conta. Agora basta a senha para entrar.',
+      'Se não foi você, redefina sua senha imediatamente.',
+    ]),
+  }
+}
+
+export function recoveryCodesRegeneratedMessage(name: string): Content {
+  return {
+    subject: 'Novos códigos de recuperação na Lynko',
+    ...layout(name, [
+      'Novos códigos de recuperação foram gerados para a sua conta. Os códigos antigos não funcionam mais.',
+      'Se não foi você, redefina sua senha imediatamente.',
+    ]),
+  }
+}

@@ -16,6 +16,13 @@ import {
   resetPasswordMessage,
   verifyEmailMessage,
 } from '../mail/mail.templates'
+import {
+  challengeMatchesPassword,
+  createChallenge,
+  readChallenge,
+} from '../two-factor/two-factor.challenge'
+import { twoFactorRepository } from '../two-factor/two-factor.repository'
+import { twoFactorService } from '../two-factor/two-factor.service'
 import { usersRepository } from '../users/users.repository'
 import type {
   ForgotPasswordBody,
@@ -23,6 +30,7 @@ import type {
   LoginBody,
   RegisterBody,
   ResetPasswordBody,
+  TwoFactorLoginBody,
 } from './auth.dto'
 import { googleAuth } from './auth.google'
 import { authRepository } from './auth.repository'
@@ -34,11 +42,15 @@ const NAME_MAX_LENGTH = 100
 
 const EMAIL_MAX_LENGTH = 50
 
+const TWO_FACTOR_MAX_ATTEMPTS = 5
+
+const TWO_FACTOR_LOCK_MINUTES = 15
+
 type SessionOwner = { id: string; passwordHash: string | null }
 
 type GoogleClaims = Awaited<ReturnType<typeof googleAuth.verifyIdToken>>
 
-async function openSession({ id, passwordHash }: SessionOwner) {
+async function openSession({ id, passwordHash }: SessionOwner, userAgent: string | null) {
   const sessionId = randomUUID()
 
   const { token, secretHash } = createRefreshToken(sessionId)
@@ -46,7 +58,7 @@ async function openSession({ id, passwordHash }: SessionOwner) {
   const expiresAt = refreshTokenExpiresAt()
 
   const created = await authRepository.createSession(
-    { id: sessionId, userId: id, refreshTokenHash: secretHash, expiresAt },
+    { id: sessionId, userId: id, refreshTokenHash: secretHash, expiresAt, userAgent },
     passwordHash,
   )
 
@@ -208,7 +220,7 @@ export const authService = {
     }
   },
 
-  async login({ email, password }: LoginBody) {
+  async login({ email, password }: LoginBody, userAgent: string | null = null) {
     const user = await authRepository.findByEmailWithPassword(email)
 
     const isValid = await verifyPassword(password, user?.passwordHash)
@@ -217,17 +229,62 @@ export const authService = {
       throw new UnauthorizedError('Invalid email or password')
     }
 
-    const session = await openSession(user)
+    if (user.totpEnabledAt) {
+      return { challengeToken: await createChallenge(user.id, user.passwordHash) }
+    }
+
+    const session = await openSession(user, userAgent)
 
     if (!session) throw new UnauthorizedError('Invalid email or password')
 
     return session
   },
 
-  async loginWithGoogle({ idToken }: GoogleLoginBody) {
+  async loginWithTwoFactor(
+    { challengeToken, ...factor }: TwoFactorLoginBody,
+    userAgent: string | null = null,
+  ) {
+    const challenge = await readChallenge(challengeToken)
+
+    if (!challenge) throw new UnauthorizedError('Two-factor challenge expired')
+
+    const user = await usersRepository.findWithPassword(challenge.userId)
+
+    if (
+      !user?.passwordHash ||
+      !user.totpEnabledAt ||
+      !challengeMatchesPassword(challenge.passwordStamp, user.passwordHash)
+    ) {
+      throw new UnauthorizedError('Invalid code')
+    }
+
+    if (user.totpLockedUntil && user.totpLockedUntil > new Date()) {
+      throw new TooManyRequestsError()
+    }
+
+    if (!(await twoFactorService.verify(user, factor))) {
+      await twoFactorRepository.registerFailure(
+        user.id,
+        TWO_FACTOR_MAX_ATTEMPTS,
+        TWO_FACTOR_LOCK_MINUTES,
+      )
+
+      throw new UnauthorizedError('Invalid code')
+    }
+
+    await twoFactorRepository.clearFailures(user.id)
+
+    const session = await openSession(user, userAgent)
+
+    if (!session) throw new UnauthorizedError('Invalid code')
+
+    return session
+  },
+
+  async loginWithGoogle({ idToken }: GoogleLoginBody, userAgent: string | null = null) {
     const user = await findOrCreateGoogleUser(await googleAuth.verifyIdToken(idToken))
 
-    const session = await openSession(user)
+    const session = await openSession(user, userAgent)
 
     if (!session) throw new UnauthorizedError('Invalid Google token')
 

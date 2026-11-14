@@ -348,6 +348,8 @@ describe('authService', () => {
         password: 'right-pass',
       })
 
+      if ('challengeToken' in session) throw new Error('Unexpected two-factor challenge')
+
       expect(store.sessions).toHaveLength(1)
       expect(store.sessions[0]?.id).toBe(session.sessionId)
       expect(session.refreshToken.startsWith(`${session.sessionId}.`)).toBe(true)

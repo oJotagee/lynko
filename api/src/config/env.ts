@@ -39,6 +39,10 @@ const envSchema = z.object({
     .transform((value) => value.replace(/\/+$/, ''))
     .optional(),
   GOOGLE_CLIENT_ID: z.string().min(1).optional(),
+  TOTP_ENCRYPTION_KEY: z
+    .string()
+    .transform((value) => Buffer.from(value, 'base64'))
+    .refine((key) => key.length === 32, 'Must be 32 bytes encoded in base64'),
 })
 
 const parsed = envSchema.safeParse(process.env)

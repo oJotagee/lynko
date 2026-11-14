@@ -7,6 +7,7 @@ export const userResponse = z.object({
   hasPassword: z.boolean(),
   hasGoogle: z.boolean(),
   emailVerified: z.boolean(),
+  twoFactorEnabled: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
 })
@@ -23,3 +24,16 @@ export const deleteAccountBody = z.object({
 export type ChangePasswordBody = z.infer<typeof changePasswordBody>
 
 export type DeleteAccountBody = z.infer<typeof deleteAccountBody>
+
+export const sessionResponse = z.object({
+  id: z.uuid(),
+  browser: z.string().nullable(),
+  os: z.string().nullable(),
+  createdAt: z.date(),
+  lastActiveAt: z.date(),
+  current: z.boolean(),
+})
+
+export const sessionParams = z.object({ id: z.uuid() })
+
+export const revokedSessionsResponse = z.object({ revoked: z.number().int() })
