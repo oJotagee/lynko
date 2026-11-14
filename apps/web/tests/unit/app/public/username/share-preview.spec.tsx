@@ -6,6 +6,7 @@ import { defaultAppearance } from '@/app/[locale]/_components/appearance-schema'
 import { getInitials } from '@/app/[locale]/_components/initials'
 import type { ApiPublicPage } from '@/app/[locale]/(public)/[username]/_data-access/get-public-page'
 import { getPublicPageUrl, SITE_URL } from '@/lib/site'
+import { createAxiosError, spyOnApi } from '../../../support/mocks'
 
 const CDN = 'https://cdn.lynko.test'
 
@@ -23,12 +24,6 @@ function buildPage(overrides: Partial<ApiPublicPage> = {}): ApiPublicPage {
     ...overrides,
   }
 }
-
-const getPublicPage = mock(async (_username: string): Promise<ApiPublicPage | null> => buildPage())
-
-mock.module('@/app/[locale]/(public)/[username]/_data-access/get-public-page', () => ({
-  getPublicPage,
-}))
 
 const { isMediaUrl, ShareImage } = await import(
   '@/app/[locale]/(public)/[username]/_components/share-image'
@@ -138,12 +133,18 @@ describe('ShareImage rendered by ImageResponse', () => {
 })
 
 describe('generateMetadata', () => {
+  let api: ReturnType<typeof spyOnApi>
+
   beforeEach(() => {
-    getPublicPage.mockReset()
+    api = spyOnApi()
+  })
+
+  afterEach(() => {
+    mock.restore()
   })
 
   it('fills open graph and twitter with the page data', async () => {
-    getPublicPage.mockResolvedValue(buildPage())
+    api.get.mockResolvedValue({ data: buildPage() })
 
     const metadata = await generateMetadata(params('maria') as never)
 
@@ -160,7 +161,7 @@ describe('generateMetadata', () => {
   })
 
   it('uses a default description without a bio', async () => {
-    getPublicPage.mockResolvedValue(buildPage({ bio: null }))
+    api.get.mockResolvedValue({ data: buildPage({ bio: null }) })
 
     const metadata = await generateMetadata(params('maria') as never)
 
@@ -168,7 +169,7 @@ describe('generateMetadata', () => {
   })
 
   it('returns no metadata for a page that does not exist', async () => {
-    getPublicPage.mockResolvedValue(null)
+    api.get.mockRejectedValue(createAxiosError(404))
 
     expect(await generateMetadata(params('ninguem') as never)).toEqual({})
   })
