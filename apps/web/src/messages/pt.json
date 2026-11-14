@@ -256,6 +256,20 @@
       "confirmRequired": "Confirme a nova senha",
       "passwordMismatch": "As senhas não coincidem",
       "nameRequired": "Nome é obrigatório"
+    },
+    "TwoFactor": {
+      "title": "Verificação em duas etapas",
+      "description": "Digite o código de 6 dígitos do seu app autenticador.",
+      "recoveryDescription": "Digite um dos códigos de recuperação que você guardou.",
+      "codeLabel": "Código do app autenticador",
+      "recoveryLabel": "Código de recuperação",
+      "submit": "Confirmar",
+      "submitting": "Confirmando…",
+      "useRecovery": "Usar um código de recuperação",
+      "useApp": "Usar o código do app",
+      "back": "Voltar para e-mail e senha",
+      "codeInvalid": "Digite os 6 dígitos do app",
+      "recoveryInvalid": "Digite um código de recuperação, como abcde-fghij"
     }
   },
   "NotFound": {

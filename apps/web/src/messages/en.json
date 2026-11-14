@@ -259,6 +259,20 @@
       "confirmRequired": "Confirm the new password",
       "passwordMismatch": "Passwords don't match",
       "nameRequired": "Name is required"
+    },
+    "TwoFactor": {
+      "title": "Two-step verification",
+      "description": "Enter the 6-digit code from your authenticator app.",
+      "recoveryDescription": "Enter one of the recovery codes you saved.",
+      "codeLabel": "Authenticator app code",
+      "recoveryLabel": "Recovery code",
+      "submit": "Confirm",
+      "submitting": "Confirming…",
+      "useRecovery": "Use a recovery code",
+      "useApp": "Use the app code",
+      "back": "Back to e-mail and password",
+      "codeInvalid": "Enter the 6 digits from the app",
+      "recoveryInvalid": "Enter a recovery code, like abcde-fghij"
     }
   },
   "NotFound": {

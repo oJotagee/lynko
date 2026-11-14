@@ -1,6 +1,7 @@
 import type { Account, User } from 'next-auth'
 
 import { api } from './api'
+import { getClientUserAgentHeader } from './client-user-agent'
 import { readApiTokens } from './read-api-tokens'
 import { type UserSession, userSessionSchema } from './user-session'
 
@@ -8,9 +9,11 @@ export async function signInWithGoogle(user: User, account: Account | null | und
   if (account?.provider !== 'google' || !account.id_token) return false
 
   try {
-    const response = await api.post<{ accessToken: string }>('/auth/google', {
-      idToken: account.id_token,
-    })
+    const response = await api.post<{ accessToken: string }>(
+      '/auth/google',
+      { idToken: account.id_token },
+      { headers: await getClientUserAgentHeader() },
+    )
 
     const tokens = readApiTokens(response)
 

@@ -30,7 +30,9 @@ const credentials = { email: user.email, password: 'password123' }
 
 const calls: InternalAxiosRequestConfig[] = []
 
-let failure: { path: string; status: number } | undefined
+let failure: { path: string; status: number; message?: string } | undefined
+
+let challenge: string | undefined
 
 let expired = false
 
@@ -50,6 +52,8 @@ beforeEach(() => {
   jar = new Map()
 
   failure = undefined
+
+  challenge = undefined
 
   expired = false
 
@@ -71,12 +75,18 @@ beforeEach(() => {
     if (failure && failure.path === config.url) {
       response.status = failure.status
 
-      response.data = { message: 'API error' }
+      response.data = { message: failure.message ?? 'API error' }
 
       throw new AxiosError('API error', 'ERR_BAD_RESPONSE', config, undefined, response)
     }
 
-    if (config.url === '/auth/login' || config.url === '/auth/refresh') {
+    if (config.url === '/auth/login' && challenge) {
+      response.data = { twoFactorRequired: true, challengeToken: challenge }
+    } else if (
+      config.url === '/auth/login' ||
+      config.url === '/auth/refresh' ||
+      config.url === '/auth/login/two-factor'
+    ) {
       response.data = { accessToken: accessToken() }
 
       response.headers['set-cookie'] = [
@@ -487,6 +497,84 @@ describe('NextAuth and the Lynko API', () => {
 
       expect(response.headers.get('location')).toBe(`http://localhost:3000${target}`)
     }
+  })
+})
+
+describe('two-factor login', () => {
+  async function finish(input: Record<string, string>) {
+    const { csrfToken } = await (await request('csrf')).json()
+
+    return request('callback/two-factor', { ...input, csrfToken, callbackUrl: '/dashboard' })
+  }
+
+  test('asks for the code without creating a session or exposing the challenge', async () => {
+    challenge = 'challenge-token-1'
+
+    const response = await login()
+
+    const location = response.headers.get('location') ?? ''
+
+    expect(location).toContain('code=two_factor_required')
+    expect(location).not.toContain('challenge-token-1')
+    expect(calls.map((call) => call.url)).toEqual(['/auth/login'])
+    expect(await (await request('session')).json()).toBeNull()
+  })
+
+  test('opens the session with the code from the app', async () => {
+    const response = await finish({ challengeToken: 'challenge-token-1', code: '123456' })
+
+    expect(response.headers.get('location')).toBe('http://localhost:3000/dashboard')
+    expect(calls.map((call) => call.url)).toEqual(['/auth/login/two-factor', '/users/me'])
+    expect(JSON.parse(String(calls[0]?.data))).toEqual({
+      challengeToken: 'challenge-token-1',
+      code: '123456',
+    })
+
+    const session = await (await request('session')).json()
+
+    expect(session.user).toMatchObject(user)
+  })
+
+  test('opens the session with a recovery code', async () => {
+    await finish({ challengeToken: 'challenge-token-1', recoveryCode: 'abcde-fghij' })
+
+    expect(JSON.parse(String(calls[0]?.data))).toEqual({
+      challengeToken: 'challenge-token-1',
+      recoveryCode: 'abcde-fghij',
+    })
+  })
+
+  test('maps the API errors to distinct codes', async () => {
+    failure = { path: '/auth/login/two-factor', status: 401, message: 'Invalid code' }
+
+    expect(
+      (await finish({ challengeToken: 'challenge', code: '123456' })).headers.get('location'),
+    ).toContain('code=invalid_code')
+
+    failure = {
+      path: '/auth/login/two-factor',
+      status: 401,
+      message: 'Two-factor challenge expired',
+    }
+
+    expect(
+      (await finish({ challengeToken: 'challenge', code: '123456' })).headers.get('location'),
+    ).toContain('code=two_factor_expired')
+
+    failure = { path: '/auth/login/two-factor', status: 429 }
+
+    expect(
+      (await finish({ challengeToken: 'challenge', code: '123456' })).headers.get('location'),
+    ).toContain('code=too_many_attempts')
+
+    expect(await (await request('session')).json()).toBeNull()
+  })
+
+  test('rejects a malformed code before calling the API', async () => {
+    const response = await finish({ challengeToken: 'challenge', code: '12ab' })
+
+    expect(response.headers.get('location')).toContain('code=invalid_code')
+    expect(calls).toHaveLength(0)
   })
 })
 

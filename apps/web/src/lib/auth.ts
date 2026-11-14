@@ -1,9 +1,10 @@
-import { isAxiosError } from 'axios'
+import { type AxiosResponse, isAxiosError } from 'axios'
 import NextAuth, { CredentialsSignin } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import Google from 'next-auth/providers/google'
 import { z } from 'zod'
 import { api } from './api'
+import { getClientUserAgentHeader } from './client-user-agent'
 import { type ApiTokens, readApiTokens } from './read-api-tokens'
 import { signInWithGoogle } from './sign-in-with-google'
 import { type UserSession, userSessionSchema } from './user-session'
@@ -50,10 +51,53 @@ class SignInUnavailable extends CredentialsSignin {
   code = 'unavailable'
 }
 
+export class TwoFactorRequired extends CredentialsSignin {
+  code = 'two_factor_required'
+
+  constructor(readonly challengeToken: string) {
+    super()
+  }
+}
+
+class InvalidTwoFactorCode extends CredentialsSignin {
+  code = 'invalid_code'
+}
+
+class TwoFactorExpired extends CredentialsSignin {
+  code = 'two_factor_expired'
+}
+
 const credentialsSchema = z.object({
   email: z.string().trim().toLowerCase().pipe(z.email().max(50)),
   password: z.string().min(1).max(72),
 })
+
+const twoFactorSchema = z.union([
+  z.object({ challengeToken: z.string().min(1).max(1024), code: z.string().regex(/^\d{6}$/) }),
+  z.object({
+    challengeToken: z.string().min(1).max(1024),
+    recoveryCode: z
+      .string()
+      .trim()
+      .regex(/^[a-z2-7]{5}-?[a-z2-7]{5}$/i),
+  }),
+])
+
+type LoginResponse = { accessToken: string } | { twoFactorRequired: true; challengeToken: string }
+
+async function toSessionUser(response: AxiosResponse<{ accessToken: string }>) {
+  const tokens = readApiTokens(response)
+
+  const { data } = await api.get<UserSession>('/users/me', {
+    headers: { Authorization: `Bearer ${tokens.accessToken}` },
+  })
+
+  return { ...userSessionSchema.parse(data), ...tokens }
+}
+
+function apiMessage(error: unknown) {
+  return isAxiosError(error) ? error.response?.data?.message : undefined
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   session: { strategy: 'jwt' },
@@ -70,17 +114,54 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!input.success) return null
 
         try {
-          const response = await api.post<{ accessToken: string }>('/auth/login', input.data)
-
-          const tokens = readApiTokens(response)
-
-          const { data } = await api.get<UserSession>('/users/me', {
-            headers: { Authorization: `Bearer ${tokens.accessToken}` },
+          const response = await api.post<LoginResponse>('/auth/login', input.data, {
+            headers: await getClientUserAgentHeader(),
           })
 
-          return { ...userSessionSchema.parse(data), ...tokens }
+          if ('twoFactorRequired' in response.data) {
+            throw new TwoFactorRequired(response.data.challengeToken)
+          }
+
+          return await toSessionUser(response as AxiosResponse<{ accessToken: string }>)
         } catch (error) {
+          if (error instanceof CredentialsSignin) throw error
+
           if (isAxiosError(error) && error.response?.status === 401) return null
+
+          if (isAxiosError(error) && error.response?.status === 429) {
+            throw new TooManyLoginAttempts()
+          }
+
+          throw new SignInUnavailable()
+        }
+      },
+    }),
+    Credentials({
+      id: 'two-factor',
+      credentials: {
+        challengeToken: {},
+        code: {},
+        recoveryCode: {},
+      },
+      async authorize(credentials) {
+        const input = twoFactorSchema.safeParse(credentials)
+
+        if (!input.success) throw new InvalidTwoFactorCode()
+
+        try {
+          const response = await api.post<{ accessToken: string }>(
+            '/auth/login/two-factor',
+            input.data,
+            { headers: await getClientUserAgentHeader() },
+          )
+
+          return await toSessionUser(response)
+        } catch (error) {
+          if (isAxiosError(error) && error.response?.status === 401) {
+            if (apiMessage(error) === 'Two-factor challenge expired') throw new TwoFactorExpired()
+
+            throw new InvalidTwoFactorCode()
+          }
 
           if (isAxiosError(error) && error.response?.status === 429) {
             throw new TooManyLoginAttempts()
@@ -94,7 +175,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     signIn({ user, account }) {
-      if (account?.provider === 'credentials') return true
+      if (account?.provider === 'credentials' || account?.provider === 'two-factor') return true
 
       return signInWithGoogle(user, account)
     },

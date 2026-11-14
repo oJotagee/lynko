@@ -3,14 +3,14 @@
 import { revalidatePath } from 'next/cache'
 import { AuthError } from 'next-auth'
 
-import { signIn } from '@/lib/auth'
+import { signIn, TwoFactorRequired } from '@/lib/auth'
 
 export interface LoginInput {
   email: string
   password: string
 }
 
-export async function login(input: LoginInput): Promise<{ error?: string }> {
+export async function login(input: LoginInput): Promise<{ error?: string; twoFactor?: string }> {
   try {
     await signIn('credentials', { ...input, redirect: false })
 
@@ -18,6 +18,8 @@ export async function login(input: LoginInput): Promise<{ error?: string }> {
 
     return {}
   } catch (error) {
+    if (error instanceof TwoFactorRequired) return { twoFactor: error.challengeToken }
+
     if (error instanceof AuthError && error.type === 'CredentialsSignin') {
       const { code } = error as AuthError & { code: string }
 

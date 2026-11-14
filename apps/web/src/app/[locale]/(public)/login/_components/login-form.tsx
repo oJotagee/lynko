@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { getSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
+import { useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -14,6 +15,7 @@ import { Link, useRouter } from '@/i18n/navigation'
 import { usePasswordVisibility } from '../../_components/password-visibility'
 import { login } from '../_actions/login'
 import { type LoginSchemaData, useLoginSchema } from './schemas'
+import { TwoFactorStep } from './two-factor-step'
 
 export function LoginForm() {
   const form = useLoginSchema()
@@ -26,27 +28,53 @@ export function LoginForm() {
 
   const passwordText = useTranslations('Auth.Password')
 
+  const [challengeToken, setChallengeToken] = useState<string | null>(null)
+
+  async function finishLogin() {
+    await getSession()
+
+    toast.success('Login realizado com sucesso!')
+
+    router.replace('/dashboard')
+    router.refresh()
+  }
+
   const { mutate: loginMutation, isPending } = useMutation({
-    mutationFn: login,
+    mutationFn: (values: LoginSchemaData) => login(values),
     onSuccess: async (response) => {
+      if (response.twoFactor) {
+        setChallengeToken(response.twoFactor)
+
+        return
+      }
+
       if (response.error) {
         toast.error(response.error)
 
         return
       }
 
-      await getSession()
-
-      toast.success('Login realizado com sucesso!')
-
-      router.replace('/dashboard')
-      router.refresh()
+      await finishLogin()
     },
     onError: () => toast.error('Não foi possível entrar. Tente novamente.'),
   })
 
   function onSubmit(values: LoginSchemaData) {
     loginMutation(values)
+  }
+
+  if (challengeToken) {
+    return (
+      <TwoFactorStep
+        challengeToken={challengeToken}
+        onSuccess={finishLogin}
+        onBack={() => {
+          setChallengeToken(null)
+
+          form.resetField('password')
+        }}
+      />
+    )
   }
 
   return (

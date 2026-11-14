@@ -9,6 +9,8 @@ import type { ApiUser } from '../../_data-access/get-dashboard'
 import { ChangePasswordForm } from './change-password-form'
 import { DeleteAccountDialog } from './delete-account-dialog'
 import { ProfileForm } from './profile-form'
+import { SessionsSection } from './sessions-section'
+import { TwoFactorSection } from './two-factor-section'
 
 interface SettingsPanelProps {
   user: ApiUser
@@ -76,22 +78,26 @@ export function SettingsPanel({ user, data, hasPage }: SettingsPanelProps) {
         </>
       )}
       {tab === 'security' && (
-        <section className="rounded-xl border border-border bg-card p-6 sm:p-8">
-          <h2 className="text-2xl font-bold">Segurança da conta</h2>
-          {user.hasPassword ? (
-            <>
-              <p className="mt-3 mb-6 max-w-xl text-sm leading-relaxed text-muted-foreground">
-                Ao alterar a senha, os outros dispositivos conectados à sua conta são desconectados.
-                Esta sessão continua ativa.
+        <>
+          <section className="rounded-xl border border-border bg-card p-6 sm:p-8">
+            <h2 className="text-2xl font-bold">Segurança da conta</h2>
+            {user.hasPassword ? (
+              <>
+                <p className="mt-3 mb-6 max-w-xl text-sm leading-relaxed text-muted-foreground">
+                  Ao alterar a senha, os outros dispositivos conectados à sua conta são
+                  desconectados. Esta sessão continua ativa.
+                </p>
+                <ChangePasswordForm />
+              </>
+            ) : (
+              <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
+                Sua conta entra com o Google, então não há senha para alterar.
               </p>
-              <ChangePasswordForm />
-            </>
-          ) : (
-            <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-              Sua conta entra com o Google, então não há senha para alterar.
-            </p>
-          )}
-        </section>
+            )}
+          </section>
+          <TwoFactorSection hasPassword={user.hasPassword} />
+          <SessionsSection />
+        </>
       )}
       {tab === 'public' && (
         <section className="grid items-center gap-8 rounded-xl border border-border bg-card p-6 md:grid-cols-2">

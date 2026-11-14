@@ -27,3 +27,35 @@ export function useLoginSchema() {
     defaultValues: { email: '', password: '' },
   })
 }
+
+const twoFactorLoginSchema = z.discriminatedUnion('method', [
+  z.object({ method: z.literal('code'), code: z.string(), recoveryCode: z.string() }),
+  z.object({ method: z.literal('recovery'), code: z.string(), recoveryCode: z.string() }),
+])
+
+export type TwoFactorLoginSchemaData = z.infer<typeof twoFactorLoginSchema>
+
+export function useTwoFactorLoginSchema() {
+  const t = useTranslations('Auth.TwoFactor')
+
+  return useForm<TwoFactorLoginSchemaData>({
+    resolver: zodResolver(
+      z.discriminatedUnion('method', [
+        z.object({
+          method: z.literal('code'),
+          code: z.string().regex(/^\d{6}$/, t('codeInvalid')),
+          recoveryCode: z.string(),
+        }),
+        z.object({
+          method: z.literal('recovery'),
+          code: z.string(),
+          recoveryCode: z
+            .string()
+            .trim()
+            .regex(/^[a-z2-7]{5}-?[a-z2-7]{5}$/i, t('recoveryInvalid')),
+        }),
+      ]),
+    ),
+    defaultValues: { method: 'code', code: '', recoveryCode: '' },
+  })
+}
