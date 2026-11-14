@@ -1,0 +1,47 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "13fda939-831e-4a3f-89a6-52d29d63f5e5",
+  "prevIds": [
+    "94fb5b29-51c9-4077-a341-4d8a7d74057d"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "page_views_daily",
+        "qr_views"
+      ],
+      "writes": [
+        "s|col|public.page_views_daily.qr_views",
+        "n|col|public.page_views_daily.qr_views",
+        "e|col|public.page_views_daily.qr_views"
+      ],
+      "reads": [
+        "n|tbl|public.page_views_daily",
+        "n|sch|public"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "page_views_daily",
+        "name": "qr_views",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    }
+  ]
+}

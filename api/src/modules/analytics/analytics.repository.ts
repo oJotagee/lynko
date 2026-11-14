@@ -21,7 +21,7 @@ function column(target: PgColumn) {
 function upsertCount(
   target: PgTable,
   keys: { column: PgColumn; value: SQL }[],
-  counter: PgColumn,
+  counters: PgColumn[],
   event: AnalyticsEvent,
 ) {
   const names = sql.join(
@@ -34,6 +34,21 @@ function upsertCount(
     sql`, `,
   )
 
+  const counterNames = sql.join(
+    counters.map((counter) => column(counter)),
+    sql`, `,
+  )
+
+  const ones = sql.join(
+    counters.map(() => sql`1`),
+    sql`, `,
+  )
+
+  const increments = sql.join(
+    counters.map((counter) => sql`${column(counter)} = ${table(target)}.${column(counter)} + 1`),
+    sql`, `,
+  )
+
   return sql`
     WITH inserted AS (
       INSERT INTO ${table(analyticsProcessedEventsSchema)}
@@ -42,10 +57,10 @@ function upsertCount(
       ON CONFLICT DO NOTHING
       RETURNING ${column(analyticsProcessedEventsSchema.eventId)}
     )
-    INSERT INTO ${table(target)} (${names}, ${column(counter)})
-    SELECT ${values}, 1 FROM inserted
+    INSERT INTO ${table(target)} (${names}, ${counterNames})
+    SELECT ${values}, ${ones} FROM inserted
     ON CONFLICT (${names}) DO UPDATE
-    SET ${column(counter)} = ${table(target)}.${column(counter)} + 1, updated_at = now()
+    SET ${increments}, updated_at = now()
   `
 }
 
@@ -62,7 +77,9 @@ export function buildRecordEventStatement(event: AnalyticsEvent) {
     return upsertCount(
       pageViewsDailySchema,
       [page, date(pageViewsDailySchema.date)],
-      pageViewsDailySchema.views,
+      event.source === 'qr'
+        ? [pageViewsDailySchema.views, pageViewsDailySchema.qrViews]
+        : [pageViewsDailySchema.views],
       event,
     )
   }
@@ -75,7 +92,7 @@ export function buildRecordEventStatement(event: AnalyticsEvent) {
         { column: linkClicksDailySchema.linkId, value: sql`${event.linkId}::uuid` },
         date(linkClicksDailySchema.date),
       ],
-      linkClicksDailySchema.clicks,
+      [linkClicksDailySchema.clicks],
       event,
     )
   }
@@ -87,7 +104,7 @@ export function buildRecordEventStatement(event: AnalyticsEvent) {
       { column: socialClicksDailySchema.platform, value: sql`${event.platform}::varchar` },
       date(socialClicksDailySchema.date),
     ],
-    socialClicksDailySchema.clicks,
+    [socialClicksDailySchema.clicks],
     event,
   )
 }
@@ -117,6 +134,15 @@ export const analyticsRepository = {
   async sumViews(pageId: string, from: string, to: string) {
     const [row] = await db
       .select({ value: total(pageViewsDailySchema.views) })
+      .from(pageViewsDailySchema)
+      .where(inRange(pageViewsDailySchema, pageId, from, to))
+
+    return row?.value ?? 0
+  },
+
+  async sumQrViews(pageId: string, from: string, to: string) {
+    const [row] = await db
+      .select({ value: total(pageViewsDailySchema.qrViews) })
       .from(pageViewsDailySchema)
       .where(inRange(pageViewsDailySchema, pageId, from, to))
 

@@ -76,8 +76,15 @@ describe('analytics reports', () => {
     addLinkClicks(link, '2026-11-05', 700, randomUUID())
     addSocialClicks('github', '2026-11-06', 2)
 
+    store.analytics.qrViews.push(
+      { pageId: page.id, date: '2026-11-06', count: 4 },
+      { pageId: page.id, date: '2026-10-30', count: 50 },
+      { pageId: randomUUID(), date: '2026-11-06', count: 70 },
+    )
+
     expect(await analyticsService.getOverview(page.userId, '7d', now)).toEqual({
       pageViews: 10,
+      qrViews: 4,
       linkClicks: 3,
       socialClicks: 2,
       totalClicks: 5,

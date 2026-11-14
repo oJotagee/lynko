@@ -140,6 +140,19 @@ describe('recordEvent statement', () => {
     expect(sql).toContain("AT TIME ZONE 'UTC'")
     expect(sql.match(/;/g)).toBeNull()
     expect(params).toContain(event.eventId)
+    expect(sql).not.toContain('qr_views')
+  })
+
+  it('also counts a QR view in the same statement and only once per event', () => {
+    const { sql } = render(view({ source: 'qr' } as Partial<AnalyticsEvent>))
+
+    expect(sql).toContain('("page_id", "date", "views", "qr_views")')
+    expect(sql).toContain('SELECT')
+    expect(sql).toContain('1, 1 FROM inserted')
+    expect(sql).toContain('"views" = "page_views_daily"."views" + 1')
+    expect(sql).toContain('"qr_views" = "page_views_daily"."qr_views" + 1')
+    expect(sql).toContain('ON CONFLICT DO NOTHING')
+    expect(sql.match(/;/g)).toBeNull()
   })
 
   it('targets the link and social tables with their own keys', () => {

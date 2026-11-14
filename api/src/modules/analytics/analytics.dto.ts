@@ -1,9 +1,12 @@
 import { z } from 'zod'
 import { socialPlatformSchema } from '../pages/pages.social'
 
+const viewSource = z.enum(['qr']).optional()
+
 export const recordViewBody = z.object({
   pageId: z.uuid(),
   eventId: z.uuid(),
+  source: viewSource,
 })
 
 export const linkRedirectParams = z.object({
@@ -22,7 +25,7 @@ const eventBase = {
 }
 
 export const analyticsEvent = z.discriminatedUnion('type', [
-  z.object({ ...eventBase, type: z.literal('view') }),
+  z.object({ ...eventBase, type: z.literal('view'), source: viewSource }),
   z.object({ ...eventBase, type: z.literal('link_click'), linkId: z.uuid() }),
   z.object({ ...eventBase, type: z.literal('social_click'), platform: socialPlatformSchema }),
 ])
@@ -37,6 +40,7 @@ export const periodQuery = z.object({
 
 export const overviewResponse = z.object({
   pageViews: z.number(),
+  qrViews: z.number(),
   linkClicks: z.number(),
   socialClicks: z.number(),
   totalClicks: z.number(),

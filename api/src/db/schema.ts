@@ -144,6 +144,7 @@ export const pageViewsDailySchema = pgTable(
     pageId: uuid('page_id').notNull(),
     date: date('date', { mode: 'string' }).notNull(),
     views: integer('views').notNull().default(0),
+    qrViews: integer('qr_views').notNull().default(0),
     ...timestamps,
   },
   (table) => [primaryKey({ columns: [table.pageId, table.date] })],

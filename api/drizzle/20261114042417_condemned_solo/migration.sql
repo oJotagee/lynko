@@ -1,0 +1,1 @@
+ALTER TABLE "page_views_daily" ADD COLUMN "qr_views" integer DEFAULT 0 NOT NULL;

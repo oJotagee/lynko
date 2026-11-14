@@ -53,6 +53,35 @@ describe('analytics routes', () => {
       expect(response.statusCode).toBe(202)
       expect(enqueue).toHaveBeenCalledTimes(1)
       expect(enqueue.mock.calls[0]?.[0]).toMatchObject({ type: 'view', pageId: page.id, eventId })
+      expect(enqueue.mock.calls[0]?.[0]).not.toHaveProperty('source', 'qr')
+    })
+
+    it('enqueues a QR view with its source', async () => {
+      const page = publish()
+
+      const response = await app.inject({
+        method: 'POST',
+        url: '/analytics/views',
+        headers: browser,
+        payload: { pageId: page.id, eventId: randomUUID(), source: 'qr' },
+      })
+
+      expect(response.statusCode).toBe(202)
+      expect(enqueue.mock.calls[0]?.[0]).toMatchObject({ type: 'view', source: 'qr' })
+    })
+
+    it('rejects an unknown source', async () => {
+      const page = publish()
+
+      const response = await app.inject({
+        method: 'POST',
+        url: '/analytics/views',
+        headers: browser,
+        payload: { pageId: page.id, eventId: randomUUID(), source: 'instagram' },
+      })
+
+      expect(response.statusCode).toBe(400)
+      expect(enqueue).not.toHaveBeenCalled()
     })
 
     it('answers 404 for an unknown page', async () => {

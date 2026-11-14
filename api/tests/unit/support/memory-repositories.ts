@@ -80,6 +80,7 @@ export function useInMemoryRepositories() {
     media: [] as Media[],
     analytics: {
       views: [] as DailyRow[],
+      qrViews: [] as DailyRow[],
       links: [] as (DailyRow & { linkId: string })[],
       social: [] as (DailyRow & { platform: string })[],
     },
@@ -464,6 +465,10 @@ export function useInMemoryRepositories() {
 
   spyOn(analyticsRepository, 'sumViews').mockImplementation(async (pageId, from, to) =>
     sumCounts(analytics.views.filter((row) => inRange(row, pageId, from, to))),
+  )
+
+  spyOn(analyticsRepository, 'sumQrViews').mockImplementation(async (pageId, from, to) =>
+    sumCounts(analytics.qrViews.filter((row) => inRange(row, pageId, from, to))),
   )
 
   spyOn(analyticsRepository, 'sumLinkClicks').mockImplementation(async (pageId, from, to) =>

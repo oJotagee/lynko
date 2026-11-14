@@ -74,8 +74,9 @@ export const analyticsService = {
   async getOverview(userId: string, period: Period, now = new Date()) {
     const { pageId, from, to } = await getReportScope(userId, period, now)
 
-    const [pageViews, linkClicks, socialClicks] = await Promise.all([
+    const [pageViews, qrViews, linkClicks, socialClicks] = await Promise.all([
       analyticsRepository.sumViews(pageId, from, to),
+      analyticsRepository.sumQrViews(pageId, from, to),
       analyticsRepository.sumLinkClicks(pageId, from, to),
       analyticsRepository.sumSocialClicks(pageId, from, to),
     ])
@@ -84,6 +85,7 @@ export const analyticsService = {
 
     return {
       pageViews,
+      qrViews,
       linkClicks,
       socialClicks,
       totalClicks,
@@ -134,10 +136,13 @@ export const analyticsService = {
     }))
   },
 
-  async recordView({ pageId, eventId }: RecordViewBody, userAgent: string | undefined) {
+  async recordView({ pageId, eventId, source }: RecordViewBody, userAgent: string | undefined) {
     if (!(await pagesRepository.findPublishedById(pageId))) throw new NotFoundError()
 
-    track({ type: 'view', eventId, pageId, occurredAt: new Date().toISOString() }, userAgent)
+    track(
+      { type: 'view', eventId, pageId, source, occurredAt: new Date().toISOString() },
+      userAgent,
+    )
   },
 
   async resolveLinkRedirect(linkId: string, userAgent: string | undefined) {
