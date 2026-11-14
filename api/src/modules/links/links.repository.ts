@@ -3,7 +3,9 @@ import { db } from '../../db'
 import { linkSchema, pageSchema } from '../../db/schema'
 import { bumpRevision } from '../pages/pages.repository'
 
-type LinkChanges = Partial<Pick<typeof linkSchema.$inferInsert, 'title' | 'url' | 'isActive'>>
+type LinkChanges = Partial<
+  Pick<typeof linkSchema.$inferInsert, 'title' | 'url' | 'isActive' | 'startsAt' | 'endsAt'>
+>
 
 type NewLink = typeof linkSchema.$inferInsert
 
@@ -28,12 +30,17 @@ export const linksRepository = {
 
   async findPublicTarget(id: string) {
     const [target] = await db
-      .select({ url: linkSchema.url, pageId: linkSchema.pageId })
+      .select({
+        url: linkSchema.url,
+        pageId: linkSchema.pageId,
+        username: pageSchema.username,
+        isActive: linkSchema.isActive,
+        startsAt: linkSchema.startsAt,
+        endsAt: linkSchema.endsAt,
+      })
       .from(linkSchema)
       .innerJoin(pageSchema, eq(pageSchema.id, linkSchema.pageId))
-      .where(
-        and(eq(linkSchema.id, id), eq(linkSchema.isActive, true), eq(pageSchema.isPublished, true)),
-      )
+      .where(and(eq(linkSchema.id, id), eq(pageSchema.isPublished, true)))
       .limit(1)
 
     return target

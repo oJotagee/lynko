@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test'
 import { randomUUID } from 'node:crypto'
+import { env } from '../../../../src/config/env'
 import { analyticsProducer } from '../../../../src/modules/analytics/analytics.queue'
 import { createTestApp, signIn } from '../../support/app'
 import { buildLink, buildPage } from '../../support/builders'
@@ -190,13 +191,60 @@ describe('analytics routes', () => {
       expect(response.headers.location).toBe('https://example.com/portfolio')
     })
 
-    it('answers 404 for an inactive link', async () => {
-      const { link } = seedLink({ isActive: false })
+    describe('when the link is not live', () => {
+      const webUrl = env.WEB_URL
+
+      afterEach(() => {
+        env.WEB_URL = webUrl
+      })
+
+      it.each([
+        ['hidden', { isActive: false }],
+        ['scheduled', { startsAt: new Date(Date.now() + 60_000) }],
+        ['ended', { endsAt: new Date(Date.now() - 60_000) }],
+      ])('sends a %s link to the profile without counting the click', async (_label, overrides) => {
+        env.WEB_URL = 'https://lynko.test'
+
+        const { page, link } = seedLink(overrides)
+
+        const response = await app.inject({
+          method: 'GET',
+          url: `/r/${link.id}`,
+          headers: browser,
+        })
+
+        expect(response.statusCode).toBe(302)
+        expect(response.headers.location).toBe(`https://lynko.test/${page.username}`)
+        expect(response.headers['cache-control']).toBe('no-store')
+        expect(enqueue).not.toHaveBeenCalled()
+      })
+
+      it('answers 404 when WEB_URL is not configured', async () => {
+        env.WEB_URL = undefined
+
+        const { link } = seedLink({ endsAt: new Date(Date.now() - 60_000) })
+
+        const response = await app.inject({
+          method: 'GET',
+          url: `/r/${link.id}`,
+          headers: browser,
+        })
+
+        expect(response.statusCode).toBe(404)
+        expect(enqueue).not.toHaveBeenCalled()
+      })
+    })
+
+    it('redirects a link inside its schedule window to the destination', async () => {
+      const { link } = seedLink({
+        startsAt: new Date(Date.now() - 60_000),
+        endsAt: new Date(Date.now() + 60_000),
+      })
 
       const response = await app.inject({ method: 'GET', url: `/r/${link.id}`, headers: browser })
 
-      expect(response.statusCode).toBe(404)
-      expect(enqueue).not.toHaveBeenCalled()
+      expect(response.headers.location).toBe('https://example.com/portfolio')
+      expect(enqueue).toHaveBeenCalledTimes(1)
     })
 
     it('answers 404 for a link of an unpublished page', async () => {

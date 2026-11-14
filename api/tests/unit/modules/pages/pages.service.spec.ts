@@ -1,9 +1,10 @@
-import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, it, mock, setSystemTime, spyOn } from 'bun:test'
 import { mediaStorage } from '../../../../src/modules/media/media.storage'
 import {
   appearanceFromTheme,
   defaultPageAppearance,
 } from '../../../../src/modules/pages/pages.appearance'
+import { cachedPageResponse } from '../../../../src/modules/pages/pages.dto'
 import { pagesRepository } from '../../../../src/modules/pages/pages.repository'
 import { pagesService, publicPageCache } from '../../../../src/modules/pages/pages.service'
 import { defaultPageTheme } from '../../../../src/modules/pages/pages.theme'
@@ -294,6 +295,47 @@ describe('pagesService', () => {
 
       await expect(pagesService.getPublic('maria')).rejects.toBeInstanceOf(NotFoundError)
     })
+
+    it('filters the same cached content by the time of each read', async () => {
+      const page = buildPage({ username: 'maria', isPublished: true })
+
+      store.pages.push(page)
+
+      store.links.push(
+        buildLink({ pageId: page.id, title: 'Sempre', position: 0 }),
+        buildLink({
+          pageId: page.id,
+          title: 'Promo',
+          position: 1,
+          startsAt: new Date('2026-11-20T18:00:00.000Z'),
+          endsAt: new Date('2026-11-21T18:00:00.000Z'),
+        }),
+      )
+
+      const fresh = await publicPageCache.get('maria')
+
+      const cached = cachedPageResponse.parse(
+        JSON.parse(JSON.stringify(cachedPageResponse.parse(fresh))),
+      )
+
+      spyOn(publicPageCache, 'get').mockResolvedValue(cached)
+
+      const titlesAt = async (iso: string) => {
+        setSystemTime(new Date(iso))
+
+        return (await pagesService.getPublic('maria')).links.map((link) => link.title)
+      }
+
+      try {
+        expect(await titlesAt('2026-11-20T17:59:00.000Z')).toEqual(['Sempre'])
+
+        expect(await titlesAt('2026-11-20T18:00:00.000Z')).toEqual(['Sempre', 'Promo'])
+
+        expect(await titlesAt('2026-11-21T18:00:00.000Z')).toEqual(['Sempre'])
+      } finally {
+        setSystemTime()
+      }
+    })
   })
 
   describe('social links visibility', () => {
@@ -366,6 +408,32 @@ describe('pagesService', () => {
       store.pages.push(buildPage({ userId, isPublished: false }))
 
       await expect(pagesService.getPreview(userId)).resolves.toMatchObject({ links: [] })
+    })
+
+    it('shows only the links that are live now', async () => {
+      const page = buildPage({ userId })
+
+      store.pages.push(page)
+
+      store.links.push(
+        buildLink({ pageId: page.id, title: 'No ar', position: 0 }),
+        buildLink({
+          pageId: page.id,
+          title: 'Agendado',
+          position: 1,
+          startsAt: new Date(Date.now() + 60_000),
+        }),
+        buildLink({
+          pageId: page.id,
+          title: 'Encerrado',
+          position: 2,
+          endsAt: new Date(Date.now() - 60_000),
+        }),
+      )
+
+      const result = await pagesService.getPreview(userId)
+
+      expect(result.links.map((link) => link.title)).toEqual(['No ar'])
     })
   })
 

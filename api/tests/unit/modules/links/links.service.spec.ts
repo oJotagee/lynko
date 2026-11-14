@@ -68,6 +68,47 @@ describe('linksService', () => {
       ).resolves.toMatchObject({ isActive: false })
     })
 
+    it('rejects an end date before the saved start date', async () => {
+      const link = buildLink({ pageId: page.id, startsAt: new Date('2026-11-20T18:00:00.000Z') })
+
+      store.links.push(link)
+
+      await expect(
+        linksService.update(userId, link.id, { endsAt: new Date('2026-11-20T17:00:00.000Z') }),
+      ).rejects.toBeInstanceOf(BadRequestError)
+
+      expect(link.endsAt).toBeNull()
+    })
+
+    it('accepts an end date after the saved start date and clears with null', async () => {
+      const startsAt = new Date('2026-11-20T18:00:00.000Z')
+
+      const link = buildLink({ pageId: page.id, startsAt })
+
+      store.links.push(link)
+
+      const endsAt = new Date('2026-11-21T18:00:00.000Z')
+
+      await expect(linksService.update(userId, link.id, { endsAt })).resolves.toMatchObject({
+        startsAt,
+        endsAt,
+      })
+
+      await expect(
+        linksService.update(userId, link.id, { startsAt: null, endsAt: null }),
+      ).resolves.toMatchObject({ startsAt: null, endsAt: null })
+    })
+
+    it('treats a link from another page as not found when scheduling', async () => {
+      const foreign = buildLink({ pageId: buildPage().id })
+
+      store.links.push(foreign)
+
+      await expect(
+        linksService.update(userId, foreign.id, { endsAt: new Date('2026-11-21T18:00:00.000Z') }),
+      ).rejects.toBeInstanceOf(NotFoundError)
+    })
+
     it('treats a link from another page as not found', async () => {
       const foreign = buildLink({ pageId: buildPage().id })
 

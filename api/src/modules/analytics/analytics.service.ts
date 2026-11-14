@@ -1,7 +1,9 @@
 import { randomUUID } from 'node:crypto'
 import { z } from 'zod'
+import { env } from '../../config/env'
 import { NotFoundError } from '../../shared/errors'
 import { linksRepository } from '../links/links.repository'
+import { isLinkLive } from '../links/links.schedule'
 import { pagesRepository } from '../pages/pages.repository'
 import type { SocialPlatform } from '../pages/pages.social'
 import type { AnalyticsEvent, Period, RecordViewBody } from './analytics.dto'
@@ -142,6 +144,12 @@ export const analyticsService = {
     const target = await linksRepository.findPublicTarget(linkId)
 
     if (!target) throw new NotFoundError()
+
+    if (!isLinkLive(target)) {
+      if (!env.WEB_URL) throw new NotFoundError()
+
+      return `${env.WEB_URL}/${target.username}`
+    }
 
     const url = toHttpUrlOrThrow(target.url)
 

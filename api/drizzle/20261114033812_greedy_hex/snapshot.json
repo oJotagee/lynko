@@ -1,0 +1,111 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "94fb5b29-51c9-4077-a341-4d8a7d74057d",
+  "prevIds": [
+    "0e9647e3-4f0f-4934-8342-01cf298946fc"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "links",
+        "starts_at"
+      ],
+      "writes": [
+        "s|col|public.links.starts_at",
+        "n|col|public.links.starts_at",
+        "e|col|public.links.starts_at"
+      ],
+      "reads": [
+        "n|tbl|public.links",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "links",
+        "ends_at"
+      ],
+      "writes": [
+        "s|col|public.links.ends_at",
+        "n|col|public.links.ends_at",
+        "e|col|public.links.ends_at"
+      ],
+      "reads": [
+        "n|tbl|public.links",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_check",
+      "statementTarget": [
+        "table",
+        "public",
+        "links"
+      ],
+      "writes": [
+        "s|ck|public.links.links_schedule_check",
+        "n|ck|public.links.links_schedule_check",
+        "e|ck|public.links.links_schedule_check",
+        "n|con|public.links.links_schedule_check"
+      ],
+      "reads": [
+        "n|tbl|public.links",
+        "n|sch|public",
+        "n|col|public.links.starts_at",
+        "n|col|public.links.ends_at"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "links",
+        "name": "starts_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "links",
+        "name": "ends_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "links",
+        "name": "links_schedule_check",
+        "value": "\"starts_at\" IS NULL OR \"ends_at\" IS NULL OR \"ends_at\" > \"starts_at\"",
+        "entityType": "checks"
+      }
+    }
+  ]
+}

@@ -3,9 +3,9 @@ import type { z } from 'zod'
 
 import { ServiceUnavailableError } from '../../shared/errors'
 import type { CacheEntry, PublicPageCacheRepository } from './pages.cache.repository'
-import { publicPageResponse } from './pages.dto'
+import { cachedPageResponse } from './pages.dto'
 
-export type PublicPage = z.infer<typeof publicPageResponse>
+export type PublicPage = z.infer<typeof cachedPageResponse>
 
 export interface PageRef {
   id: string
@@ -191,7 +191,7 @@ function parseRef(ref: string) {
 
 function parsePage(content: string): PublicPage | undefined {
   try {
-    const result = publicPageResponse.safeParse(JSON.parse(content))
+    const result = cachedPageResponse.safeParse(JSON.parse(content))
 
     return result.success ? result.data : undefined
   } catch {
@@ -325,7 +325,7 @@ export function createPublicPageCache(deps: PublicPageCacheDeps) {
 
       if (!page) continue
 
-      const content = JSON.stringify(publicPageResponse.parse(page))
+      const content = JSON.stringify(cachedPageResponse.parse(page))
 
       const outcome = await settle(() =>
         repo.publish({

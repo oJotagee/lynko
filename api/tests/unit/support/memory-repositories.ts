@@ -347,15 +347,29 @@ export function useInMemoryRepositories() {
   )
 
   spyOn(linksRepository, 'findPublicTarget').mockImplementation(async (id) => {
-    const link = store.links.find((item) => item.id === id && item.isActive)
+    const link = store.links.find((item) => item.id === id)
 
     const page = link && store.pages.find((item) => item.id === link.pageId && item.isPublished)
 
-    return link && page ? { url: link.url, pageId: page.id } : undefined
+    return link && page
+      ? {
+          url: link.url,
+          pageId: page.id,
+          username: page.username,
+          isActive: link.isActive,
+          startsAt: link.startsAt,
+          endsAt: link.endsAt,
+        }
+      : undefined
   })
 
   spyOn(linksRepository, 'create').mockImplementation(async ({ id, ...data }) => {
-    const link = buildLink({ ...data, ...(id && { id }) })
+    const link = buildLink({
+      ...data,
+      ...(id && { id }),
+      startsAt: data.startsAt ?? null,
+      endsAt: data.endsAt ?? null,
+    })
 
     store.links.push(link)
 

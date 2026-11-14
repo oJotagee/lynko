@@ -56,7 +56,62 @@ describe('links routes', () => {
     })
 
     expect(response.statusCode).toBe(201)
-    expect(response.json()).toMatchObject({ title: 'Blog', position: 0, isActive: true })
+    expect(response.json()).toMatchObject({
+      title: 'Blog',
+      position: 0,
+      isActive: true,
+      startsAt: null,
+      endsAt: null,
+    })
+  })
+
+  it('POST /links schedules a link with an offset date', async () => {
+    const { headers } = signIn(app, store)
+
+    const response = await app.inject({
+      method: 'POST',
+      url: '/links',
+      headers,
+      payload: {
+        title: 'Promo',
+        url: 'https://promo.dev',
+        startsAt: '2026-11-20T18:00:00-03:00',
+        endsAt: '2026-11-21T23:59:00-03:00',
+      },
+    })
+
+    expect(response.statusCode).toBe(201)
+
+    expect(response.json()).toMatchObject({
+      startsAt: '2026-11-20T21:00:00.000Z',
+      endsAt: '2026-11-22T02:59:00.000Z',
+    })
+  })
+
+  it.each([
+    [
+      'an end before the start',
+      { startsAt: '2026-11-20T18:00:00Z', endsAt: '2026-11-20T17:00:00Z' },
+    ],
+    [
+      'an end equal to the start',
+      { startsAt: '2026-11-20T18:00:00Z', endsAt: '2026-11-20T18:00:00Z' },
+    ],
+    ['a date without offset', { startsAt: '2026-11-20T18:00:00' }],
+    ['a date only', { endsAt: '2026-11-20' }],
+  ])('POST /links rejects %s', async (_label, schedule) => {
+    const { headers } = signIn(app, store)
+
+    const response = await app.inject({
+      method: 'POST',
+      url: '/links',
+      headers,
+      payload: { title: 'Promo', url: 'https://promo.dev', ...schedule },
+    })
+
+    expect(response.statusCode).toBe(400)
+
+    expect(store.links).toHaveLength(0)
   })
 
   it.each(['javascript:alert(1)', 'ftp://files.dev', 'not a url'])(

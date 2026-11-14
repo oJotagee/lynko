@@ -271,6 +271,40 @@ describe('pages routes', () => {
     ])
   })
 
+  it('GET /pages/:username hides scheduled and ended links and never exposes the dates', async () => {
+    const page = buildPage({ username: 'maria', isPublished: true })
+
+    store.pages.push(page)
+
+    store.links.push(
+      buildLink({
+        pageId: page.id,
+        title: 'Agora',
+        endsAt: new Date(Date.now() + 60_000),
+      }),
+      buildLink({
+        pageId: page.id,
+        title: 'Depois',
+        position: 1,
+        startsAt: new Date(Date.now() + 60_000),
+      }),
+      buildLink({
+        pageId: page.id,
+        title: 'Antes',
+        position: 2,
+        endsAt: new Date(Date.now() - 60_000),
+      }),
+    )
+
+    const response = await app.inject({ method: 'GET', url: '/pages/maria' })
+
+    expect(response.json().links.map((link: { title: string }) => link.title)).toEqual(['Agora'])
+
+    expect(response.json().links[0]).not.toHaveProperty('startsAt')
+
+    expect(response.json().links[0]).not.toHaveProperty('endsAt')
+  })
+
   it('GET /pages/:username returns 404 for an unpublished page', async () => {
     store.pages.push(buildPage({ username: 'maria', isPublished: false }))
 

@@ -2,6 +2,7 @@ import { sql } from 'drizzle-orm'
 import {
   bigint,
   boolean,
+  check,
   date,
   index,
   integer,
@@ -104,9 +105,17 @@ export const linkSchema = pgTable(
     url: text('url').notNull(),
     position: integer('position').notNull().default(0),
     isActive: boolean('is_active').notNull().default(true),
+    startsAt: timestamp('starts_at', { withTimezone: true }),
+    endsAt: timestamp('ends_at', { withTimezone: true }),
     ...timestamps,
   },
-  (table) => [index('links_page_id_position_idx').on(table.pageId, table.position)],
+  (table) => [
+    index('links_page_id_position_idx').on(table.pageId, table.position),
+    check(
+      'links_schedule_check',
+      sql`${table.startsAt} IS NULL OR ${table.endsAt} IS NULL OR ${table.endsAt} > ${table.startsAt}`,
+    ),
+  ],
 )
 
 export const mediaSchema = pgTable(

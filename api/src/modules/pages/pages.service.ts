@@ -4,6 +4,7 @@ import type { pageSchema } from '../../db/schema'
 import { getUniqueViolation } from '../../shared/db-errors'
 import { ConflictError, NotFoundError } from '../../shared/errors'
 import { linksRepository } from '../links/links.repository'
+import { isLinkLive } from '../links/links.schedule'
 import type { MediaType } from '../media/media.dto'
 import { mediaRepository } from '../media/media.repository'
 import { getMediaUrl, mediaService } from '../media/media.service'
@@ -221,16 +222,18 @@ export const pagesService = {
       throw new NotFoundError('Page not found')
     }
 
-    return page
+    return { ...page, links: page.links.filter((link) => isLinkLive(link)) }
   },
 
   async getPreview(userId: string) {
     const page = await pagesService.getMine(userId)
 
+    const links = await linksRepository.findActiveByPageId(page.id)
+
     return {
       ...page,
       socialLinks: toPublicSocialLinks(page.socialLinks),
-      links: await linksRepository.findActiveByPageId(page.id),
+      links: links.filter((link) => isLinkLive(link)),
     }
   },
 }

@@ -4,6 +4,7 @@ import { pagesRepository } from '../pages/pages.repository'
 import { publicPageCache } from '../pages/pages.service'
 import { type CreateLinkBody, MAX_LINKS_PER_PAGE, type UpdateLinkBody } from './links.dto'
 import { linksRepository } from './links.repository'
+import { isValidSchedule, SCHEDULE_ERROR } from './links.schedule'
 
 const LINK_NOT_FOUND = 'Link not found'
 
@@ -44,6 +45,22 @@ export const linksService = {
 
   async update(userId: string, id: string, changes: UpdateLinkBody) {
     const { id: pageId } = await getPageOrThrow(userId)
+
+    if (changes.startsAt !== undefined || changes.endsAt !== undefined) {
+      const current = (await linksRepository.findByPageId(pageId)).find((item) => item.id === id)
+
+      if (!current) {
+        throw new NotFoundError(LINK_NOT_FOUND)
+      }
+
+      const startsAt = changes.startsAt === undefined ? current.startsAt : changes.startsAt
+
+      const endsAt = changes.endsAt === undefined ? current.endsAt : changes.endsAt
+
+      if (!isValidSchedule(startsAt, endsAt)) {
+        throw new BadRequestError(SCHEDULE_ERROR)
+      }
+    }
 
     const { link, page } = await linksRepository.update(id, pageId, changes)
 

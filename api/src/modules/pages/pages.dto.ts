@@ -105,6 +105,15 @@ export const publicPageResponse = pageResponse
     links: z.array(publicLinkResponse),
   })
 
+export const cachedPageResponse = publicPageResponse.extend({
+  links: z.array(
+    publicLinkResponse.extend({
+      startsAt: z.coerce.date().nullable(),
+      endsAt: z.coerce.date().nullable(),
+    }),
+  ),
+})
+
 export type CreatePageBody = z.infer<typeof createPageBody>
 
 export type UpdatePageBody = z.infer<typeof updatePageBody>

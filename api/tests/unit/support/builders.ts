@@ -100,6 +100,8 @@ export function buildLink(overrides: Partial<Link> = {}): Link {
     url: 'https://example.com',
     position: 0,
     isActive: true,
+    startsAt: null,
+    endsAt: null,
     createdAt,
     updatedAt: createdAt,
     ...overrides,
