@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, mock } from 'bun:test'
-import { act, screen, waitFor, within } from '@testing-library/react'
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
 
 import { buildDashboardData, buildLink } from '../../../../support/builders'
 import { resetNextMocks, toast } from '../../../../support/next'
@@ -131,11 +131,121 @@ describe('LinksEditor', () => {
     await user.click(screen.getByRole('button', { name: 'Salvar link' }))
 
     await waitFor(() =>
-      expect(createLink).toHaveBeenCalledWith({ title: 'Blog', url: 'https://blog.dev' }),
+      expect(createLink).toHaveBeenCalledWith({
+        title: 'Blog',
+        url: 'https://blog.dev',
+        startsAt: null,
+        endsAt: null,
+      }),
     )
 
     await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Link adicionado'))
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+  })
+
+  it('schedules a new link from the time fields', async () => {
+    const { user } = renderEditor()
+
+    await user.click(screen.getByRole('button', { name: 'Adicionar link' }))
+    await user.type(await screen.findByLabelText('Título'), 'Promo')
+    await user.type(screen.getByLabelText('URL'), 'https://promo.dev')
+
+    fireEvent.change(screen.getByLabelText('Hora de entra no ar em'), {
+      target: { value: '18:00' },
+    })
+
+    fireEvent.change(screen.getByLabelText('Hora de sai do ar em'), { target: { value: '23:30' } })
+
+    await user.click(screen.getByRole('button', { name: 'Salvar link' }))
+
+    await waitFor(() => expect(createLink).toHaveBeenCalled())
+
+    const [input] = createLink.mock.calls[0] as [{ startsAt: Date; endsAt: Date; title: string }]
+
+    expect(input.title).toBe('Promo')
+
+    expect([input.startsAt.getHours(), input.startsAt.getMinutes()]).toEqual([18, 0])
+
+    expect([input.endsAt.getHours(), input.endsAt.getMinutes()]).toEqual([23, 30])
+  })
+
+  it('picks a start day from the calendar with the keyboard', async () => {
+    const { user } = renderEditor()
+
+    await user.click(screen.getByRole('button', { name: 'Adicionar link' }))
+    await user.type(await screen.findByLabelText('Título'), 'Promo')
+    await user.type(screen.getByLabelText('URL'), 'https://promo.dev')
+
+    const trigger = screen.getByRole('button', { name: 'Entra no ar em' })
+
+    trigger.focus()
+
+    await user.keyboard('{Enter}')
+
+    const grid = await screen.findByRole('grid')
+
+    const day = within(grid)
+      .getAllByRole('button')
+      .find((button) => button.textContent === '15') as HTMLElement
+
+    await user.click(day)
+
+    await waitFor(() => expect(screen.queryByRole('grid')).toBeNull())
+
+    expect(screen.getByLabelText('Hora de entra no ar em')).toHaveValue('09:00')
+
+    await user.click(screen.getByRole('button', { name: 'Salvar link' }))
+
+    await waitFor(() => expect(createLink).toHaveBeenCalled())
+
+    const [input] = createLink.mock.calls[0] as [{ startsAt: Date }]
+
+    expect([input.startsAt.getDate(), input.startsAt.getHours()]).toEqual([15, 9])
+  })
+
+  it('shows the error when the end is before the start and does not submit', async () => {
+    const { user } = renderEditor()
+
+    await user.click(screen.getByRole('button', { name: 'Adicionar link' }))
+    await user.type(await screen.findByLabelText('Título'), 'Promo')
+    await user.type(screen.getByLabelText('URL'), 'https://promo.dev')
+
+    fireEvent.change(screen.getByLabelText('Hora de entra no ar em'), {
+      target: { value: '18:00' },
+    })
+
+    fireEvent.change(screen.getByLabelText('Hora de sai do ar em'), { target: { value: '17:00' } })
+
+    await user.click(screen.getByRole('button', { name: 'Salvar link' }))
+
+    expect(
+      await screen.findByText('A data de saída precisa ser depois da entrada'),
+    ).toBeInTheDocument()
+
+    expect(createLink).not.toHaveBeenCalled()
+  })
+
+  it('clears the end date of a scheduled link', async () => {
+    const scheduled = buildLink({
+      id: '66666666-6666-4666-8666-666666666666',
+      title: 'Promo',
+      endsAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+    })
+
+    const { user } = renderEditor({ data: buildDashboardData({ links: [scheduled] }) })
+
+    await user.click(screen.getByRole('button', { name: 'Editar Promo' }))
+
+    await user.click(await screen.findByRole('button', { name: 'Limpar sai do ar em' }))
+
+    await user.click(screen.getByRole('button', { name: 'Salvar link' }))
+
+    await waitFor(() =>
+      expect(updateLink).toHaveBeenCalledWith(
+        scheduled.id,
+        expect.objectContaining({ startsAt: null, endsAt: null }),
+      ),
+    )
   })
 
   it('keeps the dialog open and shows the error when the action fails', async () => {
@@ -257,5 +367,68 @@ describe('LinksEditor', () => {
         expect.stringContaining('Segundo'),
       ]),
     )
+  })
+
+  describe('schedule', () => {
+    const hour = 60 * 60 * 1000
+
+    const scheduled = buildLink({
+      id: '33333333-3333-4333-8333-333333333333',
+      title: 'Promo',
+      startsAt: new Date(Date.now() + hour).toISOString(),
+      endsAt: new Date(Date.now() + 2 * hour).toISOString(),
+    })
+
+    const ended = buildLink({
+      id: '44444444-4444-4444-8444-444444444444',
+      title: 'Evento',
+      endsAt: new Date(Date.now() - hour).toISOString(),
+    })
+
+    const hidden = buildLink({
+      id: '55555555-5555-4555-8555-555555555555',
+      title: 'Rascunho',
+      active: false,
+    })
+
+    function row(title: string) {
+      return within(screen.getByRole('list', { hidden: true }))
+        .getAllByRole('listitem', { hidden: true })
+        .find((item) => item.textContent?.includes(title)) as HTMLElement
+    }
+
+    it('shows the state and the dates of each link', () => {
+      renderEditor({
+        data: buildDashboardData({ links: [first, scheduled, ended, hidden] }),
+      })
+
+      expect(within(row('Primeiro')).getByText('No ar')).toBeInTheDocument()
+
+      expect(within(row('Promo')).getByText('Agendado')).toBeInTheDocument()
+
+      expect(within(row('Promo')).getByText(/^Entra no ar em .+ e sai em /)).toBeInTheDocument()
+
+      expect(within(row('Evento')).getByText('Encerrado')).toBeInTheDocument()
+
+      expect(within(row('Evento')).getByText(/^Saiu do ar em /)).toBeInTheDocument()
+
+      expect(within(row('Rascunho')).getByText('Oculto')).toBeInTheDocument()
+    })
+
+    it('shows only the live links in the preview', () => {
+      renderEditor({
+        data: buildDashboardData({ links: [first, scheduled, ended, hidden] }),
+      })
+
+      const preview = screen.getByText('Prévia ao vivo').closest('aside') as HTMLElement
+
+      expect(within(preview).getByText('Primeiro')).toBeInTheDocument()
+
+      expect(within(preview).queryByText('Promo')).toBeNull()
+
+      expect(within(preview).queryByText('Evento')).toBeNull()
+
+      expect(within(preview).queryByText('Rascunho')).toBeNull()
+    })
   })
 })

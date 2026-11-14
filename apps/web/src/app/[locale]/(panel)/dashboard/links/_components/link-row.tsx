@@ -2,13 +2,16 @@
 
 import { ArrowDown, ArrowUp, GripVertical, Pencil, Trash2 } from 'lucide-react'
 import { LinkIcon } from '@/app/[locale]/_components/link-icon'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { cn } from '@/lib/utils'
 import type { DashboardLink } from '../../_components/dashboard-data'
+import { getLinkStatus, getScheduleText, linkStatusLabels } from '../../_components/link-status'
 
 interface LinkRowProps {
   link: DashboardLink
+  now: Date | null
   index: number
   total: number
   onEdit: () => void
@@ -26,6 +29,7 @@ interface LinkRowProps {
 
 export function LinkRow({
   link,
+  now,
   index,
   total,
   onEdit,
@@ -40,6 +44,10 @@ export function LinkRow({
   onDragOver,
   onDrop,
 }: LinkRowProps) {
+  const status = getLinkStatus(link, now ?? new Date())
+
+  const scheduleText = now && getScheduleText(link, status)
+
   const showBefore = dropPosition === index
 
   const showAfter = index === total - 1 && dropPosition === total
@@ -136,10 +144,19 @@ export function LinkRow({
           iconClassName="size-5"
         />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold">{link.title}</p>
+          <div className="flex min-w-0 items-center gap-2">
+            <p className="truncate text-sm font-semibold">{link.title}</p>
+            <Badge
+              variant={status === 'scheduled' ? 'secondary' : 'outline'}
+              className={cn('shrink-0', status !== 'live' && 'text-muted-foreground')}
+            >
+              {linkStatusLabels[status]}
+            </Badge>
+          </div>
           <p className="mt-1 truncate text-xs text-muted-foreground">
             {link.url.replace(/^https?:\/\//, '')}
           </p>
+          {scheduleText && <p className="mt-1 text-xs text-muted-foreground">{scheduleText}</p>}
         </div>
       </div>
       <div className="flex items-center justify-between border-t border-border pt-3 sm:w-auto sm:justify-end sm:gap-1 sm:border-0 sm:pt-0">

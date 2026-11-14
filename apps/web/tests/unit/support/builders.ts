@@ -33,6 +33,8 @@ export function buildApiLink(overrides: Partial<ApiLink> = {}): ApiLink {
     url: 'https://example.com',
     position: 0,
     isActive: true,
+    startsAt: null,
+    endsAt: null,
     ...overrides,
   }
 }

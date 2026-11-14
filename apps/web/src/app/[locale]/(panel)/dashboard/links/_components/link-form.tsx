@@ -2,6 +2,7 @@
 
 import { useMutation } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
+import { useSyncExternalStore } from 'react'
 import { Controller } from 'react-hook-form'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -12,17 +13,30 @@ import type { DashboardLink } from '../../_components/dashboard-data'
 import { portalTheme } from '../../_components/portal-theme'
 import { createLink } from '../_actions/create-link'
 import { updateLink } from '../_actions/update-link'
-import { type LinkSchemaData, useLinkSchema } from './schemas'
+import { LinkScheduleField } from './link-schedule-field'
+import { type LinkFormData, useLinkSchema } from './schemas'
+
+const toDate = (value: string | null | undefined) => (value ? new Date(value) : null)
+
+const noop = () => () => {}
+
+const browserTimeZone = () => Intl.DateTimeFormat().resolvedOptions().timeZone
 
 export function LinkForm({ link, onClose }: { link?: DashboardLink; onClose: () => void }) {
-  const form = useLinkSchema(link ?? { title: '', url: '' })
+  const timeZone = useSyncExternalStore(noop, browserTimeZone, () => null)
 
-  const { mutateAsync, isPending } = useMutation({
-    mutationFn: (values: LinkSchemaData) =>
-      link ? updateLink(link.id, values) : createLink(values),
+  const form = useLinkSchema({
+    title: link?.title ?? '',
+    url: link?.url ?? '',
+    startsAt: toDate(link?.startsAt),
+    endsAt: toDate(link?.endsAt),
   })
 
-  async function onSubmit(values: LinkSchemaData) {
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: (values: LinkFormData) => (link ? updateLink(link.id, values) : createLink(values)),
+  })
+
+  async function onSubmit(values: LinkFormData) {
     const response = await mutateAsync(values)
 
     if (response.error) {
@@ -82,6 +96,15 @@ export function LinkForm({ link, onClose }: { link?: DashboardLink; onClose: () 
               </Field>
             )}
           />
+          <fieldset className="space-y-4 border-t border-border pt-5">
+            <legend className="float-left mb-1 w-full text-sm font-semibold">Agendamento</legend>
+            <LinkScheduleField control={form.control} name="startsAt" label="Entra no ar em" />
+            <LinkScheduleField control={form.control} name="endsAt" label="Sai do ar em" />
+            <p className="text-xs text-muted-foreground">
+              {timeZone ? `Horário de ${timeZone}. ` : ''}Sem datas, o link fica no ar enquanto
+              estiver ativo.
+            </p>
+          </fieldset>
           <div className="flex justify-end gap-3">
             <Button variant="outline" type="button" onClick={onClose}>
               Cancelar

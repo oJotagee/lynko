@@ -3,6 +3,7 @@
 import { Link2, Plus } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { useNow } from '@/hooks/use-now'
 import type { DashboardLink } from '../../_components/dashboard-data'
 import { LinkRow } from './link-row'
 
@@ -27,6 +28,8 @@ export function LinkList({
   onDelete,
   onToggle,
 }: LinkListProps) {
+  const now = useNow()
+
   const [draggingId, setDraggingId] = useState<string | null>(null)
 
   const [dropPosition, setDropPosition] = useState<number | null>(null)
@@ -77,6 +80,7 @@ export function LinkList({
               <LinkRow
                 key={link.id}
                 link={link}
+                now={now}
                 index={index}
                 total={links.length}
                 draggingId={draggingId}

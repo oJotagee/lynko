@@ -10,6 +10,8 @@ export interface DashboardLink {
   title: string
   url: string
   active: boolean
+  startsAt: string | null
+  endsAt: string | null
   color: string
 }
 
@@ -63,6 +65,8 @@ export function toDashboardData({ user, page, links }: ApiDashboard): DashboardD
         title: link.title,
         url: link.url,
         active: link.isActive,
+        startsAt: link.startsAt,
+        endsAt: link.endsAt,
         color: linkAccents[index % linkAccents.length],
       })),
   }

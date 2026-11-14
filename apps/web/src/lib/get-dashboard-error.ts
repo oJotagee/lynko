@@ -7,6 +7,7 @@ const messages: Record<string, string> = {
   'Page not found': 'Sua página não foi encontrada. Recarregue o dashboard.',
   'Link not found': 'Este link não foi encontrado. Recarregue a lista.',
   'A page can have at most 100 links': 'Sua página pode ter até 100 links.',
+  'endsAt must be after startsAt': 'A data de saída precisa ser depois da entrada.',
 }
 
 export function getDashboardError(error: unknown, fallback: string): string {

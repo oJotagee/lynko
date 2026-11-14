@@ -10,6 +10,8 @@ export function buildLink(overrides: Partial<DashboardLink> = {}): DashboardLink
     title: 'Portfólio',
     url: 'https://example.com',
     active: true,
+    startsAt: null,
+    endsAt: null,
     color: '#9b8cff',
     ...overrides,
   }

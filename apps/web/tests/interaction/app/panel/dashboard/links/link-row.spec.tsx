@@ -9,7 +9,16 @@ function row(
   onPosition = mock((_position: number) => {}),
 ) {
   return LinkRow({
-    link: { id: 'second', title: 'Projeto', url: 'https://example.com', color: '', active: true },
+    link: {
+      id: 'second',
+      title: 'Projeto',
+      url: 'https://example.com',
+      color: '',
+      active: true,
+      startsAt: null,
+      endsAt: null,
+    },
+    now: new Date(),
     index: 1,
     total: 3,
     draggingId,

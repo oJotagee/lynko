@@ -1,6 +1,10 @@
+'use client'
+
 import { PageView } from '@/app/[locale]/_components/page-view/page-view'
+import { useNow } from '@/hooks/use-now'
 import { cn } from '@/lib/utils'
 import type { DashboardData } from '../dashboard-data'
+import { getLinkStatus } from '../link-status'
 
 export type PreviewMode = 'mobile' | 'desktop'
 
@@ -13,6 +17,8 @@ export function ProfilePreview({
   data: { profile, appearance, backgroundImageUrl, socialLinks, links },
   mode = 'mobile',
 }: ProfilePreviewProps) {
+  const now = useNow()
+
   return (
     <div
       className={cn(
@@ -25,7 +31,7 @@ export function ProfilePreview({
         appearance={appearance}
         backgroundImageUrl={backgroundImageUrl}
         socialLinks={socialLinks}
-        links={links.filter((link) => link.active)}
+        links={links.filter((link) => getLinkStatus(link, now ?? new Date()) === 'live')}
         className="min-h-[420px]"
       />
     </div>

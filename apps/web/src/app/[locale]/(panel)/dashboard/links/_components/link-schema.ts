@@ -13,3 +13,15 @@ export const linkSchema = z.object({
 })
 
 export type LinkSchemaData = z.infer<typeof linkSchema>
+
+export const linkFormSchema = linkSchema
+  .extend({
+    startsAt: z.date().nullable(),
+    endsAt: z.date().nullable(),
+  })
+  .refine((link) => !link.startsAt || !link.endsAt || link.endsAt > link.startsAt, {
+    path: ['endsAt'],
+    message: 'A data de saída precisa ser depois da entrada',
+  })
+
+export type LinkFormData = z.infer<typeof linkFormSchema>

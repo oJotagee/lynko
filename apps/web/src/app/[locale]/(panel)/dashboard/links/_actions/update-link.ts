@@ -8,18 +8,32 @@ import { getDashboardError } from '@/lib/get-dashboard-error'
 import type { ApiLink } from '../../_data-access/get-dashboard'
 import { linkSchema } from '../_components/link-schema'
 
+const updateLinkSchema = linkSchema
+  .extend({
+    isActive: z.boolean(),
+    startsAt: z.date().nullable(),
+    endsAt: z.date().nullable(),
+  })
+  .partial()
+
 export async function updateLink(
   id: string,
-  input: { title?: string; url?: string; isActive?: boolean },
+  input: z.input<typeof updateLinkSchema>,
 ): Promise<{ data?: ApiLink; error?: string }> {
   try {
     const linkId = z.uuid().parse(id)
 
-    const values = linkSchema.extend({ isActive: z.boolean() }).partial().parse(input)
+    const { startsAt, endsAt, ...values } = updateLinkSchema.parse(input)
 
-    const { data } = await api.patch<ApiLink>(`/links/${linkId}`, values, {
-      headers: await getApiAuthorization(),
-    })
+    const { data } = await api.patch<ApiLink>(
+      `/links/${linkId}`,
+      {
+        ...values,
+        ...(startsAt !== undefined && { startsAt: startsAt?.toISOString() ?? null }),
+        ...(endsAt !== undefined && { endsAt: endsAt?.toISOString() ?? null }),
+      },
+      { headers: await getApiAuthorization() },
+    )
 
     revalidatePath('/[locale]/dashboard', 'layout')
 

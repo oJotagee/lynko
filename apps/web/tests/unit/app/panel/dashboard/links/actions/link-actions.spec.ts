@@ -37,11 +37,16 @@ describe('link actions', () => {
     it('creates the link with the bearer token and revalidates the dashboard', async () => {
       api.post.mockResolvedValueOnce({ data: link })
 
-      const result = await createLink({ title: ' Portfólio ', url: 'https://example.com' })
+      const result = await createLink({
+        title: ' Portfólio ',
+        url: 'https://example.com',
+        startsAt: null,
+        endsAt: null,
+      })
 
       expect(api.post).toHaveBeenCalledWith(
         '/links',
-        { title: 'Portfólio', url: 'https://example.com' },
+        { title: 'Portfólio', url: 'https://example.com', startsAt: null, endsAt: null },
         { headers: authorization },
       )
 
@@ -52,7 +57,7 @@ describe('link actions', () => {
     it.each(['javascript:alert(1)', 'ftp://example.com', 'example.com'])(
       'never sends the url %s to the API',
       async (url) => {
-        const result = await createLink({ title: 'Teste', url })
+        const result = await createLink({ title: 'Teste', url, startsAt: null, endsAt: null })
 
         expect(result.error).toBe('Não foi possível criar o link')
         expect(api.post).not.toHaveBeenCalled()
@@ -64,10 +69,72 @@ describe('link actions', () => {
         createAxiosError(409, { message: 'A page can have at most 100 links' }),
       )
 
-      const result = await createLink({ title: 'Blog', url: 'https://blog.dev' })
+      const result = await createLink({
+        title: 'Blog',
+        url: 'https://blog.dev',
+        startsAt: null,
+        endsAt: null,
+      })
 
       expect(result).toEqual({ error: 'Sua página pode ter até 100 links.' })
       expect(revalidatePath).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('schedule', () => {
+    const startsAt = new Date('2026-11-20T21:00:00.000Z')
+
+    const endsAt = new Date('2026-11-22T02:59:00.000Z')
+
+    it('creates a scheduled link sending ISO dates', async () => {
+      api.post.mockResolvedValueOnce({ data: link })
+
+      await createLink({ title: 'Promo', url: 'https://promo.dev', startsAt, endsAt })
+
+      expect(api.post).toHaveBeenCalledWith(
+        '/links',
+        {
+          title: 'Promo',
+          url: 'https://promo.dev',
+          startsAt: '2026-11-20T21:00:00.000Z',
+          endsAt: '2026-11-22T02:59:00.000Z',
+        },
+        { headers: authorization },
+      )
+    })
+
+    it('never sends an end before the start', async () => {
+      const result = await createLink({
+        title: 'Promo',
+        url: 'https://promo.dev',
+        startsAt: endsAt,
+        endsAt: startsAt,
+      })
+
+      expect(result.error).toBe('Não foi possível criar o link')
+      expect(api.post).not.toHaveBeenCalled()
+    })
+
+    it('updates the dates and clears one with null', async () => {
+      api.patch.mockResolvedValueOnce({ data: link })
+
+      await updateLink(linkId, { startsAt, endsAt: null })
+
+      expect(api.patch).toHaveBeenCalledWith(
+        `/links/${linkId}`,
+        { startsAt: '2026-11-20T21:00:00.000Z', endsAt: null },
+        { headers: authorization },
+      )
+    })
+
+    it('translates the schedule error from the API', async () => {
+      api.patch.mockRejectedValueOnce(
+        createAxiosError(400, { message: 'endsAt must be after startsAt' }),
+      )
+
+      const result = await updateLink(linkId, { endsAt })
+
+      expect(result).toEqual({ error: 'A data de saída precisa ser depois da entrada.' })
     })
   })
 

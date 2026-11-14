@@ -32,6 +32,8 @@ export interface ApiLink {
   url: string
   position: number
   isActive: boolean
+  startsAt: string | null
+  endsAt: string | null
 }
 
 export interface ApiPage {
