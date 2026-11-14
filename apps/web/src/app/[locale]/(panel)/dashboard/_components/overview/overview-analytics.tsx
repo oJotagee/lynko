@@ -3,13 +3,13 @@
 import { type ReactNode, useState } from 'react'
 
 import { AnalyticsError } from '../../analytics/_components/analytics-error'
-import { AnalyticsSkeleton } from '../../analytics/_components/analytics-skeleton'
 import { formatPercent, numberFormat, StatCard } from '../../analytics/_components/overview-cards'
 import { PeriodFilter } from '../../analytics/_components/period-filter'
 import { TimeseriesChart } from '../../analytics/_components/timeseries-chart'
 import { TopLinks } from '../../analytics/_components/top-links'
 import { useAnalytics } from '../../analytics/_components/use-analytics'
 import type { AnalyticsPeriod } from '../../analytics/_data-access/analytics-period'
+import { OverviewBodySkeleton } from '../skeletons/overview-skeleton'
 
 interface OverviewAnalyticsProps {
   activeLinks: number
@@ -26,8 +26,8 @@ export function OverviewAnalytics({ activeLinks, totalLinks, children }: Overvie
     if (isError || !overview || !timeseries || !links) {
       return (
         <>
-          {isError ? <AnalyticsError onRetry={retry} /> : <AnalyticsSkeleton />}
-          {children}
+          {isError ? <AnalyticsError onRetry={retry} /> : <OverviewBodySkeleton aside={children} />}
+          {isError && children}
         </>
       )
     }
