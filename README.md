@@ -6,14 +6,18 @@
 
 Página de links personalizável. Cada pessoa cria uma página pública em `/<username>` com seus links, ícones de redes sociais, foto e fundo, e edita tudo num dashboard com prévia ao vivo.
 
-Contas com e-mail e senha ou com Google, confirmação de e-mail, recuperação e troca de senha e exclusão de conta com todos os dados.
+Contas com e-mail e senha ou com Google, confirmação de e-mail, recuperação e troca de senha e exclusão de conta com todos os dados. Login em duas etapas com app autenticador, lista de dispositivos conectados e encerramento de sessões.
+
+Links com data de início e fim, Analytics de visitas e cliques (incluindo as que chegam pelo QR code), QR code da página para baixar e imagem de prévia ao compartilhar o link.
+
+Plano Pro pago por assinatura na [AbacatePay](https://www.abacatepay.com), mensal ou anual: libera o Analytics de 90 dias e a página sem a marca Lynko.
 
 Monorepo com [Bun](https://bun.com) workspaces:
 
-| Pasta                             | O que é                                                              |
-| --------------------------------- | -------------------------------------------------------------------- |
-| [`api/`](api/README.md)           | API REST em Fastify, Drizzle e Postgres (Neon), upload no S3, e-mail |
-| [`apps/web/`](apps/web/README.md) | Site, dashboard e página pública em Next.js 16                       |
+| Pasta                             | O que é                                                                                         |
+| --------------------------------- | ----------------------------------------------------------------------------------------------- |
+| [`api/`](api/README.md)           | API REST em Fastify, Drizzle e Postgres (Neon), upload no S3, e-mail, assinaturas na AbacatePay |
+| [`apps/web/`](apps/web/README.md) | Site, dashboard e página pública em Next.js 16                                                  |
 
 ## Requisitos
 
@@ -22,8 +26,9 @@ Monorepo com [Bun](https://bun.com) workspaces:
 - Opcional, para upload de foto e fundo: bucket S3 e distribuição CloudFront
 - Opcional, para e-mails de verificação, redefinição e exclusão de conta: um servidor SMTP (por exemplo, Gmail com senha de app)
 - Opcional, para entrar com Google: um OAuth Client ID do Google Cloud
+- Opcional, para o plano Pro: uma conta na AbacatePay e, em desenvolvimento, o [`cloudflared`](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) para receber os webhooks
 
-Sem SMTP a API funciona, mas nenhum e-mail é enviado. Sem o Client ID do Google, o botão "Continuar com Google" não conclui o login. As variáveis estão em [`api/.env.example`](api/.env.example) e [`apps/web/.env.example`](apps/web/.env.example).
+Sem SMTP a API funciona, mas nenhum e-mail é enviado. Sem o Client ID do Google, o botão "Continuar com Google" não conclui o login. Sem as variáveis da AbacatePay, as rotas de cobrança respondem 503 e o resto funciona. A `TOTP_ENCRYPTION_KEY` (login em duas etapas) é obrigatória: a API não sobe sem ela. As variáveis estão em [`api/.env.example`](api/.env.example) e [`apps/web/.env.example`](apps/web/.env.example).
 
 ## Como rodar
 
@@ -66,6 +71,7 @@ Abra http://localhost:3000. A documentação da API fica em http://localhost:808
 | `bun run dev`         | API e web juntos                                                                                 |
 | `bun run dev:api`     | só a API                                                                                         |
 | `bun run dev:web`     | só o web                                                                                         |
+| `bun run webhook`     | túnel público (`cloudflared`) até a API em `localhost:8080`, para receber webhooks da AbacatePay |
 | `bun run build`       | build de todos os pacotes                                                                        |
 | `bun run typecheck`   | TypeScript em todos os pacotes                                                                   |
 | `bun run test`        | testes unitários de todos os pacotes                                                             |
