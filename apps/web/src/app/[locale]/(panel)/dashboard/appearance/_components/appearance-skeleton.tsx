@@ -54,12 +54,12 @@ export function AppearanceSkeleton() {
           </section>
           <section className="space-y-4">
             <h2 className="text-base font-semibold">Fundo</h2>
-            <ChoicesSkeleton widths={['w-28', 'w-28', 'w-24']} />
+            <ChoicesSkeleton widths={['w-28', 'w-32', 'w-24']} />
             <ControlRowSkeleton />
           </section>
           <section className="space-y-4">
             <h2 className="text-base font-semibold">Tipografia</h2>
-            <ChoicesSkeleton widths={['w-24', 'w-28', 'w-20', 'w-24']} />
+            <ChoicesSkeleton widths={['w-24', 'w-28', 'w-20', 'w-32']} />
             <ControlRowSkeleton />
           </section>
           <section className="space-y-4">
