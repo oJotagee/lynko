@@ -48,7 +48,15 @@ export function OverviewCards({ overview, social }: OverviewCardsProps) {
 
   return (
     <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-      <StatCard label="Visualizações" value={numberFormat.format(overview.pageViews)} />
+      <StatCard
+        label="Visualizações"
+        value={numberFormat.format(overview.pageViews)}
+        hint={
+          overview.qrViews
+            ? `${numberFormat.format(overview.qrViews)} pelo QR code`
+            : 'Nenhuma visita pelo QR code neste período'
+        }
+      />
       <StatCard label="Cliques totais" value={numberFormat.format(overview.totalClicks)} />
       <StatCard label="CTR" value={formatPercent(overview.ctr)} />
       <StatCard

@@ -18,12 +18,28 @@ export function TrackPageView({ pageId }: TrackPageViewProps) {
 
     sent.current = true
 
+    const params = new URLSearchParams(window.location.search)
+
+    const source = params.get('src') === 'qr' ? 'qr' : undefined
+
     fetch(`${publicApiUrl}/analytics/views`, {
       method: 'POST',
       keepalive: true,
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ pageId, eventId: eventId.current }),
+      body: JSON.stringify({ pageId, eventId: eventId.current, source }),
     }).catch(() => {})
+
+    if (!params.has('src')) return
+
+    params.delete('src')
+
+    const query = params.size ? `?${params}` : ''
+
+    window.history.replaceState(
+      window.history.state,
+      '',
+      `${window.location.pathname}${query}${window.location.hash}`,
+    )
   }, [pageId])
 
   return null

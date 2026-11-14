@@ -16,3 +16,11 @@ export const BASE_OPEN_GRAPH = {
   locale: 'pt_BR',
   siteName: SITE_NAME,
 } satisfies NonNullable<Metadata['openGraph']>
+
+export function getPublicPageUrl(username: string) {
+  return `${SITE_URL}/${username}`
+}
+
+export function getQrCodeUrl(username: string) {
+  return `${getPublicPageUrl(username)}?src=qr`
+}

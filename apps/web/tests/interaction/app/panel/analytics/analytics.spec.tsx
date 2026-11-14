@@ -6,6 +6,7 @@ import { renderWithProviders } from '../../../support/render'
 
 const overview = mock(async (_period: AnalyticsPeriod) => ({
   pageViews: 1200,
+  qrViews: 45,
   linkClicks: 90,
   socialClicks: 30,
   totalClicks: 120,
@@ -43,7 +44,14 @@ const { Analytics } = await import(
   '@/app/[locale]/(panel)/dashboard/analytics/_components/analytics'
 )
 
-const emptyOverview = { pageViews: 0, linkClicks: 0, socialClicks: 0, totalClicks: 0, ctr: 0 }
+const emptyOverview = {
+  pageViews: 0,
+  qrViews: 0,
+  linkClicks: 0,
+  socialClicks: 0,
+  totalClicks: 0,
+  ctr: 0,
+}
 
 describe('Analytics', () => {
   beforeEach(() => {
@@ -61,6 +69,7 @@ describe('Analytics', () => {
 
     expect(await screen.findByText('1.200')).toBeInTheDocument()
     expect(screen.getByText('10%')).toBeInTheDocument()
+    expect(screen.getByText('45 pelo QR code')).toBeInTheDocument()
     expect(screen.getByText('Visualizações e cliques')).toBeInTheDocument()
     expect(document.querySelector('[data-slot="chart"]')).not.toBeNull()
     expect(screen.getByText('Portfólio')).toBeInTheDocument()
@@ -112,6 +121,14 @@ describe('Analytics', () => {
     expect(
       await screen.findByText('Ainda não há visitas nem cliques neste período'),
     ).toBeInTheDocument()
+  })
+
+  it('says when no visit came from the QR code', async () => {
+    overview.mockResolvedValueOnce({ ...emptyOverview, pageViews: 10 })
+
+    renderWithProviders(<Analytics />)
+
+    expect(await screen.findByText('Nenhuma visita pelo QR code neste período')).toBeInTheDocument()
   })
 
   it('shows the error and retries', async () => {

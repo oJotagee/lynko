@@ -5,6 +5,7 @@ import { fetchAnalytics } from './fetch-analytics'
 
 export interface AnalyticsOverview {
   pageViews: number
+  qrViews: number
   linkClicks: number
   socialClicks: number
   totalClicks: number

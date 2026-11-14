@@ -2,6 +2,7 @@ import type { DashboardData } from '../dashboard-data'
 import { CopyPageUrlButton } from './copy-page-url-button'
 import { DashboardMenuButton } from './dashboard-menu-button'
 import { PreviewPageButton } from './preview-page-button'
+import { QrCodeButton } from './qr-code-button'
 
 interface DashboardHeaderProps {
   title: string
@@ -18,6 +19,7 @@ export function DashboardHeader({ title, data, hasPage }: DashboardHeaderProps) 
         <h1 className="mt-1 text-xl font-bold tracking-tight sm:text-2xl">{title}</h1>
       </div>
       <CopyPageUrlButton profile={data.profile} hasPage={hasPage} />
+      <QrCodeButton profile={data.profile} />
       <PreviewPageButton profile={data.profile} />
     </header>
   )

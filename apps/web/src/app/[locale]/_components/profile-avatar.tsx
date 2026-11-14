@@ -2,6 +2,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import type { DashboardProfile } from '../(panel)/dashboard/_components/dashboard-data'
+import { getInitials } from './initials'
 
 export function ProfileAvatar({
   profile,
@@ -10,14 +11,7 @@ export function ProfileAvatar({
   profile: Pick<DashboardProfile, 'name' | 'image'>
   large?: boolean
 }) {
-  const initials = profile.name
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((word) => word[0])
-    .filter((_, index, words) => index === 0 || index === words.length - 1)
-    .join('')
-    .toUpperCase()
+  const initials = getInitials(profile.name)
 
   return (
     <Avatar className={large ? 'size-16 border-2 border-foreground' : 'size-9'}>

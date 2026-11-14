@@ -6,6 +6,8 @@ import { TrackPageView } from '@/app/[locale]/(public)/[username]/_components/tr
 
 const pageId = '7f0c9e64-3f1d-4c2b-9a51-2d8e6f4b1a90'
 
+const { happyDOM } = window as unknown as { happyDOM: { setURL: (url: string) => void } }
+
 describe('TrackPageView', () => {
   let fetchSpy: ReturnType<typeof spyOn<typeof globalThis, 'fetch'>>
 
@@ -32,6 +34,30 @@ describe('TrackPageView', () => {
 
     expect(body.pageId).toBe(pageId)
     expect(body.eventId).toMatch(/^[0-9a-f-]{36}$/)
+  })
+
+  it('does not send a source without the qr param', () => {
+    render(<TrackPageView pageId={pageId} />)
+
+    const body = JSON.parse(String(fetchSpy.mock.calls[0]?.[1]?.body))
+
+    expect(body.source).toBeUndefined()
+  })
+
+  it('sends the qr source and removes it from the address', () => {
+    happyDOM.setURL('http://localhost/maria?src=qr&utm=x#links')
+
+    render(<TrackPageView pageId={pageId} />)
+
+    const body = JSON.parse(String(fetchSpy.mock.calls[0]?.[1]?.body))
+
+    expect(body.source).toBe('qr')
+
+    expect(`${window.location.pathname}${window.location.search}${window.location.hash}`).toBe(
+      '/maria?utm=x#links',
+    )
+
+    happyDOM.setURL('about:blank')
   })
 
   it('sends once even with a re-render and a double mount', () => {

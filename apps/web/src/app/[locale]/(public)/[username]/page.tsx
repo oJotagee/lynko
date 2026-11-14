@@ -4,6 +4,7 @@ import { setRequestLocale } from 'next-intl/server'
 
 import { PageView } from '@/app/[locale]/_components/page-view/page-view'
 import { publicApiUrl } from '@/lib/public-api-url'
+import { BASE_OPEN_GRAPH, getPublicPageUrl, SITE_NAME } from '@/lib/site'
 import { TrackPageView } from './_components/track-page-view'
 import { getPublicPage } from './_data-access/get-public-page'
 
@@ -18,9 +19,15 @@ export async function generateMetadata({
 
   if (!page) return {}
 
+  const title = `${page.title} (@${page.username})`
+
+  const description = page.bio || `Todos os links de ${page.title} no ${SITE_NAME}.`
+
   return {
-    title: `${page.title} (@${page.username})`,
-    description: page.bio ?? undefined,
+    title,
+    description,
+    openGraph: { ...BASE_OPEN_GRAPH, title, description, url: getPublicPageUrl(page.username) },
+    twitter: { card: 'summary_large_image', title, description },
   }
 }
 

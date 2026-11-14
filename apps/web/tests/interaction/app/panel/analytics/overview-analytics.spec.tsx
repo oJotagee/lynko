@@ -8,6 +8,7 @@ const root = '@/app/[locale]/(panel)/dashboard/analytics/_data-access'
 mock.module(`${root}/get-analytics-overview`, () => ({
   getAnalyticsOverview: async () => ({
     pageViews: 2842,
+    qrViews: 0,
     linkClicks: 1206,
     socialClicks: 10,
     totalClicks: 1216,
