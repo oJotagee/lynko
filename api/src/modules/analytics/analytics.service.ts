@@ -1,7 +1,9 @@
 import { randomUUID } from 'node:crypto'
 import { z } from 'zod'
 import { env } from '../../config/env'
-import { NotFoundError } from '../../shared/errors'
+import { ForbiddenError, NotFoundError } from '../../shared/errors'
+import { isPro, PRO_PLAN_REQUIRED } from '../billing/billing.access'
+import { billingRepository } from '../billing/billing.repository'
 import { linksRepository } from '../links/links.repository'
 import { isLinkLive } from '../links/links.schedule'
 import { pagesRepository } from '../pages/pages.repository'
@@ -56,6 +58,10 @@ async function getReportScope(userId: string, period: Period, now: Date) {
   const page = await pagesRepository.findByUserId(userId)
 
   if (!page) throw new NotFoundError('Page not found')
+
+  if (period === '90d' && !isPro(await billingRepository.findByUserId(userId), now)) {
+    throw new ForbiddenError(PRO_PLAN_REQUIRED)
+  }
 
   const { from, to, days } = getPeriodRange(period, now)
 

@@ -6,6 +6,7 @@ import type {
   mediaSchema,
   pageSchema,
   sessionSchema,
+  subscriptionSchema,
   userSchema,
 } from '../../../src/db/schema'
 import { defaultPageTheme } from '../../../src/modules/pages/pages.theme'
@@ -21,6 +22,8 @@ export type Page = typeof pageSchema.$inferSelect
 export type Link = typeof linkSchema.$inferSelect
 
 export type Media = typeof mediaSchema.$inferSelect
+
+export type Subscription = typeof subscriptionSchema.$inferSelect
 
 const createdAt = new Date('2026-01-01T00:00:00.000Z')
 
@@ -92,6 +95,7 @@ export function buildPage(overrides: Partial<Page> = {}): Page {
     socialLinks: [],
     appearance: null,
     isPublished: false,
+    showBranding: true,
     revision: nextRevision(),
     createdAt,
     updatedAt: createdAt,
@@ -128,6 +132,23 @@ export function buildMedia(overrides: Partial<Media> = {}): Media {
     mimeType: 'image/png',
     size: 1024,
     status: 'pending',
+    createdAt,
+    updatedAt: createdAt,
+    ...overrides,
+  }
+}
+
+export function buildSubscription(overrides: Partial<Subscription> = {}): Subscription {
+  return {
+    id: randomUUID(),
+    userId: randomUUID(),
+    cycle: 'monthly',
+    status: 'active',
+    providerCustomerId: 'cust_test',
+    providerSubscriptionId: `subs_${randomUUID()}`,
+    checkoutId: `bill_${randomUUID()}`,
+    currentPeriodEnd: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000),
+    cancelledAt: null,
     createdAt,
     updatedAt: createdAt,
     ...overrides,

@@ -3,6 +3,7 @@ import { cacheRedis } from './db/redis'
 import { analyticsProducer } from './modules/analytics/analytics.queue'
 import { analyticsRoutes, redirectRoutes } from './modules/analytics/analytics.routes'
 import { authRoutes } from './modules/auth/auth.routes'
+import { billingRoutes } from './modules/billing/billing.routes'
 import { healthRoutes } from './modules/health/health.routes'
 import { linksRoutes } from './modules/links/links.routes'
 import { mediaRoutes } from './modules/media/media.routes'
@@ -58,6 +59,7 @@ export function buildApp() {
   app.register(linksRoutes, { prefix: '/links' })
   app.register(mediaRoutes, { prefix: '/media' })
   app.register(analyticsRoutes, { prefix: '/analytics' })
+  app.register(billingRoutes, { prefix: '/billing' })
   app.register(redirectRoutes, { prefix: '/r' })
 
   return app

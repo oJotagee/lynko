@@ -30,8 +30,10 @@ function buildPublicPage(id: string, bio = 'v1'): PublicPage {
     backgroundImageUrl: null,
     theme: defaultPageTheme,
     appearance: defaultPageAppearance,
+    showBranding: true,
     socialLinks: [],
     links: [],
+    proAccessUntil: null,
   }
 }
 

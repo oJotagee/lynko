@@ -8,6 +8,7 @@ import {
 import { hashPassword, verifyPassword } from '../../shared/password'
 import { authRepository } from '../auth/auth.repository'
 import { authTokens } from '../auth/auth.tokens'
+import { billingActions, billingService } from '../billing/billing.service'
 import { mailService } from '../mail/mail.service'
 import {
   accountDeletedMessage,
@@ -31,7 +32,7 @@ export const usersService = {
       throw new NotFoundError('User not found')
     }
 
-    return user
+    return { ...user, plan: await billingService.getPlan(userId) }
   },
 
   async changePassword(
@@ -68,6 +69,8 @@ export const usersService = {
   },
 
   async deleteAccount(user: DeletableUser) {
+    await billingActions.cancelBeforeAccountDeletion(user.id)
+
     const deleted = await usersRepository.deleteWithData(user.id, user.passwordHash)
 
     if (!deleted) return false

@@ -92,6 +92,30 @@ export const recoveryCodeSchema = pgTable(
   (table) => [uniqueIndex('recovery_codes_user_id_code_hash_idx').on(table.userId, table.codeHash)],
 )
 
+export const subscriptionSchema = pgTable('subscriptions', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id')
+    .notNull()
+    .unique('subscriptions_user_id_unique')
+    .references(() => userSchema.id, { onDelete: 'cascade' }),
+  cycle: varchar('cycle', { length: 10 }).$type<'monthly' | 'annually'>().notNull(),
+  status: varchar('status', { length: 12 }).$type<'pending' | 'active' | 'cancelled'>().notNull(),
+  providerCustomerId: varchar('provider_customer_id', { length: 64 }),
+  providerSubscriptionId: varchar('provider_subscription_id', { length: 64 }).unique(
+    'subscriptions_provider_subscription_id_unique',
+  ),
+  checkoutId: varchar('checkout_id', { length: 64 }),
+  currentPeriodEnd: timestamp('current_period_end', { withTimezone: true }),
+  cancelledAt: timestamp('cancelled_at', { withTimezone: true }),
+  ...timestamps,
+})
+
+export const billingEventSchema = pgTable('billing_events', {
+  id: varchar('id', { length: 64 }).primaryKey(),
+  type: varchar('type', { length: 40 }).notNull(),
+  processedAt: timestamp('processed_at', { withTimezone: true }).notNull().defaultNow(),
+})
+
 export const pageRevisionSequence = pgSequence('pages_revision_seq')
 
 export const pageSchema = pgTable('pages', {
@@ -109,6 +133,7 @@ export const pageSchema = pgTable('pages', {
   appearance: jsonb('appearance').$type<PageAppearance>(),
   socialLinks: jsonb('social_links').$type<SocialLink[]>().notNull().default([]),
   isPublished: boolean('is_published').notNull().default(false),
+  showBranding: boolean('show_branding').notNull().default(true),
   revision: bigint('revision', { mode: 'number' })
     .notNull()
     .default(sql`nextval('pages_revision_seq')`),

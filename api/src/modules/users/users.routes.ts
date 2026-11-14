@@ -15,10 +15,10 @@ import { twoFactorService } from '../two-factor/two-factor.service'
 import {
   changePasswordBody,
   deleteAccountBody,
+  profileResponse,
   revokedSessionsResponse,
   sessionParams,
   sessionResponse,
-  userResponse,
 } from './users.dto'
 import { usersService } from './users.service'
 
@@ -32,7 +32,7 @@ export const usersRoutes: FastifyPluginAsyncZod = async (app) => {
         tags: ['Users'],
         summary: 'Get the authenticated user',
         security: [{ bearerAuth: [] }],
-        response: { 200: userResponse },
+        response: { 200: profileResponse },
       },
     },
     async (request) => {

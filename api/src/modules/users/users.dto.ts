@@ -37,3 +37,5 @@ export const sessionResponse = z.object({
 export const sessionParams = z.object({ id: z.uuid() })
 
 export const revokedSessionsResponse = z.object({ revoked: z.number().int() })
+
+export const profileResponse = userResponse.extend({ plan: z.enum(['free', 'pro']) })

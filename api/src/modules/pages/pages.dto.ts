@@ -65,6 +65,7 @@ export const updatePageBody = z
     socialLinks: socialLinksSchema,
     appearance: pageAppearanceSchema,
     isPublished: z.boolean(),
+    showBranding: z.boolean(),
   })
   .partial()
   .refine((body) => Object.keys(body).length > 0, 'Send at least one field to update')
@@ -85,6 +86,7 @@ export const pageResponse = z.object({
   appearance: pageAppearanceSchema,
   socialLinks: z.array(socialLinkResponse),
   isPublished: z.boolean(),
+  showBranding: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
 })
@@ -99,6 +101,7 @@ export const publicPageResponse = pageResponse
     backgroundImageUrl: true,
     theme: true,
     appearance: true,
+    showBranding: true,
   })
   .extend({
     socialLinks: z.array(socialLinkResponse.pick({ platform: true, url: true })),
@@ -106,6 +109,7 @@ export const publicPageResponse = pageResponse
   })
 
 export const cachedPageResponse = publicPageResponse.extend({
+  proAccessUntil: z.coerce.date().nullable(),
   links: z.array(
     publicLinkResponse.extend({
       startsAt: z.coerce.date().nullable(),

@@ -50,3 +50,8 @@ export const mediaRateLimit = {
   presign: { max: 10, timeWindow: '1 minute' },
   confirm: { max: 20, timeWindow: '1 minute' },
 }
+
+export const billingRateLimit = {
+  checkout: { max: 5, timeWindow: '1 minute' },
+  cancel: { max: 5, timeWindow: '1 minute' },
+}

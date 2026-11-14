@@ -2,6 +2,10 @@ import { spyOn } from 'bun:test'
 
 import { analyticsRepository } from '../../../src/modules/analytics/analytics.repository'
 import { authRepository } from '../../../src/modules/auth/auth.repository'
+import {
+  billingRepository,
+  type Subscription,
+} from '../../../src/modules/billing/billing.repository'
 import { linksRepository } from '../../../src/modules/links/links.repository'
 import { type MailMessage, mailService } from '../../../src/modules/mail/mail.service'
 import { mediaRepository } from '../../../src/modules/media/media.repository'
@@ -15,6 +19,7 @@ import {
   buildMedia,
   buildPage,
   buildSession,
+  buildSubscription,
   buildUser,
   type Link,
   type Media,
@@ -93,6 +98,8 @@ export function useInMemoryRepositories() {
     sessions: [] as Session[],
     authTokens: [] as AuthToken[],
     recoveryCodes: [] as RecoveryCode[],
+    subscriptions: [] as Subscription[],
+    billingEvents: new Set<string>(),
     mails: [] as MailMessage[],
     pages: [] as Page[],
     links: [] as Link[],
@@ -297,6 +304,139 @@ export function useInMemoryRepositories() {
         .map((item) => item.createdAt)
         .sort((a, b) => b.getTime() - a.getTime())[0],
   )
+
+  spyOn(billingRepository, 'findByUserId').mockImplementation(async (userId) =>
+    store.subscriptions.find((item) => item.userId === userId),
+  )
+
+  function nextPeriodEnd(subscription: Subscription) {
+    const start = new Date(
+      Math.max(subscription.currentPeriodEnd?.getTime() ?? Date.now(), Date.now()),
+    )
+
+    if (subscription.cycle === 'annually') start.setFullYear(start.getFullYear() + 1)
+    else start.setMonth(start.getMonth() + 1)
+
+    return start
+  }
+
+  function changedRow({ userId, status, cycle, currentPeriodEnd }: Subscription) {
+    return { userId, status, cycle, currentPeriodEnd }
+  }
+
+  function recordEvent(event: { id: string; type: string }) {
+    if (store.billingEvents.has(event.id)) return false
+
+    store.billingEvents.add(event.id)
+
+    return true
+  }
+
+  function updateOnce(
+    event: { id: string; type: string },
+    find: (item: Subscription) => boolean,
+    apply: (item: Subscription) => void,
+  ) {
+    if (!recordEvent(event)) return undefined
+
+    const subscription = store.subscriptions.find(find)
+
+    if (!subscription) return undefined
+
+    apply(subscription)
+
+    return changedRow(subscription)
+  }
+
+  spyOn(billingRepository, 'upsertPending').mockImplementation(
+    async (userId, cycle, providerCustomerId) => {
+      const existing = store.subscriptions.find((item) => item.userId === userId)
+
+      if (existing) {
+        Object.assign(existing, { cycle, status: 'pending', providerCustomerId, checkoutId: null })
+
+        return { id: existing.id }
+      }
+
+      const created = buildSubscription({
+        userId,
+        cycle,
+        status: 'pending',
+        providerCustomerId,
+        providerSubscriptionId: null,
+        checkoutId: null,
+        currentPeriodEnd: null,
+      })
+
+      store.subscriptions.push(created)
+
+      return { id: created.id }
+    },
+  )
+
+  spyOn(billingRepository, 'saveCheckout').mockImplementation(async (id, checkoutId) => {
+    const subscription = store.subscriptions.find((item) => item.id === id)
+
+    if (subscription) subscription.checkoutId = checkoutId
+  })
+
+  spyOn(billingRepository, 'activate').mockImplementation(
+    async (event, id, providerSubscriptionId) =>
+      updateOnce(
+        event,
+        (item) =>
+          item.id === id &&
+          (item.status !== 'active' ||
+            !item.providerSubscriptionId ||
+            item.providerSubscriptionId === providerSubscriptionId),
+        (item) =>
+          Object.assign(item, {
+            providerSubscriptionId,
+            status: 'active',
+            cancelledAt: null,
+            currentPeriodEnd: nextPeriodEnd(item),
+          }),
+      ),
+  )
+
+  spyOn(billingRepository, 'renew').mockImplementation(async (event, providerSubscriptionId) =>
+    updateOnce(
+      event,
+      (item) =>
+        item.providerSubscriptionId === providerSubscriptionId && item.status !== 'cancelled',
+      (item) => Object.assign(item, { status: 'active', currentPeriodEnd: nextPeriodEnd(item) }),
+    ),
+  )
+
+  spyOn(billingRepository, 'cancelByProvider').mockImplementation(
+    async (event, providerSubscriptionId) =>
+      updateOnce(
+        event,
+        (item) =>
+          item.providerSubscriptionId === providerSubscriptionId && item.status !== 'cancelled',
+        (item) => Object.assign(item, { status: 'cancelled', cancelledAt: new Date() }),
+      ),
+  )
+
+  spyOn(billingRepository, 'findById').mockImplementation(async (id) =>
+    store.subscriptions.find((item) => item.id === id),
+  )
+
+  spyOn(billingRepository, 'hasEvent').mockImplementation(async (id) => store.billingEvents.has(id))
+
+  spyOn(billingRepository, 'recordEvent').mockImplementation(async (event) => recordEvent(event))
+
+  spyOn(billingRepository, 'markCancelled').mockImplementation(async (userId) => {
+    const subscription = store.subscriptions.find(
+      (item) => item.userId === userId && item.status === 'active',
+    )
+
+    if (!subscription) return undefined
+
+    Object.assign(subscription, { status: 'cancelled', cancelledAt: new Date() })
+
+    return changedRow(subscription)
+  })
 
   spyOn(usersRepository, 'findById').mockImplementation(async (id) => {
     const user = store.users.find((item) => item.id === id)

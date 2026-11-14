@@ -2,7 +2,9 @@ import { env } from '../../config/env'
 import { cacheRedis } from '../../db/redis'
 import type { pageSchema } from '../../db/schema'
 import { getUniqueViolation } from '../../shared/db-errors'
-import { ConflictError, NotFoundError } from '../../shared/errors'
+import { ConflictError, ForbiddenError, NotFoundError } from '../../shared/errors'
+import { isPro, PRO_PLAN_REQUIRED, proAccessUntil } from '../billing/billing.access'
+import { billingRepository } from '../billing/billing.repository'
 import { linksRepository } from '../links/links.repository'
 import { isLinkLive } from '../links/links.schedule'
 import type { MediaType } from '../media/media.dto'
@@ -100,7 +102,12 @@ async function loadPublicPage(pageId: string) {
     ...(await toPageResponse(page)),
     socialLinks: toPublicSocialLinks(page.socialLinks),
     links: await linksRepository.findActiveByPageId(page.id),
+    proAccessUntil: proAccessUntil(await billingRepository.findByUserId(page.userId)),
   }
+}
+
+function effectiveBranding(showBranding: boolean, accessUntil: Date | null, now = new Date()) {
+  return showBranding || !(accessUntil && accessUntil > now)
 }
 
 export const publicPageCache = createPublicPageCache({
@@ -149,6 +156,10 @@ export const pagesService = {
 
   async updateMine(userId: string, { theme, ...changes }: UpdatePageBody) {
     const current = await findMineOrThrow(userId)
+
+    if (changes.showBranding === false && !isPro(await billingRepository.findByUserId(userId))) {
+      throw new ForbiddenError(PRO_PLAN_REQUIRED)
+    }
 
     if (changes.username && changes.username !== current.username) {
       const owner = await pagesRepository.findByUsername(changes.username)
@@ -222,7 +233,13 @@ export const pagesService = {
       throw new NotFoundError('Page not found')
     }
 
-    return { ...page, links: page.links.filter((link) => isLinkLive(link)) }
+    const { proAccessUntil: accessUntil, ...publicPage } = page
+
+    return {
+      ...publicPage,
+      showBranding: effectiveBranding(page.showBranding, accessUntil),
+      links: page.links.filter((link) => isLinkLive(link)),
+    }
   },
 
   async getPreview(userId: string) {
@@ -230,8 +247,11 @@ export const pagesService = {
 
     const links = await linksRepository.findActiveByPageId(page.id)
 
+    const accessUntil = proAccessUntil(await billingRepository.findByUserId(userId))
+
     return {
       ...page,
+      showBranding: effectiveBranding(page.showBranding, accessUntil),
       socialLinks: toPublicSocialLinks(page.socialLinks),
       links: links.filter((link) => isLinkLive(link)),
     }

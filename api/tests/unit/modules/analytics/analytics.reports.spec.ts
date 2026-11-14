@@ -4,8 +4,8 @@ import {
   analyticsService,
   getPeriodRange,
 } from '../../../../src/modules/analytics/analytics.service'
-import { NotFoundError } from '../../../../src/shared/errors'
-import { buildLink, buildPage } from '../../support/builders'
+import { ForbiddenError, NotFoundError } from '../../../../src/shared/errors'
+import { buildLink, buildPage, buildSubscription } from '../../support/builders'
 import { useInMemoryRepositories } from '../../support/memory-repositories'
 
 const now = new Date('2026-11-06T23:59:59.000Z')
@@ -21,6 +21,13 @@ describe('analytics reports', () => {
     page = buildPage()
 
     store.pages.push(page)
+
+    store.subscriptions.push(
+      buildSubscription({
+        userId: page.userId,
+        currentPeriodEnd: new Date('2026-12-01T00:00:00.000Z'),
+      }),
+    )
   })
 
   afterEach(() => {
@@ -53,6 +60,36 @@ describe('analytics reports', () => {
       expect(series.every((point) => point.views === 0 && point.clicks === 0)).toBe(true)
     },
   )
+
+  it('requires the Pro plan for 90 days, and keeps 7 and 30 days free', async () => {
+    store.subscriptions.length = 0
+
+    await expect(analyticsService.getOverview(page.userId, '90d', now)).rejects.toBeInstanceOf(
+      ForbiddenError,
+    )
+
+    await expect(analyticsService.getTimeseries(page.userId, '90d', now)).rejects.toThrow(
+      'Pro plan required',
+    )
+
+    await expect(analyticsService.getOverview(page.userId, '30d', now)).resolves.toBeDefined()
+  })
+
+  it('blocks 90 days after the paid period of a cancelled plan', async () => {
+    store.subscriptions.length = 0
+
+    store.subscriptions.push(
+      buildSubscription({
+        userId: page.userId,
+        status: 'cancelled',
+        currentPeriodEnd: new Date('2026-11-05T00:00:00.000Z'),
+      }),
+    )
+
+    await expect(analyticsService.getOverview(page.userId, '90d', now)).rejects.toBeInstanceOf(
+      ForbiddenError,
+    )
+  })
 
   it('computes the period range in UTC around midnight', () => {
     expect(getPeriodRange('7d', new Date('2026-11-06T23:59:59.000Z'))).toMatchObject({

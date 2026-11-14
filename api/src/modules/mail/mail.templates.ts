@@ -137,3 +137,30 @@ export function recoveryCodesRegeneratedMessage(name: string): Content {
     ]),
   }
 }
+
+const dateFormat = new Intl.DateTimeFormat('pt-BR', {
+  dateStyle: 'long',
+  timeZone: 'America/Sao_Paulo',
+})
+
+export function proActivatedMessage(name: string, periodEnd: Date | null): Content {
+  return {
+    subject: 'Seu Pro da Lynko está ativo',
+    ...layout(name, [
+      'Obrigado por assinar o Pro da Lynko. Os recursos Pro já estão liberados na sua conta.',
+      ...(periodEnd ? [`A próxima cobrança será em ${dateFormat.format(periodEnd)}.`] : []),
+    ]),
+  }
+}
+
+export function proCancelledMessage(name: string, accessUntil: Date | null): Content {
+  return {
+    subject: 'Sua assinatura Pro da Lynko foi cancelada',
+    ...layout(name, [
+      'Sua assinatura Pro foi cancelada e não haverá novas cobranças.',
+      accessUntil
+        ? `Você continua com o Pro até ${dateFormat.format(accessUntil)}. Depois disso, a conta volta ao plano grátis e nenhum dado é apagado.`
+        : 'A conta volta ao plano grátis e nenhum dado é apagado.',
+    ]),
+  }
+}

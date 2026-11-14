@@ -59,8 +59,10 @@ function buildPublicPage(id: string, username: string, bio: string): PublicPage 
     backgroundImageUrl: null,
     theme: defaultPageTheme,
     appearance: defaultPageAppearance,
+    showBranding: true,
     socialLinks: [],
     links: [],
+    proAccessUntil: null,
   }
 }
 

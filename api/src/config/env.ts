@@ -1,5 +1,9 @@
 import { z } from 'zod'
 
+const blankAsUnset = (value: unknown) => (value === '' ? undefined : value)
+
+const optionalText = (min: number) => z.preprocess(blankAsUnset, z.string().min(min).optional())
+
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().positive().default(8080),
@@ -39,6 +43,15 @@ const envSchema = z.object({
     .transform((value) => value.replace(/\/+$/, ''))
     .optional(),
   GOOGLE_CLIENT_ID: z.string().min(1).optional(),
+  ABACATEPAY_API_KEY: optionalText(1),
+  ABACATEPAY_WEBHOOK_SECRET: optionalText(32),
+  ABACATEPAY_WEBHOOK_PUBLIC_KEY: optionalText(1),
+  ABACATEPAY_PRO_MONTHLY_PRODUCT_ID: optionalText(1),
+  ABACATEPAY_PRO_ANNUAL_PRODUCT_ID: optionalText(1),
+  ABACATEPAY_METHODS: z
+    .preprocess(blankAsUnset, z.string().default('CARD'))
+    .transform((value) => value.split(',').map((method) => method.trim()))
+    .pipe(z.array(z.enum(['CARD', 'PIX'])).min(1)),
   TOTP_ENCRYPTION_KEY: z
     .string()
     .transform((value) => Buffer.from(value, 'base64'))
