@@ -13,6 +13,7 @@
     "dev": "bun run --filter '*' dev",
     "dev:web": "bun run --filter '@lynko/web' dev",
     "dev:api": "bun run --filter '@lynko/api' dev",
+    "webhook": "cloudflared tunnel --url http://localhost:8080",
     "build": "bun --filter '*' build",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
