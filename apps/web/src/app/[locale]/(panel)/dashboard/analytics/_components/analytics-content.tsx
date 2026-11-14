@@ -15,7 +15,7 @@ export async function AnalyticsContent() {
     <>
       <DashboardHeader title="Analytics" data={data} hasPage={hasPage} />
       <DashboardMain hasPage={hasPage}>
-        <Analytics />
+        <Analytics isPro={dashboard.user.plan === 'pro'} />
       </DashboardMain>
     </>
   )

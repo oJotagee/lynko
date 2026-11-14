@@ -14,10 +14,16 @@ import { OverviewBodySkeleton } from '../skeletons/overview-skeleton'
 interface OverviewAnalyticsProps {
   activeLinks: number
   totalLinks: number
+  isPro: boolean
   children: ReactNode
 }
 
-export function OverviewAnalytics({ activeLinks, totalLinks, children }: OverviewAnalyticsProps) {
+export function OverviewAnalytics({
+  activeLinks,
+  totalLinks,
+  isPro,
+  children,
+}: OverviewAnalyticsProps) {
   const [period, setPeriod] = useState<AnalyticsPeriod>('7d')
 
   const { overview, timeseries, links, isError, retry } = useAnalytics(period)
@@ -61,7 +67,7 @@ export function OverviewAnalytics({ activeLinks, totalLinks, children }: Overvie
         <h2 id="overview-analytics-title" className="text-lg font-semibold">
           Visão geral
         </h2>
-        <PeriodFilter value={period} onChange={setPeriod} />
+        <PeriodFilter value={period} onChange={setPeriod} isPro={isPro} />
       </div>
       {renderBody()}
     </section>

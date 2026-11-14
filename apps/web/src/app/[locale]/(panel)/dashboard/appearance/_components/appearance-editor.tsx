@@ -2,7 +2,7 @@
 
 import { useMutation } from '@tanstack/react-query'
 import { Loader2, RotateCcw, Undo2 } from 'lucide-react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { defaultAppearance } from '@/app/[locale]/_components/appearance-schema'
 import { Button } from '@/components/ui/button'
@@ -14,6 +14,7 @@ import { useUnsavedMedia } from '../../_components/upload/use-image-upload'
 import { DesignControls } from './design-controls'
 import { LivePreview } from './live-preview'
 import { useAppearanceSchema } from './schemas'
+import { BrandingSection } from './sections/branding'
 import { applyAppearance } from './sections/themes'
 
 interface AppearanceEditorProps {
@@ -28,11 +29,15 @@ export function AppearanceEditor({ data, hasPage }: AppearanceEditorProps) {
 
   const [backgroundImageUrl, setBackgroundImageUrl] = useState(data.backgroundImageUrl)
 
+  const [showBranding, setShowBranding] = useState(data.showBranding)
+
+  const previewData = useMemo(() => ({ ...data, showBranding }), [data, showBranding])
+
   const unsavedMedia = useUnsavedMedia()
 
   const { mutateAsync, isPending } = useMutation({ mutationFn: updatePage })
 
-  const isDirty = appearanceForm.formState.isDirty
+  const isDirty = appearanceForm.formState.isDirty || showBranding !== data.showBranding
 
   function discard() {
     unsavedMedia.flush(data.appearance.background.imageMediaId)
@@ -40,6 +45,8 @@ export function AppearanceEditor({ data, hasPage }: AppearanceEditorProps) {
     appearanceForm.reset()
 
     setBackgroundImageUrl(data.backgroundImageUrl)
+
+    setShowBranding(data.showBranding)
   }
 
   async function save() {
@@ -51,7 +58,7 @@ export function AppearanceEditor({ data, hasPage }: AppearanceEditorProps) {
 
     const appearanceValues = appearanceForm.getValues()
 
-    const response = await mutateAsync({ ...data, appearance: appearanceValues })
+    const response = await mutateAsync({ ...data, appearance: appearanceValues, showBranding })
 
     if (response.error) {
       toast.error(response.error)
@@ -115,6 +122,13 @@ export function AppearanceEditor({ data, hasPage }: AppearanceEditorProps) {
                   setBackgroundImageUrl(image?.url ?? null)
                 }}
               />
+              <div className="mt-8">
+                <BrandingSection
+                  value={showBranding}
+                  isPro={data.isPro}
+                  onChange={setShowBranding}
+                />
+              </div>
             </div>
           </div>
           <div
@@ -124,7 +138,7 @@ export function AppearanceEditor({ data, hasPage }: AppearanceEditorProps) {
           >
             <LivePreview
               control={appearanceForm.control}
-              data={data}
+              data={previewData}
               backgroundImageUrl={backgroundImageUrl}
             />
           </div>

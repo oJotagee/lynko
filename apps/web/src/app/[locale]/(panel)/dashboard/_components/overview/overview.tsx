@@ -27,6 +27,7 @@ export function Overview({ data, hasPage }: { data: DashboardData; hasPage: bool
         <OverviewAnalytics
           activeLinks={data.links.filter((link) => link.active).length}
           totalLinks={data.links.length}
+          isPro={data.isPro}
         >
           <YourLinks links={data.links} />
         </OverviewAnalytics>

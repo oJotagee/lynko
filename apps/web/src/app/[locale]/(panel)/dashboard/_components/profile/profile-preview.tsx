@@ -14,7 +14,7 @@ interface ProfilePreviewProps {
 }
 
 export function ProfilePreview({
-  data: { profile, appearance, backgroundImageUrl, socialLinks, links },
+  data: { profile, appearance, backgroundImageUrl, socialLinks, links, showBranding, isPro },
   mode = 'mobile',
 }: ProfilePreviewProps) {
   const now = useNow()
@@ -32,6 +32,7 @@ export function ProfilePreview({
         backgroundImageUrl={backgroundImageUrl}
         socialLinks={socialLinks}
         links={links.filter((link) => getLinkStatus(link, now ?? new Date()) === 'live')}
+        showBranding={showBranding || !isPro}
         className="min-h-[420px]"
       />
     </div>

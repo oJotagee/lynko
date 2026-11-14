@@ -19,6 +19,7 @@ function buildPage(overrides: Partial<ApiPublicPage> = {}): ApiPublicPage {
     avatarUrl: null,
     backgroundImageUrl: null,
     appearance: defaultAppearance,
+    showBranding: true,
     socialLinks: [],
     links: [],
     ...overrides,

@@ -13,7 +13,7 @@ import { TimeseriesChart } from './timeseries-chart'
 import { TopLinks } from './top-links'
 import { useAnalytics } from './use-analytics'
 
-export function Analytics() {
+export function Analytics({ isPro }: { isPro: boolean }) {
   const [period, setPeriod] = useState<AnalyticsPeriod>('7d')
 
   const { overview, timeseries, links, social, isError, retry } = useAnalytics(period)
@@ -43,7 +43,7 @@ export function Analytics() {
         <p className="text-sm text-muted-foreground">
           Acompanhe as visitas e os cliques da sua página.
         </p>
-        <PeriodFilter value={period} onChange={setPeriod} />
+        <PeriodFilter value={period} onChange={setPeriod} isPro={isPro} />
       </div>
       {renderBody()}
     </div>

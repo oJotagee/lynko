@@ -8,6 +8,7 @@ import { ProfilePreview } from '../../_components/profile/profile-preview'
 import type { ApiUser } from '../../_data-access/get-dashboard'
 import { ChangePasswordForm } from './change-password-form'
 import { DeleteAccountDialog } from './delete-account-dialog'
+import { PlanSection } from './plan-section'
 import { ProfileForm } from './profile-form'
 import { SessionsSection } from './sessions-section'
 import { TwoFactorSection } from './two-factor-section'
@@ -67,6 +68,7 @@ export function SettingsPanel({ user, data, hasPage }: SettingsPanelProps) {
               <ProfileForm data={data} hasPage={hasPage} />
             </div>
           </section>
+          <PlanSection />
           <section className="rounded-xl border border-destructive/40 bg-card p-6">
             <h2 className="text-lg font-semibold">Excluir sua conta Lynko</h2>
             <p className="mt-2 mb-4 max-w-xl text-sm leading-relaxed text-muted-foreground">

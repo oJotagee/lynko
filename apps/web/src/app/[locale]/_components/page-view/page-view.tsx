@@ -25,6 +25,7 @@ export interface PageViewProps {
   backgroundImageUrl?: string | null
   headingAs?: 'h1' | 'h2'
   fixedFooter?: boolean
+  showBranding?: boolean
   className?: string
 }
 
@@ -36,13 +37,14 @@ export function PageView({
   backgroundImageUrl,
   headingAs: Heading = 'h2',
   fixedFooter = false,
+  showBranding = true,
   className,
 }: PageViewProps) {
   const { buttons, typography } = appearance
 
   return (
     <div
-      className={cn('px-4 py-8 text-center', fixedFooter && 'pb-20', className)}
+      className={cn('px-4 py-8 text-center', fixedFooter && showBranding && 'pb-20', className)}
       style={{
         ...getBackgroundStyle(appearance, backgroundImageUrl),
         color: typography.textColor,
@@ -88,22 +90,23 @@ export function PageView({
             <p className="py-8 text-sm opacity-70">Seus links aparecerão aqui.</p>
           )}
         </div>
-        {fixedFooter ? (
-          <div className="pointer-events-none fixed inset-x-0 bottom-4 flex justify-center">
-            <p
-              className="pointer-events-auto flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] shadow-sm"
-              style={{ background: buttons.backgroundColor, color: buttons.textColor }}
-            >
+        {showBranding &&
+          (fixedFooter ? (
+            <div className="pointer-events-none fixed inset-x-0 bottom-4 flex justify-center">
+              <p
+                className="pointer-events-auto flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] shadow-sm"
+                style={{ background: buttons.backgroundColor, color: buttons.textColor }}
+              >
+                <Link2 className="size-3" aria-hidden="true" /> Feito com
+                <LynkoLink />
+              </p>
+            </div>
+          ) : (
+            <p className="mt-8 flex items-center justify-center gap-1 text-[10px] opacity-60">
               <Link2 className="size-3" aria-hidden="true" /> Feito com
               <LynkoLink />
             </p>
-          </div>
-        ) : (
-          <p className="mt-8 flex items-center justify-center gap-1 text-[10px] opacity-60">
-            <Link2 className="size-3" aria-hidden="true" /> Feito com
-            <LynkoLink />
-          </p>
-        )}
+          ))}
       </div>
     </div>
   )

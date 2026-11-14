@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowRight, ChartNoAxesColumn, House, Link2, Moon, Settings } from 'lucide-react'
+import { ArrowRight, ChartNoAxesColumn, Gem, House, Link2, Moon, Settings } from 'lucide-react'
 import { Link, usePathname } from '@/i18n/navigation'
 
 import { LynkoLogo } from '../../../../(public)/_components/lynko-logo'
@@ -12,6 +12,7 @@ export const dashboardRoutes = [
   { href: '/dashboard/links', label: 'Meus links', icon: Link2, prefetch: true },
   { href: '/dashboard/appearance', label: 'Aparência', icon: Moon, prefetch: true },
   { href: '/dashboard/analytics', label: 'Analytics', icon: ChartNoAxesColumn },
+  { href: '/dashboard/plans', label: 'Planos', icon: Gem },
   { href: '/dashboard/settings', label: 'Configurações', icon: Settings, prefetch: true },
 ]
 

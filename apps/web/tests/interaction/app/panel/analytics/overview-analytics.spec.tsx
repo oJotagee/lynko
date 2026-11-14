@@ -41,7 +41,7 @@ const { OverviewAnalytics } = await import(
 describe('OverviewAnalytics', () => {
   it('shows analytics cards, the chart and the top links on the overview', async () => {
     renderWithProviders(
-      <OverviewAnalytics activeLinks={3} totalLinks={4}>
+      <OverviewAnalytics activeLinks={3} totalLinks={4} isPro>
         <p>Seus links</p>
       </OverviewAnalytics>,
     )

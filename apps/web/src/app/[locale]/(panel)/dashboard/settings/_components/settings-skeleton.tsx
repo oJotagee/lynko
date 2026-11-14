@@ -39,6 +39,11 @@ export function SettingsSkeleton() {
         </div>
         <FormSkeleton />
       </section>
+      <section className="rounded-xl border border-border bg-card p-6">
+        <h2 className="text-lg font-semibold">Plano</h2>
+        <Skeleton className="mt-3 mb-4 h-4 w-72 max-w-full" />
+        <Skeleton className="h-9 w-40 rounded-[10px]" />
+      </section>
       <section className="rounded-xl border border-destructive/40 bg-card p-6">
         <h2 className="text-lg font-semibold">Excluir sua conta Lynko</h2>
         <Skeleton className="mt-3 h-4 w-full max-w-xl" />

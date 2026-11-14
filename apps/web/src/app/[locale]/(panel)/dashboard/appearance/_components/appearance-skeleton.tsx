@@ -68,6 +68,13 @@ export function AppearanceSkeleton() {
             <ControlRowSkeleton />
             <ControlRowSkeleton />
           </section>
+          <section className="space-y-4">
+            <h2 className="text-base font-semibold">Marca Lynko</h2>
+            <div className="flex items-center justify-between gap-4">
+              <Skeleton className="h-4 w-64 max-w-full" />
+              <Skeleton className="h-5 w-9 rounded-full" />
+            </div>
+          </section>
         </div>
         <aside className="hidden rounded-xl bg-muted p-6 sm:p-10 xl:block">
           <div className="mb-8 flex flex-col items-center gap-3">

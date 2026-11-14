@@ -32,6 +32,8 @@ export function buildDashboardData(overrides: Partial<DashboardData> = {}): Dash
     backgroundImageUrl: null,
     socialLinks: [],
     links: [buildLink()],
+    showBranding: true,
+    isPro: false,
     ...overrides,
   }
 }

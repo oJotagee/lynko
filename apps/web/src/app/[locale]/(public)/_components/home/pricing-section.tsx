@@ -1,6 +1,5 @@
 import { useTranslations } from 'next-intl'
 
-import { Button } from '@/components/ui/button'
 import { CtaLink } from './cta-link'
 
 function FeatureList({ features }: { features: string[] }) {
@@ -38,7 +37,7 @@ export function PricingSection() {
         <article className="relative rounded-[14px] border border-[#d9d8d1] bg-white p-[30px] [&_ul]:border-[#d9d8d1]">
           <span className="text-[11px] font-bold tracking-[0.14em]">{t('free')}</span>
           <h3 className="my-3 text-[32px] font-bold [&_small]:text-xs [&_small]:font-normal [&_small]:text-[#74736d]">
-            $0 <small>{t('forever')}</small>
+            {t('freePrice')} <small>{t('forever')}</small>
           </h3>
           <p className="text-[#74736d] leading-[1.5]">{t('freeDescription')}</p>
           <CtaLink className="my-[15px] w-full">{t('start')}</CtaLink>
@@ -46,17 +45,14 @@ export function PricingSection() {
         </article>
 
         <article className="relative rounded-[14px] border border-[#d9d8d1] bg-[#171716] p-[30px] text-white [&_ul]:border-[#38383c]">
-          <b className="absolute top-6 right-6 rounded-[5px] bg-[#9b8cff] px-2 py-1.5 text-[8px] text-[#171716]">
-            {t('comingSoon')}
-          </b>
           <span className="text-[11px] font-bold tracking-[0.14em]">{t('pro')}</span>
           <h3 className="my-3 text-[32px] font-bold [&_small]:text-xs [&_small]:font-normal [&_small]:text-[#aaa9a4]">
-            $8 <small>{t('month')}</small>
+            {t('proPrice')} <small>{t('month')}</small>
           </h3>
           <p className="text-[#aaa9a4] leading-[1.5]">{t('proDescription')}</p>
-          <Button className="my-[15px] w-full" variant="outline" disabled>
-            {t('waitlist')}
-          </Button>
+          <CtaLink className="my-[15px] w-full border-[#b7f34a] bg-[#b7f34a] text-[#171716] hover:bg-[#b7f34a] hover:text-[#171716]">
+            {t('proCta')}
+          </CtaLink>
           <FeatureList features={proFeatures} />
         </article>
       </div>

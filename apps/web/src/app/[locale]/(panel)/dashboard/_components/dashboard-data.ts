@@ -31,6 +31,8 @@ export interface DashboardData {
   backgroundImageUrl: string | null
   socialLinks: SocialLinkData[]
   links: DashboardLink[]
+  showBranding: boolean
+  isPro: boolean
 }
 
 const linkAccents = ['#9b8cff', '#ff8d6b', '#b7f34a'] as const
@@ -57,6 +59,8 @@ export function toDashboardData({ user, page, links }: ApiDashboard): DashboardD
     },
     appearance: page?.appearance ?? defaultAppearance,
     backgroundImageUrl: page?.backgroundImageUrl ?? null,
+    showBranding: page?.showBranding ?? true,
+    isPro: user.plan === 'pro',
     socialLinks: page?.socialLinks ?? [],
     links: [...links]
       .sort((a, b) => a.position - b.position)

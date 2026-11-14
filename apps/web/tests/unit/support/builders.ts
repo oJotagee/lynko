@@ -21,6 +21,7 @@ export function buildApiPage(overrides: Partial<ApiPage> = {}): ApiPage {
     appearance: defaultAppearance,
     socialLinks: [],
     isPublished: false,
+    showBranding: true,
     updatedAt: '2026-01-01T00:00:00.000Z',
     ...overrides,
   }
@@ -48,6 +49,7 @@ export function buildApiDashboard(overrides: Partial<ApiDashboard> = {}): ApiDas
       hasPassword: true,
       hasGoogle: false,
       emailVerified: true,
+      plan: 'free',
     },
     page: buildApiPage(),
     links: [buildApiLink()],

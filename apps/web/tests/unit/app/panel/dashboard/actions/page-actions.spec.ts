@@ -63,6 +63,25 @@ describe('page actions', () => {
   })
 
   describe('updatePage', () => {
+    it.each([
+      ['a free account showing the branding', false, true, true],
+      ['a Pro account hiding the branding', true, false, true],
+      ['a former Pro account that still hides it', false, false, false],
+    ])(
+      'sends showBranding only when the API accepts it: %s',
+      async (_, isPro, showBranding, sent) => {
+        api.patch.mockResolvedValueOnce({ data: buildApiPage() })
+
+        await updatePage({ ...data, isPro, showBranding })
+
+        const body = api.patch.mock.calls[0]?.[1] as Record<string, unknown>
+
+        expect('showBranding' in body).toBe(sent)
+
+        if (sent) expect(body.showBranding).toBe(showBranding)
+      },
+    )
+
     it('sends empty bio and photo as null and keeps the publication flag', async () => {
       api.patch.mockResolvedValueOnce({ data: buildApiPage({ isPublished: true }) })
 

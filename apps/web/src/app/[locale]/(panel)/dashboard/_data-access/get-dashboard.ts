@@ -24,6 +24,7 @@ export interface ApiUser {
   hasPassword: boolean
   hasGoogle: boolean
   emailVerified: boolean
+  plan: 'free' | 'pro'
 }
 
 export interface ApiLink {
@@ -48,6 +49,7 @@ export interface ApiPage {
   appearance: PageAppearance
   socialLinks: SocialLinkData[]
   isPublished: boolean
+  showBranding: boolean
   updatedAt: string
 }
 

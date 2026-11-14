@@ -27,6 +27,7 @@ export async function updatePage(
         isPublished: profile.published,
         appearance: appearanceSchema.parse(input.appearance),
         socialLinks: socialLinksSchema.parse(input.socialLinks),
+        ...((input.isPro || input.showBranding) && { showBranding: input.showBranding }),
       },
       { headers: await getApiAuthorization() },
     )

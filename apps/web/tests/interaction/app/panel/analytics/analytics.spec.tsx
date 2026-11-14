@@ -59,13 +59,13 @@ describe('Analytics', () => {
   })
 
   it('shows a skeleton while loading', () => {
-    renderWithProviders(<Analytics />)
+    renderWithProviders(<Analytics isPro />)
 
     expect(screen.getByText('Carregando analytics…')).toBeInTheDocument()
   })
 
   it('shows the numbers, the chart, the top links and the social ranking from the api', async () => {
-    renderWithProviders(<Analytics />)
+    renderWithProviders(<Analytics isPro />)
 
     expect(await screen.findByText('1.200')).toBeInTheDocument()
     expect(screen.getByText('10%')).toBeInTheDocument()
@@ -80,13 +80,13 @@ describe('Analytics', () => {
   })
 
   it('shows the most clicked social network as a card', async () => {
-    renderWithProviders(<Analytics />)
+    renderWithProviders(<Analytics isPro />)
 
     expect(await screen.findByText('100% dos cliques em redes')).toBeInTheDocument()
   })
 
   it('switches the chart between lines and bars', async () => {
-    const { user } = renderWithProviders(<Analytics />)
+    const { user } = renderWithProviders(<Analytics isPro />)
 
     await screen.findByText('1.200')
 
@@ -100,7 +100,7 @@ describe('Analytics', () => {
   })
 
   it('reloads the four queries with the new period', async () => {
-    const { user } = renderWithProviders(<Analytics />)
+    const { user } = renderWithProviders(<Analytics isPro />)
 
     await screen.findByText('1.200')
 
@@ -116,7 +116,7 @@ describe('Analytics', () => {
   it('shows the empty state when there are no views or clicks', async () => {
     overview.mockResolvedValueOnce(emptyOverview)
 
-    renderWithProviders(<Analytics />)
+    renderWithProviders(<Analytics isPro />)
 
     expect(
       await screen.findByText('Ainda não há visitas nem cliques neste período'),
@@ -126,7 +126,7 @@ describe('Analytics', () => {
   it('says when no visit came from the QR code', async () => {
     overview.mockResolvedValueOnce({ ...emptyOverview, pageViews: 10 })
 
-    renderWithProviders(<Analytics />)
+    renderWithProviders(<Analytics isPro />)
 
     expect(await screen.findByText('Nenhuma visita pelo QR code neste período')).toBeInTheDocument()
   })
@@ -134,7 +134,7 @@ describe('Analytics', () => {
   it('shows the error and retries', async () => {
     overview.mockRejectedValueOnce(new Error('falhou'))
 
-    const { user } = renderWithProviders(<Analytics />)
+    const { user } = renderWithProviders(<Analytics isPro />)
 
     await user.click(await screen.findByRole('button', { name: 'Tentar novamente' }))
 

@@ -45,6 +45,7 @@ export default async function PublicPage({ params }: PageProps<'/[locale]/[usern
       <PageView
         headingAs="h1"
         fixedFooter
+        showBranding={page.showBranding}
         className="min-h-svh"
         profile={{
           name: page.title,

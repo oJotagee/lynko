@@ -8,6 +8,7 @@ const messages: Record<string, string> = {
   'Link not found': 'Este link não foi encontrado. Recarregue a lista.',
   'A page can have at most 100 links': 'Sua página pode ter até 100 links.',
   'endsAt must be after startsAt': 'A data de saída precisa ser depois da entrada.',
+  'Pro plan required': 'Esse recurso é do plano Pro. Assine em Planos.',
 }
 
 export function getDashboardError(error: unknown, fallback: string): string {
