@@ -5,6 +5,7 @@ import { ExternalLink } from 'lucide-react'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Link } from '@/i18n/navigation'
+import { getPublicPageUrl } from '@/lib/site'
 import type { DashboardProfile } from '../dashboard-data'
 
 const label = <span className="hidden sm:inline">Ver página</span>
@@ -29,13 +30,30 @@ export function PreviewPageButton({ profile }: { profile: DashboardProfile }) {
     )
   }
 
+  const className = buttonVariants({ variant: 'outline', className: 'h-11 gap-2 px-3' })
+
+  if (profile.customDomain) {
+    return (
+      <a
+        href={getPublicPageUrl(profile.username, profile.customDomain)}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Ver página pública em nova aba"
+        className={className}
+      >
+        <ExternalLink />
+        {label}
+      </a>
+    )
+  }
+
   return (
     <Link
       href={`/${profile.username}`}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Ver página pública em nova aba"
-      className={buttonVariants({ variant: 'outline', className: 'h-11 gap-2 px-3' })}
+      className={className}
     >
       <ExternalLink />
       {label}

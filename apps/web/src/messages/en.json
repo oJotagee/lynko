@@ -101,7 +101,7 @@
       "pro1": "Everything in Free",
       "pro2": "90-day analytics",
       "pro3": "No Lynko branding",
-      "pro4": "Custom domain (soon)",
+      "pro4": "Custom domain, like yourname.com",
       "freePrice": "R$0",
       "proPrice": "R$19.90",
       "proCta": "Get Pro"
@@ -116,7 +116,7 @@
       "q3": "Can I change my username later?",
       "q4": "What does Lynko track?",
       "q5": "Can I cancel Pro anytime?",
-      "a2": "Custom domains are planned for Pro, which is not available yet. For now, your page uses a Lynko address with your chosen username.",
+      "a2": "Yes, on the Pro plan. Connect a domain you already own, like yourname.com, in Settings. HTTPS is automatic and your Lynko address keeps working.",
       "a3": "Yes, as long as the new username is available. Changing it changes your page address, so update the link in your bio, social profiles, and anywhere else you have shared it.",
       "a4": "Analytics are still in development. The goal is to show page views and link clicks so you can understand which content attracts the most interest. The numbers shown on this page are examples.",
       "a5": "Pro is not available to subscribe to yet, so there is currently no charge or subscription to cancel. Subscription and cancellation terms will be provided before launch."

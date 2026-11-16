@@ -8,6 +8,7 @@ import { ProfilePreview } from '../../_components/profile/profile-preview'
 import type { ApiUser } from '../../_data-access/get-dashboard'
 import { ChangePasswordForm } from './change-password-form'
 import { DeleteAccountDialog } from './delete-account-dialog'
+import { DomainSection } from './domain-section'
 import { PlanSection } from './plan-section'
 import { ProfileForm } from './profile-form'
 import { SessionsSection } from './sessions-section'
@@ -102,22 +103,25 @@ export function SettingsPanel({ user, data, hasPage }: SettingsPanelProps) {
         </>
       )}
       {tab === 'public' && (
-        <section className="grid items-center gap-8 rounded-xl border border-border bg-card p-6 md:grid-cols-2">
-          <div>
-            <h2 className="text-2xl font-bold">Seu perfil público</h2>
-            <p className="mt-3 mb-6 text-sm leading-relaxed text-muted-foreground">
-              Edite temas e botões em Aparência. Nome, biografia, foto e visibilidade ficam em
-              Geral.
-            </p>
-            <Link
-              href="/dashboard/appearance"
-              className={buttonVariants({ variant: 'outline', className: 'min-h-11' })}
-            >
-              Editar aparência
-            </Link>
-          </div>
-          <ProfilePreview data={data} />
-        </section>
+        <>
+          <section className="grid items-center gap-8 rounded-xl border border-border bg-card p-6 md:grid-cols-2">
+            <div>
+              <h2 className="text-2xl font-bold">Seu perfil público</h2>
+              <p className="mt-3 mb-6 text-sm leading-relaxed text-muted-foreground">
+                Edite temas e botões em Aparência. Nome, biografia, foto e visibilidade ficam em
+                Geral.
+              </p>
+              <Link
+                href="/dashboard/appearance"
+                className={buttonVariants({ variant: 'outline', className: 'min-h-11' })}
+              >
+                Editar aparência
+              </Link>
+            </div>
+            <ProfilePreview data={data} />
+          </section>
+          <DomainSection isPro={data.isPro} hasPage={hasPage} />
+        </>
       )}
     </div>
   )

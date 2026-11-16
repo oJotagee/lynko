@@ -86,6 +86,24 @@ describe('QR code', () => {
     await waitFor(() => expect(toast.success).toHaveBeenCalledWith('URL copiada'))
   })
 
+  it('uses the custom domain in the QR code and in the copied address', async () => {
+    const toDataURL = spyOn(QRCode, 'toDataURL')
+
+    const { user } = renderWithProviders(
+      <QrCodeButton profile={{ ...published, customDomain: 'seunome.com' }} />,
+    )
+
+    await user.click(screen.getByLabelText('QR code da página'))
+
+    await screen.findByAltText('QR code para https://seunome.com')
+
+    expect(toDataURL.mock.calls[0]?.[0]).toBe('https://seunome.com?src=qr')
+
+    await user.click(screen.getByLabelText('Copiar endereço'))
+
+    expect(await navigator.clipboard.readText()).toBe('https://seunome.com')
+  })
+
   it('shows an error when the QR code cannot be generated', async () => {
     spyOn(QRCode, 'toString').mockImplementation((async () => {
       throw new Error('boom')

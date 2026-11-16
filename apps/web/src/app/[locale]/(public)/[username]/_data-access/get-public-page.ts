@@ -17,6 +17,7 @@ export interface ApiPublicPage {
   backgroundImageUrl: string | null
   appearance: PageAppearance
   showBranding: boolean
+  customDomain: string | null
   socialLinks: Pick<SocialLinkData, 'platform' | 'url'>[]
   links: { id: string; title: string; url: string }[]
 }

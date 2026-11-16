@@ -50,6 +50,7 @@ export interface ApiPage {
   socialLinks: SocialLinkData[]
   isPublished: boolean
   showBranding: boolean
+  customDomain: string | null
   updatedAt: string
 }
 

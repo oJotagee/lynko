@@ -27,6 +27,7 @@ export function buildDashboardData(overrides: Partial<DashboardData> = {}): Dash
       image: '',
       avatarMediaId: null,
       published: false,
+      customDomain: null,
     },
     appearance: defaultAppearance,
     backgroundImageUrl: null,

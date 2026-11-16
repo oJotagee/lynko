@@ -27,6 +27,7 @@ describe('toDashboardData', () => {
       image: '',
       avatarMediaId: null,
       published: false,
+      customDomain: null,
     })
 
     expect(data.links.map((link) => [link.id, link.active])).toEqual([
