@@ -116,6 +116,34 @@ export const billingEventSchema = pgTable('billing_events', {
   processedAt: timestamp('processed_at', { withTimezone: true }).notNull().defaultNow(),
 })
 
+export const customDomainSchema = pgTable(
+  'custom_domains',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .unique('custom_domains_user_id_unique')
+      .references(() => userSchema.id, { onDelete: 'cascade' }),
+    hostname: varchar('hostname', { length: 253 }).notNull(),
+    kind: varchar('kind', { length: 10 }).$type<'apex' | 'subdomain'>().notNull(),
+    status: varchar('status', { length: 16 })
+      .$type<'pending_owner' | 'pending_dns' | 'active' | 'error'>()
+      .notNull(),
+    verificationToken: varchar('verification_token', { length: 64 }).notNull(),
+    lastError: varchar('last_error', { length: 40 }),
+    ownerVerifiedAt: timestamp('owner_verified_at', { withTimezone: true }),
+    activatedAt: timestamp('activated_at', { withTimezone: true }),
+    lastCheckedAt: timestamp('last_checked_at', { withTimezone: true }),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex('custom_domains_hostname_verified_unique')
+      .on(table.hostname)
+      .where(sql`${table.ownerVerifiedAt} is not null`),
+    index('custom_domains_status_checked_idx').on(table.status, table.lastCheckedAt),
+  ],
+)
+
 export const pageRevisionSequence = pgSequence('pages_revision_seq')
 
 export const pageSchema = pgTable('pages', {

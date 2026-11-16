@@ -9,6 +9,7 @@ import { hashPassword, verifyPassword } from '../../shared/password'
 import { authRepository } from '../auth/auth.repository'
 import { authTokens } from '../auth/auth.tokens'
 import { billingActions, billingService } from '../billing/billing.service'
+import { domainsService } from '../domains/domains.service'
 import { mailService } from '../mail/mail.service'
 import {
   accountDeletedMessage,
@@ -70,6 +71,8 @@ export const usersService = {
 
   async deleteAccount(user: DeletableUser) {
     await billingActions.cancelBeforeAccountDeletion(user.id)
+
+    await domainsService.removeBeforeAccountDeletion(user.id)
 
     const deleted = await usersRepository.deleteWithData(user.id, user.passwordHash)
 

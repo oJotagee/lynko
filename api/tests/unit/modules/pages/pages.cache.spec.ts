@@ -31,6 +31,7 @@ function buildPublicPage(id: string, bio = 'v1'): PublicPage {
     theme: defaultPageTheme,
     appearance: defaultPageAppearance,
     showBranding: true,
+    customDomain: null,
     socialLinks: [],
     links: [],
     proAccessUntil: null,

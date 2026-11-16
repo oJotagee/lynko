@@ -98,6 +98,7 @@ describe('Lynko branding', () => {
       theme: defaultPageTheme,
       appearance: defaultPageAppearance,
       showBranding: false,
+      customDomain: null,
       socialLinks: [],
       links: [],
       proAccessUntil: new Date(Date.now() - DAY),

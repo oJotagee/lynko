@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto'
 
 import type {
   authTokenSchema,
+  customDomainSchema,
   linkSchema,
   mediaSchema,
   pageSchema,
@@ -24,6 +25,8 @@ export type Link = typeof linkSchema.$inferSelect
 export type Media = typeof mediaSchema.$inferSelect
 
 export type Subscription = typeof subscriptionSchema.$inferSelect
+
+export type CustomDomain = typeof customDomainSchema.$inferSelect
 
 const createdAt = new Date('2026-01-01T00:00:00.000Z')
 
@@ -149,6 +152,24 @@ export function buildSubscription(overrides: Partial<Subscription> = {}): Subscr
     checkoutId: `bill_${randomUUID()}`,
     currentPeriodEnd: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000),
     cancelledAt: null,
+    createdAt,
+    updatedAt: createdAt,
+    ...overrides,
+  }
+}
+
+export function buildCustomDomain(overrides: Partial<CustomDomain> = {}): CustomDomain {
+  return {
+    id: randomUUID(),
+    userId: randomUUID(),
+    hostname: 'seunome.com',
+    kind: 'apex',
+    status: 'pending_owner',
+    verificationToken: 'token-test',
+    lastError: null,
+    ownerVerifiedAt: null,
+    activatedAt: null,
+    lastCheckedAt: null,
     createdAt,
     updatedAt: createdAt,
     ...overrides,

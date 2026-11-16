@@ -60,6 +60,7 @@ function buildPublicPage(id: string, username: string, bio: string): PublicPage 
     theme: defaultPageTheme,
     appearance: defaultPageAppearance,
     showBranding: true,
+    customDomain: null,
     socialLinks: [],
     links: [],
     proAccessUntil: null,
